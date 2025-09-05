@@ -3,201 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>เข้าสู่ระบบ | ระบบลาออนไลน์</title>
+<title>BUS EasyLeave Login</title>
+
+<!-- Google Fonts Prompt -->
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg1: #0f172a;
-    --bg2: #0ea5a4;
-    --accent: #7c3aed;
-    --radius: 16px;
-    --card-shadow: 0 12px 28px rgba(2,6,23,0.6);
-    font-family: "Inter","Noto Sans Thai",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  body {
+    font-family: 'Prompt', sans-serif;
+    background: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
   }
 
-  html, body {
-    margin:0;
-    padding:0;
-    height:100%;
-    background: radial-gradient(800px 500px at 20% 20%, rgba(124,58,237,0.15), transparent 10%),
-                linear-gradient(180deg, var(--bg1) 0%, #071028 70%);
-    color:#e6eef8;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-
-  .card {
-    width:90%;
-    max-width:400px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius: var(--radius);
-    box-shadow: var(--card-shadow);
-    padding: 32px 24px;
-    display:flex;
-    flex-direction: column;
-    align-items:center;
-    gap: 24px;
-    position: relative;
-  }
-
-  .logo {
-    display:flex;
-    align-items:center;
-    gap:12px;
-  }
-
-  .badge {
-    width:48px;
-    height:48px;
-    border-radius:12px;
-    background: linear-gradient(135deg,var(--accent),var(--bg2));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:700;
-    font-size:20px;
-    box-shadow: 0 6px 18px rgba(124,58,237,0.2);
+  .login-container {
+    background: #fff;
+    padding: 30px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 320px;
   }
 
   h1 {
-    font-size:24px;
-    text-align:center;
-    margin:0;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(90deg, #4CAF50, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
-  p.lead {
-    font-size:14px;
-    text-align:center;
-    color:#cfe7ff;
-    opacity:0.95;
-    margin:0;
+  .tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
   }
 
-  .features {
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    width:100%;
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    cursor: pointer;
+    font-weight: 500;
+    color: #555;
   }
 
-  .chip {
-    background: rgba(255,255,255,0.03);
-    padding:6px 10px;
-    border-radius:999px;
-    font-size:13px;
-    text-align:center;
-    box-shadow: inset 0 -1px rgba(255,255,255,0.01);
+  .tab.active {
+    border-bottom: 3px solid #4CAF50;
+    color: #4CAF50;
+    font-weight: 600;
   }
 
-  /* LINE Login Button */
-  .line-btn {
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    padding:12px 16px;
-    border-radius:12px;
-    font-weight:600;
-    font-size:15px;
-    color:white;
-    background: linear-gradient(90deg,var(--bg2),var(--accent));
-    box-shadow: 0 6px 18px rgba(14,165,164,0.12);
-    cursor:pointer;
-    border:none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  .tab-content {
+    display: none;
   }
 
-  .line-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(14,165,164,0.25);
+  .tab-content.active {
+    display: block;
   }
 
-  .meta {
-    font-size:12px;
-    color:#9fb7d6;
-    opacity:0.9;
-    text-align:center;
+  .login-button, .line-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
   }
 
-  .bg-pattern {
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    opacity:0.18;
-    mix-blend-mode:screen;
+  .login-button {
+    background: #4CAF50;
+    color: #fff;
   }
 
+  .line-button {
+    background: #00C300;
+    color: #fff;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 8px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  .credits {
+    text-align: center;
+    font-size: 11px;
+    color: #888;
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    font-weight: 400;
+  }
+
+  .credits svg {
+    vertical-align: middle;
+    margin-left: 4px;
+  }
 </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="logo">
-    <div class="badge">ระบบ</div>
-    <div>
-      <div style="font-size:13px; color:#bcd9ff; opacity:0.95">ข้อความจากทีมงาน</div>
-      <div style="font-size:12px; color:#8fb5da">อัปเดตฟังก์ชัน</div>
-    </div>
-  </div>
-
-  <h1>เข้าสู่ระบบ</h1>
-  <p class="lead">เข้าสู่ระบบเพื่อใช้งานระบบลาออนไลน์</p>
-
-  <div class="features">
-    <div class="chip">📊 ตรวจสอบสิทธิลาคงเหลือ</div>
-    <div class="chip">📝 แจ้งลาออนไลน์ได้ทันที</div>
-    <div class="chip">⚡ ใช้งานสะดวก ทุกที่ ทุกเวลา</div>
-  </div>
-
-  <button class="line-btn" id="lineLogin">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-line" viewBox="0 0 16 16">
-      <path d="M8 0c4.411 0 8 2.912 8 6.492 0 1.433-.555 2.723-1.715 3.994-1.678 1.932-5.431 4.285-6.285 4.645-.83.35-.734-.197-.696-.413l.003-.018.114-.685c.027-.204.055-.521-.026-.723-.09-.223-.444-.339-.704-.395C2.846 12.39 0 9.701 0 6.492 0 2.912 3.59 0 8 0M5.022 7.686H3.497V4.918a.156.156 0 0 0-.155-.156H2.78a.156.156 0 0 0-.156.156v3.486c0 .041.017.08.044.107v.001l.002.002.002.002a.15.15 0 0 0 .108.043h2.242c.086 0 .155-.07.155-.156v-.56a.156.156 0 0 0-.155-.157m.791-2.924a.156.156 0 0 0-.156.156v3.486c0 .086.07.155.156.155h.562c.086 0 .155-.07.155-.155V4.918a.156.156 0 0 0-.155-.156zm3.863 0a.156.156 0 0 0-.156.156v2.07L7.923 4.832l-.013-.015v-.001l-.01-.01-.003-.003-.011-.009h-.001L7.88 4.79l-.003-.002-.005-.003-.008-.005h-.002l-.003-.002-.01-.004-.004-.002-.01-.003h-.002l-.003-.001-.009-.002h-.006l-.003-.001h-.004l-.002-.001h-.574a.156.156 0 0 0-.156.155v3.486c0 .086.07.155.156.155h.56c.087 0 .157-.07.157-.155v-2.07l1.6 2.16a.2.2 0 0 0 .039.038l.001.001.01.006.004.002.008.004.007.003.005.002.01.003h.003a.2.2 0 0 0 .04.006h.56c.087 0 .157-.07.157-.155V4.918a.156.156 0 0 0-.156-.156zm3.815.717v-.56a.156.156 0 0 0-.155-.157h-2.242a.16.16 0 0 0-.108.044h-.001l-.001.002-.002.003a.16.16 0 0 0-.044.107v3.486c0 .041.017.08.044.107l.002.003.002.002a.16.16 0 0 0 .108.043h2.242c.086 0 .155-.07.155-.156v-.56a.156.156 0 0 0-.155-.157H11.81v-.589h1.525c.086 0 .155-.07.155-.156v-.56a.156.156 0 0 0-.155-.157H11.81v-.589h1.525c.086 0 .155-.07.155-.156Z"/>
+<div class="login-container">
+  <h1>
+    <!-- SVG ปฏิทิน -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#4CAF50" class="bi bi-calendar-week-fill" viewBox="0 0 16 16">
+      <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2M9.5 7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5m3 0h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5M2 10.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>
     </svg>
-    <span>LINE Login</span>
-  </button>
-  <div class="meta">เข้าสู่ระบบด้วยบัญชี LINE</div>
+    BUS EasyLeave
+  </h1>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="user">User</div>
+    <div class="tab" data-tab="admin">Admin</div>
+  </div>
+
+  <!-- User Login -->
+  <div class="tab-content active" id="user">
+    <button class="line-button">Login with LINE</button>
+  </div>
+
+  <!-- Admin Login -->
+  <div class="tab-content" id="admin">
+    <input type="text" placeholder="รหัสพนักงาน">
+    <input type="password" placeholder="รหัสผ่าน">
+    <button class="login-button">Login</button>
+  </div>
+
+  <!-- Footer เครดิต -->
+  <div class="credits">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#888" class="bi bi-openai" viewBox="0 0 16 16">
+      <path d="M14.949 6.547a3.94 3.94 0 0 0-.348-3.273 4.11 4.11 0 0 0-4.4-1.934A4.1 4.1 0 0 0 8.423.2 4.15 4.15 0 0 0 6.305.086a4.1 4.1 0 0 0-1.891.948 4.04 4.04 0 0 0-1.158 1.753 4.1 4.1 0 0 0-1.563.679A4 4 0 0 0 .554 4.72a3.99 3.99 0 0 0 .502 4.731 3.94 3.94 0 0 0 .346 3.274 4.11 4.11 0 0 0 4.402 1.933c.382.425.852.764 1.377.995.526.231 1.095.35 1.67.346 1.78.002 3.358-1.132 3.901-2.804a4.1 4.1 0 0 0 1.563-.68 4 4 0 0 0 1.14-1.253 3.99 3.99 0 0 0-.506-4.716m-6.097 8.406a3.05 3.05 0 0 1-1.945-.694l.096-.054 3.23-1.838a.53.53 0 0 0 .265-.455v-4.49l1.366.778q.02.011.025.035v3.722c-.003 1.653-1.361 2.992-3.037 2.996m-6.53-2.75a2.95 2.95 0 0 1-.36-2.01l.095.057L5.29 12.09a.53.53 0 0 0 .527 0l3.949-2.246v1.555a.05.05 0 0 1-.022.041L6.473 13.3c-1.454.826-3.311.335-4.15-1.098m-.85-6.94A3.02 3.02 0 0 1 3.07 3.949v3.785a.51.51 0 0 0 .262.451l3.93 2.237-1.366.779a.05.05 0 0 1-.048 0L2.585 9.342a2.98 2.98 0 0 1-1.113-4.094zm11.216 2.571L8.747 5.576l1.362-.776a.05.05 0 0 1 .048 0l3.265 1.86a3 3 0 0 1 1.173 1.207 2.96 2.96 0 0 1-.27 3.2 3.05 3.05 0 0 1-1.36.997V8.279a.52.52 0 0 0-.276-.445m1.36-2.015-.097-.057-3.226-1.855a.53.53 0 0 0-.53 0L6.249 6.153V4.598a.04.04 0 0 1 .019-.04L9.533 2.7a3.07 3.07 0 0 1 3.257.139c.474.325.843.778 1.066 1.303.223.526.289 1.103.191 1.664zM5.503 8.575 4.139 7.8a.05.05 0 0 1-.026-.037V4.049c0-.57.166-1.127.476-1.607s.752-.864 1.275-1.105a3.08 3.08 0 0 1 3.234.41l-.096.054-3.23 1.838a.53.53 0 0 0-.265.455zm.742-1.577 1.758-1 1.762 1v2l-1.755 1-1.762-1z"/>
+    </svg>Developed by PEE-MOR-TAE
+  </div>
 </div>
 
-<svg class="bg-pattern" width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-  <defs>
-    <linearGradient id="g1" x1="0" x2="1">
-      <stop offset="0" stop-color="#7c3aed" stop-opacity="0.5"/>
-      <stop offset="1" stop-color="#0ea5a4" stop-opacity="0.3"/>
-    </linearGradient>
-  </defs>
-  <circle cx="70" cy="80" r="220" fill="url(#g1)"/>
-  <circle cx="720" cy="420" r="180" fill="url(#g1)"/>
-</svg>
-
-<script src="https://static.line-scdn.net/liff/edge/2.3/liff.js"></script>
 <script>
-(async function(){
-  const btn = document.getElementById('lineLogin');
-  if(window.liff){
-    try {
-      await liff.init({ liffId: "2007956727-rbZz9a0z" }); // ใส่ LIFF ID ของคุณ
-    } catch(err){
-      console.error("LIFF init error", err);
-    }
-  }
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
 
-  btn.addEventListener('click', async function(){
-    if(window.liff){
-      if(!liff.isLoggedIn()){
-        await liff.login();
-      } else {
-        const profile = await liff.getProfile();
-        alert(`ยินดีต้อนรับ ${profile.displayName}`);
-      }
-    } else {
-      alert('LIFF ไม่ถูกโหลด กรุณาเปิดใน LINE');
-    }
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const target = tab.getAttribute('data-tab');
+      contents.forEach(c => {
+        c.id === target ? c.classList.add('active') : c.classList.remove('active');
+      });
+    });
   });
-})();
 </script>
+
 </body>
 </html>
-
-
-
