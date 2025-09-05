@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบ | ระบบลาออนไลน์</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center min-h-screen font-sans">
+
+  <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+    <!-- โลโก้ -->
+    <div class="text-center mb-6">
+      <div class="mx-auto w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+        📝
+      </div>
+      <h1 class="text-2xl font-bold text-gray-800 mt-4">ระบบลาออนไลน์</h1>
+      <p class="text-gray-500 text-sm">เข้าสู่ระบบเพื่อจัดการการลา</p>
+    </div>
+
+    <!-- ฟอร์มล็อคอิน -->
+    <form id="loginForm" class="space-y-5">
+      <div>
+        <label class="block text-gray-700 text-sm mb-2">รหัสพนักงาน</label>
+        <input type="text" id="empId" placeholder="เช่น EMP1234"
+               class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 text-sm mb-2">รหัสผ่าน</label>
+        <input type="password" id="password" placeholder="••••••••"
+               class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <button type="submit"
+        class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition duration-200">
+        เข้าสู่ระบบ
+      </button>
+    </form>
+
+    <!-- ลิงก์ -->
+    <div class="text-center mt-6 text-sm text-gray-500">
+      <a href="#" class="hover:underline">ลืมรหัสผ่าน?</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const empId = document.getElementById("empId").value;
+      const password = document.getElementById("password").value;
+      
+      if(empId && password){
+        alert("เข้าสู่ระบบสำเร็จ! (คุณสามารถต่อ API หรือ LIFF SDK ได้ที่นี่)");
+      } else {
+        alert("กรุณากรอกข้อมูลให้ครบ");
+      }
+    });
+  </script>
+</body>
+</html>
