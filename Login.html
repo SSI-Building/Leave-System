@@ -213,7 +213,9 @@ userBtn.addEventListener('click', async () => {
       window.location.href = "Dashboard.html";
     } else {
       // ยังไม่มี → ไป Register
-      window.location.href = "register.html";
+      // ยังไม่มี → ไป Register
+    sessionStorage.setItem('lineUserId', lineUserId);
+    window.location.href = "register.html";
     }
 
   } catch(e) {
