@@ -175,48 +175,77 @@
     });
   });
 
-  // --- User Tab LINE Login ---
-  document.getElementById('lineLoginUser').addEventListener('click', async () => {
-    try {
-      await liff.init({ liffId: "2007956727-6V7DrnMD" });
-      if (!liff.isLoggedIn()) { liff.login(); return; }
-      const profile = await liff.getProfile();
-      const lineUserId = profile.userId;
+// ===== ฟังก์ชันแสดงสถานะ Loading =====
+function setLoading(button, isLoading, text = "Login") {
+  if (isLoading) {
+    button.disabled = true;
+    button.dataset.originalText = button.textContent;
+    button.textContent = "⏳ กำลังทำงาน...";
+  } else {
+    button.disabled = false;
+    button.textContent = button.dataset.originalText || text;
+  }
+}
 
-      // TODO: ตรวจสอบ LineUserID ใน sheet1 ผ่าน Web App
-      const response = await fetch(`https://script.google.com/macros/s/AKfycbyKdxqTu0YM6gtDmsO6kJ-WrzTgtoAZZF4YPzzcaPcnfgVhkBBSBOcU6r5cracI6Rd6/exec`);
-      const result = await response.json();
-      if (result.exists) window.location.href = "Dashboard.html";
-      else window.location.href = "register.html";
-    } catch(e){ console.error(e); alert("เกิดข้อผิดพลาด LINE Login"); }
-  });
+// --- User Tab LINE Login ---
+const userBtn = document.getElementById('lineLoginUser');
+userBtn.addEventListener('click', async (e) => {
+  setLoading(userBtn, true);
+  try {
+    await liff.init({ liffId: "2007956727-6V7DrnMD" });
+    if (!liff.isLoggedIn()) { liff.login(); return; }
+    const profile = await liff.getProfile();
+    const lineUserId = profile.userId;
 
-  // --- Admin Tab Username/Password Login ---
-  document.getElementById('adminLoginBtn').addEventListener('click', () => {
-    const username = document.getElementById('adminUsername').value;
-    const password = document.getElementById('adminPassword').value;
+    const response = await fetch(`https://script.google.com/macros/s/AKfycbyKdxqTu0YM6gtDmsO6kJ-WrzTgtoAZZF4YPzzcaPcnfgVhkBBSBOcU6r5cracI6Rd6/exec`);
+    const result = await response.json();
+    if (result.exists) window.location.href = "Dashboard.html";
+    else window.location.href = "register.html";
+  } catch(e){ 
+    console.error(e); 
+    alert("เกิดข้อผิดพลาด LINE Login"); 
+  } finally {
+    setLoading(userBtn, false);
+  }
+});
+
+// --- Admin Tab Username/Password Login ---
+const adminBtn = document.getElementById('adminLoginBtn');
+adminBtn.addEventListener('click', () => {
+  setLoading(adminBtn, true, "Login");
+  const username = document.getElementById('adminUsername').value;
+  const password = document.getElementById('adminPassword').value;
+  setTimeout(() => { // จำลอง delay
     if(username === "admin-bus" && password === "Abc@12345"){
       window.location.href = "Dashboard-admin.html";
     } else {
       alert("รหัสหรือผู้ใช้ไม่ถูกต้อง");
     }
-  });
+    setLoading(adminBtn, false, "Login");
+  }, 500);
+});
 
-  // --- Admin Tab LINE Login ---
-  document.getElementById('lineLoginAdmin').addEventListener('click', async () => {
-    try {
-      await liff.init({ liffId: "2007956727-6V7DrnMD" });
-      if (!liff.isLoggedIn()) { liff.login(); return; }
-      const profile = await liff.getProfile();
-      const lineUserId = profile.userId;
+// --- Admin Tab LINE Login ---
+const adminLineBtn = document.getElementById('lineLoginAdmin');
+adminLineBtn.addEventListener('click', async () => {
+  setLoading(adminLineBtn, true, "Login with LINE");
+  try {
+    await liff.init({ liffId: "2007956727-6V7DrnMD" });
+    if (!liff.isLoggedIn()) { liff.login(); return; }
+    const profile = await liff.getProfile();
+    const lineUserId = profile.userId;
 
-      // TODO: ตรวจสอบ LineUserID ใน sheet2 ผ่าน Web App
-      const response = await fetch(`https://script.google.com/macros/s/AKfycby7rEQM3_i3hItuIDuHTOU02MC4t3htLN4wjzZ9ruX_7ru76KrT52d2uKaWepICk_78JQ/exec`);
-      const result = await response.json();
-      if (result.exists) window.location.href = "Dashboard-admin.html";
-      else window.location.href = "register-admin.html";
-    } catch(e){ console.error(e); alert("เกิดข้อผิดพลาด LINE Login"); }
-  });
+    const response = await fetch(`https://script.google.com/macros/s/AKfycby7rEQM3_i3hItuIDuHTOU02MC4t3htLN4wjzZ9ruX_7ru76KrT52d2uKaWepICk_78JQ/exec`);
+    const result = await response.json();
+    if (result.exists) window.location.href = "Dashboard-admin.html";
+    else window.location.href = "register-admin.html";
+  } catch(e){ 
+    console.error(e); 
+    alert("เกิดข้อผิดพลาด LINE Login"); 
+  } finally {
+    setLoading(adminLineBtn, false, "Login with LINE");
+  }
+});
 </script>
 
 </body>
