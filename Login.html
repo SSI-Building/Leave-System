@@ -201,7 +201,7 @@ userBtn.addEventListener('click', async () => {
     const lineUserId = profile.userId;
 
     // ตรวจสอบ LineUserID ผ่าน Web App
-    const response = await fetch(`https://script.google.com/macros/s/AKfycbz92zLN8AVy-tC0x8MjkczJr7_sqjI64fduCHBBzO9s9mVcXdQQpShijUGlWTH7Rx6N/exec`, {
+    const response = await fetch(`https://script.google.com/macros/s/AKfycbyY8pDCk39QczGFyazmA1PR8jShjbS6wnZJUONWP7yyUQHQfyiGY_1L9pY9hOr_qIoj/exec`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `lineUserId=${encodeURIComponent(lineUserId)}`
