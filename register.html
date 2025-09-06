@@ -49,7 +49,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   messageDiv.textContent = "⏳ กำลังลงทะเบียน...";
 
   try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbzlqnfbordTlS53DwJRUDVO_H1MdfyPR90-Sh_M11V5m89D1SB0wQGfETazcVs2E7ni/exec", {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbyDr8c9LjBVErXD4U0rgxOq6fDR42ZVcdNfOAIptYFDwlfIBas8nPDoZHyz10gBSA50Xw/exec", {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'register', employeeId: empId, lineUserId })
