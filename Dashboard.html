@@ -119,7 +119,7 @@ document.getElementById('settingsIcon').addEventListener('click', () => {
 });
 
 // LIFF init
-liff.init({liffId: 'https://liff.line.me/2007956727-6V7DrnMD'}).then(() => {
+liff.init({liffId: '2007956727-6V7DrnMD'}).then(() => {
   liff.getProfile().then(profile => {
     document.getElementById('empName').textContent = profile.displayName;
     document.getElementById('profilePic').src = profile.pictureUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop';
