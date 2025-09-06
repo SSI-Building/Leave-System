@@ -65,7 +65,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     if (result.result === "success") {
       messageDiv.style.color = "green";
       messageDiv.textContent = "✅ ลงทะเบียนสำเร็จ!";
-      setTimeout(() => window.location.href = "Dashboard.html", 1000);
+      setTimeout(() => window.location.href = "Login.html", 1000);
     } else {
       messageDiv.style.color = "red";
       messageDiv.textContent = "❌ " + result.message;
