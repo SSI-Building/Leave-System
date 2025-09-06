@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ทดสอบลงทะเบียน</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin:0; background:#f0f4f8;}
+    .card { background:#fff; border-radius:15px; padding:30px; max-width:400px; width:100%; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+    input, button { width:100%; padding:12px; margin:10px 0; border-radius:8px; font-size:15px;}
+    input { border:1px solid #ccc; }
+    input:focus { border-color:#4CAF50; outline:none; }
+    button { border:none; color:#fff; background:linear-gradient(90deg,#4CAF50,#FFA500); font-weight:600; cursor:pointer;}
+    button:hover { opacity:0.9; }
+    .msg { margin-top:15px; min-height:20px; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>ทดสอบลงทะเบียน</h2>
+  <input type="text" id="empId" placeholder="เช่น P0123456" required>
+  <input type="text" id="lineUserId" placeholder="ทดสอบ LINE User ID" required>
+  <button id="submitBtn">Register</button>
+  <div id="message" class="msg"></div>
+</div>
+
+<script>
+document.getElementById("submitBtn").addEventListener("click", async () => {
+  const empId = document.getElementById("empId").value.trim().toUpperCase();
+  const lineUserId = document.getElementById("lineUserId").value.trim();
+  const messageDiv = document.getElementById("message");
+
+  if (!empId || !lineUserId) {
+    messageDiv.textContent = "❌ กรุณากรอกข้อมูลให้ครบ";
+    return;
+  }
+
+  messageDiv.textContent = "⏳ กำลังส่งข้อมูล...";
+
+  try {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbxA3j2YzEfYIFLSCQ__vIkb8IpEO60G_jbub8kTAn-3ekuZ5W1xqERN0xMkfg4peiWHlw/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "register",
+        employeeId: empId,
+        lineUserId: lineUserId
+      })
+    });
+
+    const result = await response.json();
+    console.log("Response:", result);
+
+    if (result.success) {
+      messageDiv.textContent = "✅ ลงทะเบียนสำเร็จ!";
+    } else {
+      messageDiv.textContent = "❌ " + result.message;
+    }
+
+  } catch(err) {
+    console.error("Fetch Error:", err);
+    messageDiv.textContent = "❌ เกิดข้อผิดพลาด: " + err.message;
+  }
+});
+</script>
+
+</body>
+</html>
