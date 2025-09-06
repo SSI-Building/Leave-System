@@ -13,33 +13,46 @@
   input:focus { border-color:#4CAF50; outline:none; }
   button { border:none; color:#fff; background:linear-gradient(90deg,#4CAF50,#FFA500); font-weight:600; cursor:pointer;}
   button:hover { opacity:0.9; }
-  .msg { margin-top:15px; min-height:20px; }
+  .msg { margin-top:15px; min-height:20px; font-weight:bold;}
 </style>
 </head>
 <body>
 
 <div class="card">
   <h2>ลงทะเบียน</h2>
-  <input type="text" id="empId" placeholder="เช่น P0123456" required>
+  <input type="text" id="empId" placeholder="รหัสพนักงาน เช่น P0123456" required>
+  <input type="hidden" id="lineUserId"> <!-- เก็บ LineUserID จาก LIFF -->
   <button id="submitBtn">Register</button>
   <div id="message" class="msg"></div>
 </div>
 
 <script>
 let lineUserId = "";
+let isSending = false;
 
-// เริ่ม LIFF
+// เริ่ม LIFF และดึง LineUserID
 async function initLiff() {
-  await liff.init({ liffId: "2007956727-6V7DrnMD" });
-  if (!liff.isLoggedIn()) {
-    liff.login();
-    return; // หลัง login หน้าเว็บจะ reload
+  try {
+    await liff.init({ liffId: "2007956727-6V7DrnMD" });
+
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return; // หลัง login หน้าเว็บ reload ใหม่
+    }
+
+    const profile = await liff.getProfile();
+    lineUserId = profile.userId;
+    document.getElementById("lineUserId").value = lineUserId; // เก็บใน hidden input
+    console.log("LineUserID:", lineUserId);
+
+  } catch (err) {
+    console.error("LIFF Init Error:", err);
+    document.getElementById("message").textContent = "❌ ไม่สามารถเชื่อมต่อกับ LIFF";
   }
-  const profile = await liff.getProfile();
-  lineUserId = profile.userId; // ดึง LineUserID อัตโนมัติ
 }
 
 document.getElementById("submitBtn").addEventListener("click", async () => {
+  if (isSending) return;
   const empId = document.getElementById("empId").value.trim().toUpperCase();
   const messageDiv = document.getElementById("message");
 
@@ -48,26 +61,40 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     return;
   }
 
+  if (!lineUserId) {
+    messageDiv.textContent = "❌ ไม่พบ LineUserID";
+    return;
+  }
+
+  isSending = true;
   messageDiv.textContent = "⏳ กำลังลงทะเบียน...";
 
   try {
     const response = await fetch("https://script.google.com/macros/s/AKfycbz92zLN8AVy-tC0x8MjkczJr7_sqjI64fduCHBBzO9s9mVcXdQQpShijUGlWTH7Rx6N/exec", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `employeeId=${encodeURIComponent(empId)}&lineUserId=${encodeURIComponent(lineUserId)}`
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "register",
+        employeeId: empId,
+        lineUserId: lineUserId
+      })
     });
 
     const result = await response.json();
+    console.log("Response:", result);
 
-    if (result.result === "success") {
+    if (result.success) {
       messageDiv.textContent = "✅ ลงทะเบียนสำเร็จ!";
       setTimeout(() => window.location.href = "Dashboard.html", 1200);
     } else {
       messageDiv.textContent = "❌ " + result.message;
+      isSending = false;
     }
 
   } catch(err) {
+    console.error("Fetch Error:", err);
     messageDiv.textContent = "❌ เกิดข้อผิดพลาด: " + err.message;
+    isSending = false;
   }
 });
 
