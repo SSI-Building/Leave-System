@@ -7,11 +7,32 @@
 <style>
   body { font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin:0; background:#f0f4f8;}
   .card { background:#fff; border-radius:15px; padding:30px; max-width:400px; width:100%; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+  
+  h2 {
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #4CAF50, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
   input, button { width:100%; padding:12px; margin:10px 0; border-radius:8px; font-size:15px;}
   input { border:1px solid #ccc; }
   input:focus { border-color:#4CAF50; outline:none; }
+  
   button { border:none; color:#fff; background:linear-gradient(90deg,#4CAF50,#FFA500); font-weight:600; cursor:pointer;}
   button:hover { opacity:0.9; }
+
+  .back-btn {
+    background: #888;
+    margin-top: 5px;
+  }
+
+  .back-btn:hover {
+    opacity:0.8;
+  }
+
   .msg { margin-top:15px; min-height:20px; font-weight:bold; }
 </style>
 </head>
@@ -20,8 +41,10 @@
 <div class="card">
   <h2>ลงทะเบียน</h2>
   <input type="text" id="empId" placeholder="เช่น P0123456" required>
-  <input type="text" id="lineUserId" placeholder="Line User ID" required>
+  <!-- ซ่อน LineUserID -->
+  <input type="hidden" id="lineUserId">
   <button id="submitBtn">Register</button>
+  <button class="back-btn" id="backBtn">กลับไป Login</button>
   <div id="message" class="msg"></div>
 </div>
 
@@ -30,9 +53,9 @@
 const storedLineUserId = sessionStorage.getItem('lineUserId');
 if (!storedLineUserId) {
   alert("❌ ไม่พบ LineUserID");
-  window.location.href = "index.html"; // กลับไปหน้า Login
+  window.location.href = "Login.html"; // กลับไปหน้า Login
 } else {
-  document.getElementById("lineUserId").value = storedLineUserId; // ใส่ใน input หรือซ่อนก็ได้
+  document.getElementById("lineUserId").value = storedLineUserId; // ใส่ใน input hidden
 }
 
 // --- ปุ่ม Register ---
@@ -77,8 +100,12 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     messageDiv.textContent = "❌ เกิดข้อผิดพลาด";
   }
 });
-</script>
 
+// --- ปุ่มย้อนกลับไป Login ---
+document.getElementById("backBtn").addEventListener("click", () => {
+  window.location.href = "Login.html";
+});
+</script>
 
 </body>
 </html>
