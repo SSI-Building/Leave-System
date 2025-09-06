@@ -358,19 +358,19 @@
     <div id="remain" class="tab-content active">
       <table>
         <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
-        <tr class="table-row-light"><td>ลาพักร้อน</td><td>6</td></tr>
-        <tr class="table-row-light"><td>ลาป่วย</td><td>30</td></tr>
-        <tr class="table-row-light"><td>ลากิจ</td><td>6</td></tr>
+        <tr><td>ลาพักร้อน</td><td>6</td></tr>
+        <tr><td>ลาป่วย</td><td>30</td></tr>
+        <tr><td>ลากิจ</td><td>6</td></tr>
       </table>
     </div>
 
     <div id="used" class="tab-content">
       <table>
         <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
-        <tr class="table-row-light"><td>ลาพักร้อน</td><td>2</td></tr>
-        <tr class="table-row-light"><td>ลาป่วย</td><td>5</td></tr>
-        <tr class="table-row-light"><td>ลากิจ</td><td>1</td></tr>
-        <tr class="table-row-light"><td>ขาดงานสะสม</td><td>0</td></tr>
+        <tr><td>ลาพักร้อน</td><td>2</td></tr>
+        <tr><td>ลาป่วย</td><td>5</td></tr>
+        <tr><td>ลากิจ</td><td>1</td></tr>
+        <tr><td>ขาดงานสะสม</td><td>0</td></tr>
       </table>
     </div>
   </div>
@@ -382,6 +382,41 @@
 </div>
 
 <script>
+const webAppUrl = "https://script.google.com/macros/s/AKfycby8GVXSGnWzPqY443Uv8-xdZwwGVaotazjTE3y7NyIn6itdinBq1n68zk36W8IavAsQ/exec";
+
+// TODO: ใช้ liff.getProfile() จริง ๆ ตอนเชื่อมกับ LINE
+// ตอนนี้ทดสอบด้วยค่า fix
+const lineUserId = "U1234567890"; 
+
+// ---------- โหลดธีมจาก Sheet ----------
+async function loadTheme() {
+  try {
+    const res = await fetch(`${webAppUrl}?lineUserId=${lineUserId}`);
+    const data = await res.json();
+    if (data.success && data.theme) {
+      document.body.className = data.theme === "default" ? "" : "theme-" + data.theme;
+    }
+  } catch (err) {
+    console.error("โหลดธีมล้มเหลว:", err);
+  }
+}
+
+// ---------- บันทึกธีมไปที่ Sheet ----------
+async function saveTheme(theme) {
+  try {
+    const res = await fetch(webAppUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lineUserId, theme })
+    });
+    const data = await res.json();
+    console.log("บันทึกธีม:", data);
+  } catch (err) {
+    console.error("บันทึกธีมล้มเหลว:", err);
+  }
+}
+
+// ---------- Tab ----------
 function openTab(evt, tabId) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
@@ -389,6 +424,7 @@ function openTab(evt, tabId) {
   document.getElementById(tabId).classList.add("active");
 }
 
+// ---------- Event ----------
 document.getElementById('settingsIcon').addEventListener('click', function() {
   document.getElementById('themeSelector').classList.toggle('active');
 });
@@ -398,8 +434,12 @@ document.querySelectorAll('.theme-option').forEach(option => {
     const theme = this.getAttribute('data-theme');
     document.body.className = theme === 'default' ? '' : 'theme-' + theme;
     document.getElementById('themeSelector').classList.remove('active');
+    saveTheme(theme); // บันทึกธีม
   });
 });
+
+// โหลดธีมเริ่มต้น
+loadTheme();
 </script>
 
 </body>
