@@ -39,7 +39,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   messageDiv.textContent = "⏳ กำลังส่งข้อมูล...";
 
   try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbz85GgIpopIf5sB5iv1VtbhuXOL7JQrMrac1XkUTIJttVEao9jV6eiH1izkD3v-gD5ivw/exec", {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbzVr_F0LGGV-Yg3ZCjRCjOaWtENQwhlJ5AEsMlc1npZiCdEzP6yNzsLxWMivVWLHhCeeg/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
