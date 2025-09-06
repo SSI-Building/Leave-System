@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ลงทะเบียน (Debug)</title>
-
-<!-- LIFF SDK -->
+<title>ลงทะเบียน</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  .card { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-  input, button { width: 100%; padding: 10px; margin-top: 10px; }
-  .msg { margin-top: 15px; min-height: 20px; }
+  body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin:0; background:#f0f4f8;}
+  .card { background:#fff; border-radius:15px; padding:30px; max-width:400px; width:100%; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+  input, button { width:100%; padding:12px; margin:10px 0; border-radius:8px; font-size:15px;}
+  input { border:1px solid #ccc; }
+  input:focus { border-color:#4CAF50; outline:none; }
+  button { border:none; color:#fff; background:linear-gradient(90deg,#4CAF50,#FFA500); font-weight:600; cursor:pointer;}
+  button:hover { opacity:0.9; }
+  .msg { margin-top:15px; min-height:20px; }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <h2>ลงทะเบียน (Debug Mode)</h2>
-  <label for="empId">รหัสพนักงาน</label>
+  <h2>ลงทะเบียน</h2>
   <input type="text" id="empId" placeholder="เช่น P0123456" required>
   <button id="submitBtn">Register</button>
   <div id="message" class="msg"></div>
@@ -27,26 +27,13 @@
 
 <script>
 let lineUserId = "";
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzDGNclga6hw6gIm-xOxFrGmnVB1WDEVbvXCQhGcjOxTgkxaAH9kn2ricLc3g1KiH5j/exec";
 
 async function initLiff() {
-  console.log("Initializing LIFF...");
-  try {
-    await liff.init({ liffId: "2007956727-6V7DrnMD" });
-    console.log("LIFF initialized");
-
-    if (!liff.isLoggedIn()) {
-      console.log("Not logged in → redirect to login");
-      liff.login();
-    } else {
-      const profile = await liff.getProfile();
-      lineUserId = profile.userId;
-      console.log("Got LINE userId:", lineUserId);
-      alert("LINE User ID: " + lineUserId); // ✅ Debug
-    }
-  } catch (err) {
-    console.error("LIFF init error:", err);
-    alert("LIFF init error: " + err.message);
+  await liff.init({ liffId: "2007956727-6V7DrnMD" });
+  if (!liff.isLoggedIn()) liff.login();
+  else {
+    const profile = await liff.getProfile();
+    lineUserId = profile.userId;
   }
 }
 
@@ -55,39 +42,30 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   const messageDiv = document.getElementById("message");
 
   if (!empId) {
-    messageDiv.textContent = "❌ Please enter Employee ID.";
+    messageDiv.textContent = "❌ กรุณากรอกรหัสพนักงาน";
     return;
   }
 
-  messageDiv.textContent = "⏳ Registering...";
-  console.log("Submitting with empId:", empId, "lineUserId:", lineUserId);
+  messageDiv.textContent = "⏳ กำลังลงทะเบียน...";
 
   try {
-    const response = await fetch(WEBAPP_URL, {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbyMvwYxEi29aW47y1FLVy2pJg5XmQ0mL6_gFYt8c2nXGSp0f5XeiFbieUPIttGsCbcC/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "register",
-        employeeId: empId,
-        lineUserId: lineUserId
-      })
+      body: JSON.stringify({ action:"register", employeeId:empId, lineUserId })
     });
-
-    console.log("Response status:", response.status);
-
     const result = await response.json();
-    console.log("Result from server:", result);
 
     if (result.success) {
-      messageDiv.textContent = "✅ Registration successful!";
-      setTimeout(() => window.location.href = "Dashboard.html", 1500);
+      messageDiv.textContent = "✅ ลงทะเบียนสำเร็จ!";
+      setTimeout(()=>window.location.href="Dashboard.html",1200);
     } else {
       messageDiv.textContent = "❌ " + result.message;
     }
-  } catch (err) {
-    console.error("Fetch error:", err);
-    alert("Fetch error: " + err.message);
-    messageDiv.textContent = "❌ Error occurred during registration.";
+
+  } catch(err) {
+    console.error(err);
+    messageDiv.textContent = "❌ เกิดข้อผิดพลาด";
   }
 });
 
