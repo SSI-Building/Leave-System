@@ -128,7 +128,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   messageDiv.textContent = "⏳ Registering...";
 
   try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbyORbW0sJ1W4hvRwbwvmg75fKNy1RSlohSU6wJEcEJDrr7fixXl3mv792f6OpUbsP5U/exec", {
+    const response = await fetch('https://script.google.com/macros/s/AKfycbyORbW0sJ1W4hvRwbwvmg75fKNy1RSlohSU6wJEcEJDrr7fixXl3mv792f6OpUbsP5U/exec', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
