@@ -1,74 +1,157 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>Register Employee</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .container { max-width: 400px; margin: auto; }
-    input, button { width: 100%; padding: 10px; margin: 10px 0; }
-    button { background: #4CAF50; color: white; border: none; cursor: pointer; }
-    button:hover { background: #45a049; }
-    .msg { margin-top: 15px; font-size: 14px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register Employee</title>
+
+<!-- LIFF SDK -->
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: 'Prompt', sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px 25px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    text-align: center;
+  }
+
+  h2 {
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 24px;
+    background: linear-gradient(90deg, #4CAF50, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  label {
+    display: block;
+    text-align: left;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #4CAF50;
+    outline: none;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #4CAF50, #FFA500);
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  .msg {
+    margin-top: 15px;
+    font-size: 14px;
+    min-height: 20px;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>Register Employee</h2>
-    <label for="empId">Employee ID</label>
-    <input type="text" id="empId" placeholder="Enter your Employee ID" required>
-    <button id="submitBtn">Submit</button>
-    <div id="message" class="msg"></div>
-  </div>
 
-  <script>
-    let lineUserId = "";
+<div class="card">
+  <h2>Register Employee</h2>
 
-    async function initLiff() {
-      await liff.init({ liffId: "2007956727-6V7DrnMD" }); // ใส่ LIFF ID ของคุณ
-      if (!liff.isLoggedIn()) {
-        liff.login();
-      } else {
-        const profile = await liff.getProfile();
-        lineUserId = profile.userId; // เก็บ lineUserId ของ user
-      }
-    }
+  <label for="empId">Employee ID</label>
+  <input type="text" id="empId" placeholder="Enter your Employee ID" required>
 
-    document.getElementById("submitBtn").addEventListener("click", async () => {
-      const empId = document.getElementById("empId").value.trim();
-      const messageDiv = document.getElementById("message");
+  <button id="submitBtn">Register</button>
 
-      if (!empId) {
-        messageDiv.textContent = "❌ Please enter Employee ID.";
-        return;
-      }
+  <div id="message" class="msg"></div>
+</div>
 
-      try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxBXi8zS1UYed_MlWtvzhI_qJr-bfLCFh3qNdGeyJ8SbaDTMc3tNHtjRZL94Pu0CbCJ-Q/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "register",
-            employeeId: empId,
-            lineUserId: lineUserId
-          })
-        });
+<script>
+let lineUserId = "";
 
-        const result = await response.json();
-        if (result.success) {
-          messageDiv.textContent = "✅ Registration successful!";
-          setTimeout(() => window.location.href = "Dashboard.html", 1500);
-        } else {
-          messageDiv.textContent = "❌ " + result.message;
-        }
-      } catch (err) {
-        console.error(err);
-        messageDiv.textContent = "❌ Error occurred during registration.";
-      }
+async function initLiff() {
+  await liff.init({ liffId: "2007956727-6V7DrnMD" });
+  if (!liff.isLoggedIn()) {
+    liff.login();
+  } else {
+    const profile = await liff.getProfile();
+    lineUserId = profile.userId;
+  }
+}
+
+document.getElementById("submitBtn").addEventListener("click", async () => {
+  const empId = document.getElementById("empId").value.trim();
+  const messageDiv = document.getElementById("message");
+
+  if (!empId) {
+    messageDiv.textContent = "❌ Please enter Employee ID.";
+    return;
+  }
+
+  messageDiv.textContent = "⏳ Registering...";
+
+  try {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbxBXi8zS1UYed_MlWtvzhI_qJr-bfLCFh3qNdGeyJ8SbaDTMc3tNHtjRZL94Pu0CbCJ-Q/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "register",
+        employeeId: empId,
+        lineUserId: lineUserId
+      })
     });
 
-    initLiff();
-  </script>
+    const result = await response.json();
+    if (result.success) {
+      messageDiv.textContent = "✅ Registration successful!";
+      setTimeout(() => window.location.href = "Dashboard.html", 1200);
+    } else {
+      messageDiv.textContent = "❌ " + result.message;
+    }
+  } catch (err) {
+    console.error(err);
+    messageDiv.textContent = "❌ Error occurred during registration.";
+  }
+});
+
+initLiff();
+</script>
+
 </body>
 </html>
