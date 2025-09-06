@@ -209,9 +209,11 @@ userBtn.addEventListener('click', async () => {
     const result = await response.json();
 
     if (result.result === "success") {
-      alert(`✅ มีข้อมูล LineUserID นี้ในระบบแล้ว\nLineUserID: ${lineUserId}`);
+      // มีข้อมูลแล้ว → ไป Dashboard
+      window.location.href = "Dashboard.html";
     } else {
-      alert(`⚠️ ยังไม่มีข้อมูล LineUserID นี้ในระบบ\nLineUserID: ${lineUserId}`);
+      // ยังไม่มี → ไป Register
+      window.location.href = "register.html";
     }
 
   } catch(e) {
