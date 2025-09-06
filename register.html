@@ -18,39 +18,33 @@
 
   .card { 
     background:#fff; 
-    border-radius:20px; 
-    padding:40px 30px; 
+    border-radius:12px; 
+    padding:30px; 
     max-width:400px; 
     width:100%; 
     text-align:center; 
-    box-shadow:0 15px 30px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow:0 25px 40px rgba(0,0,0,0.15);
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
   }
 
   h2 {
     margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
     background: linear-gradient(90deg, #4CAF50, #FFA500);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 26px;
-    font-weight: 700;
-  }
-
-  input, button { 
-    width:100%; 
-    padding:14px; 
-    margin:12px 0; 
-    border-radius:10px; 
-    font-size:16px;
-    box-sizing: border-box;
   }
 
   input { 
+    width:100%; 
+    padding:14px; 
+    margin:12px 0; 
+    border-radius:6px; 
+    font-size:16px;
     border:1px solid #ccc; 
     transition: border-color 0.3s, box-shadow 0.3s;
   }
@@ -61,11 +55,16 @@
   }
 
   button { 
+    width:100%; 
+    padding:14px; 
+    margin:12px 0; 
+    border-radius:6px; 
+    font-weight:600; 
+    font-size:16px; 
+    cursor:pointer; 
     border:none; 
     color:#fff; 
     background: linear-gradient(90deg,#4CAF50,#FFA500); 
-    font-weight:600; 
-    cursor:pointer; 
     transition: opacity 0.3s, transform 0.2s;
   }
   button:hover { 
@@ -76,11 +75,11 @@
   .back-btn {
     background: #888;
     margin-top: 8px;
-    transition: opacity 0.3s, transform 0.2s;
-  }
-  .back-btn:hover {
-    opacity:0.85;
-    transform: translateY(-2px);
+    padding:12px;
+    border-radius:6px;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
   }
 
   .msg { 
@@ -89,16 +88,26 @@
     font-weight:bold; 
     font-size:15px;
   }
+
+  /* ซ่อน input LineUserID แต่ยังใช้งานได้ */
+  #lineUserId { display:none; }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <h2>ลงทะเบียน</h2>
+  <h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-fill-add" viewBox="0 0 16 16">
+      <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+      <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
+    </svg>
+    ลงทะเบียน
+  </h2>
+
   <input type="text" id="empId" placeholder="เช่น P0123456" required>
-  <input type="hidden" id="lineUserId">
+  <input type="text" id="lineUserId">
   <button id="submitBtn">Register</button>
-  <button class="back-btn" id="backBtn">กลับไป Login</button>
+  <button class="back-btn" onclick="window.location.href='Login.html'">ย้อนกลับ</button>
   <div id="message" class="msg"></div>
 </div>
 
@@ -107,9 +116,9 @@
 const storedLineUserId = sessionStorage.getItem('lineUserId');
 if (!storedLineUserId) {
   alert("❌ ไม่พบ LineUserID");
-  window.location.href = "Login.html"; 
+  window.location.href = "Login.html"; // กลับไปหน้า Login
 } else {
-  document.getElementById("lineUserId").value = storedLineUserId;
+  document.getElementById("lineUserId").value = storedLineUserId; // ใส่ใน input หรือซ่อนก็ได้
 }
 
 // --- ปุ่ม Register ---
@@ -153,11 +162,6 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     messageDiv.style.color = "red";
     messageDiv.textContent = "❌ เกิดข้อผิดพลาด";
   }
-});
-
-// --- ปุ่มย้อนกลับไป Login ---
-document.getElementById("backBtn").addEventListener("click", () => {
-  window.location.href = "Login.html";
 });
 </script>
 
