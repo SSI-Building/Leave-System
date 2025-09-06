@@ -189,23 +189,33 @@ function setLoading(button, isLoading, text = "Login") {
 
 // --- User Tab LINE Login ---
 const userBtn = document.getElementById('lineLoginUser');
-userBtn.addEventListener('click', async (e) => {
-  setLoading(userBtn, true);
+userBtn.addEventListener('click', async () => {
+  userBtn.disabled = true;
+  userBtn.textContent = "⏳ กำลังตรวจสอบ...";
+  
   try {
     await liff.init({ liffId: "2007956727-6V7DrnMD" });
     if (!liff.isLoggedIn()) { liff.login(); return; }
+
     const profile = await liff.getProfile();
     const lineUserId = profile.userId;
 
-    const response = await fetch(`https://script.google.com/macros/s/AKfycbyKdxqTu0YM6gtDmsO6kJ-WrzTgtoAZZF4YPzzcaPcnfgVhkBBSBOcU6r5cracI6Rd6/exec`);
+    // ตรวจสอบ LineUserID ผ่าน Web App
+    const response = await fetch(`https://script.google.com/macros/s/AKfycbyhRIDdwps_JbQ7R4JttwZYY-XtkHbCJFSi_A5tfWlSvUKPLKy03ndFV8NCENGagSQZtQ/exec`);
     const result = await response.json();
-    if (result.exists) window.location.href = "Dashboard.html";
-    else window.location.href = "register.html";
-  } catch(e){ 
-    console.error(e); 
-    alert("เกิดข้อผิดพลาด LINE Login"); 
+
+    if (result.exists) {
+      window.location.href = "Dashboard.html"; // มีอยู่แล้ว
+    } else {
+      window.location.href = "register.html"; // ยังไม่มี
+    }
+
+  } catch(e) {
+    console.error(e);
+    alert("เกิดข้อผิดพลาด LINE Login");
   } finally {
-    setLoading(userBtn, false);
+    userBtn.disabled = false;
+    userBtn.textContent = "Login with LINE";
   }
 });
 
