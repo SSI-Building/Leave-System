@@ -4,234 +4,110 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ลงทะเบียน</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary-color: #007bff; /* Navy Blue / Professional Blue */
-    --accent-color: #28a745; /* Success Green */
-    --background-light: #f8f9fa; /* Light grey background */
-    --card-background: #ffffff;
-    --text-dark: #343a40; /* Darker text for professionalism */
-    --text-secondary: #6c757d;
-    --border-light: #dee2e6;
-    --shadow-subtle: rgba(0, 0, 0, 0.08);
-    --shadow-hover: rgba(0, 0, 0, 0.12);
+  body { 
+    font-family: 'Prompt', sans-serif; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    margin:0; 
+    background: #f0f4f8; 
   }
 
-  body {
-    font-family: 'Prompt', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background: var(--background-light);
-    color: var(--text-dark);
-    padding: 20px;
-    box-sizing: border-box;
+  .card { 
+    background:#fff; 
+    border-radius:12px; 
+    padding:30px; 
+    max-width:400px; 
+    width:100%; 
+    text-align:center; 
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
   }
 
-  .card {
-    background: var(--card-background);
-    border-radius: 15px;
-    padding: 35px;
-    max-width: 420px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 8px 25px var(--shadow-subtle);
-    transition: all 0.3s ease;
-    overflow: hidden; /* For pseudo-elements */
-    position: relative;
-  }
-
-  /* Optional: Add a subtle background pattern or gradient */
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, rgba(0, 123, 255, 0.7) 100%);
-    border-radius: 15px 15px 0 0;
-    opacity: 0.05;
-    z-index: 0;
-  }
-
-  .card-content {
-    position: relative;
-    z-index: 1;
-  }
-
-  .card-header {
-    margin-bottom: 30px;
-  }
-
-  .card-header h2 {
-    font-size: 2.2rem; /* Larger for impact */
+  h2 {
+    margin-bottom: 25px;
+    font-size: 26px;
     font-weight: 700;
-    margin-bottom: 8px;
-    color: var(--text-dark); /* Use dark text for heading */
-  }
-
-  .card-header p {
-    color: var(--text-secondary);
-    font-weight: 400;
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-
-  .icon-wrapper {
-    background: var(--primary-color);
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto 20px;
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-  }
-
-  .icon {
-    font-size: 2.5rem;
-    color: #ffffff;
-    transition: transform 0.3s ease;
-  }
-
-  .card:hover .icon {
-    transform: rotate(5deg) scale(1.05);
-  }
-  
-  .input-group {
-    margin-bottom: 20px;
-    position: relative;
-  }
-
-  .input-group i {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-    pointer-events: none;
-    transition: color 0.3s ease;
-    font-size: 1.1rem;
-  }
-
-  input {
-    width: 100%;
-    padding: 16px 15px 16px 50px; /* Increased padding-left for icon */
-    border-radius: 10px;
-    border: 1px solid var(--border-light);
-    font-size: 1.05rem;
-    box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    background-color: #fcfcfc;
-    color: var(--text-dark);
-  }
-
-  input::placeholder {
-    color: #a0a8b4;
-  }
-
-  input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
-    outline: none;
-    background-color: #fff;
-  }
-
-  input:focus + i {
-    color: var(--primary-color);
-  }
-
-  button {
-    width: 100%;
-    padding: 17px;
-    margin: 15px 0 10px;
-    border-radius: 10px;
-    font-size: 1.15rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    color: #fff;
-    background: linear-gradient(45deg, var(--primary-color), #0056b3); /* Subtle gradient */
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px var(--shadow-subtle);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 10px;
+    background: linear-gradient(90deg, #4CAF50, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
-  button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px var(--shadow-hover);
-    background: linear-gradient(45deg, #0056b3, var(--primary-color));
+  /* ปรับ input และ button ให้ขนาดเท่ากัน */
+  input, button {
+    width: 100%;
+    padding: 14px;
+    margin: 12px 0;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box; /* สำคัญมาก */
+    border:1px solid #ccc;
+    transition: border-color 0.3s, box-shadow 0.3s;
   }
-  
-  button i {
-    font-size: 1.25rem;
+
+  input:focus { 
+    border-color:#4CAF50; 
+    box-shadow:0 0 8px rgba(76,175,80,0.3);
+    outline:none; 
+  }
+
+  button { 
+    font-weight:600; 
+    cursor:pointer; 
+    border:none; 
+    color:#fff; 
+    background: linear-gradient(90deg,#4CAF50,#FFA500); 
+    transition: opacity 0.3s, transform 0.2s;
+  }
+  button:hover { 
+    opacity:0.95; 
+    transform: translateY(-2px);
   }
 
   .back-btn {
-    background: #e9ecef; /* Lighter grey for back button */
-    color: var(--text-secondary);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    background: var(--background-light); /* No gradient for back button */
+    background: #888;
+    margin-top: 8px;
+    padding:14px;
+    border-radius:6px;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    box-sizing: border-box;
   }
 
-  .back-btn:hover {
-    background-color: #e2e6ea;
-    color: var(--text-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  .msg { 
+    margin-top:18px; 
+    min-height:22px; 
+    font-weight:bold; 
+    font-size:15px;
   }
 
-  .msg {
-    margin-top: 25px;
-    min-height: 30px;
-    font-weight: 500;
-    font-size: 1.05rem;
-    color: var(--text-dark);
-  }
-  
-  #lineUserId { 
-    display: none; 
-  }
+  /* ซ่อน input LineUserID แต่ยังใช้งานได้ */
+  #lineUserId { display:none; }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <div class="card-content">
-    <div class="icon-wrapper">
-      <i class="bi bi-person-badge-fill icon"></i>
-    </div>
-    <div class="card-header">
-      <h2>ลงทะเบียนผู้ใช้งาน</h2>
-      <p>กรุณากรอกรหัสพนักงานเพื่อเข้าสู่ระบบหรือลงทะเบียน</p>
-    </div>
-    
-    <div class="input-group">
-      <input type="text" id="empId" placeholder="รหัสพนักงาน เช่น P0123456" required>
-      <i class="bi bi-person"></i>
-    </div>
-    
-    <input type="text" id="lineUserId"> <button id="submitBtn">
-      <i class="bi bi-person-check-fill"></i>
-      ยืนยันการลงทะเบียน
-    </button>
-    
-    <button class="back-btn" onclick="window.location.href='Login.html'">
-      <i class="bi bi-arrow-left-circle-fill"></i>
-      ย้อนกลับ
-    </button>
-    
-    <div id="message" class="msg"></div>
-  </div>
+  <h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-fill-add" viewBox="0 0 16 16">
+      <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+      <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
+    </svg>
+    ลงทะเบียน
+  </h2>
+
+  <input type="text" id="empId" placeholder="เช่น P0123456" required>
+  <input type="text" id="lineUserId">
+  <button id="submitBtn">Register</button>
+  <button class="back-btn" onclick="window.location.href='Login.html'">ย้อนกลับ</button>
+  <div id="message" class="msg"></div>
 </div>
 
 <script>
@@ -241,7 +117,7 @@ if (!storedLineUserId) {
   alert("❌ ไม่พบ LineUserID");
   window.location.href = "Login.html"; // กลับไปหน้า Login
 } else {
-  document.getElementById("lineUserId").value = storedLineUserId;
+  document.getElementById("lineUserId").value = storedLineUserId; // ใส่ใน input หรือซ่อนก็ได้
 }
 
 // --- ปุ่ม Register ---
@@ -252,11 +128,11 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
 
   if (!empId || !lineUserId) {
     messageDiv.style.color = "red";
-    messageDiv.textContent = "❌ กรุณากรอกรหัสพนักงานและ LineUserID";
+    messageDiv.textContent = "❌ กรุณากรอก EmployeeID และ LineUserID";
     return;
   }
 
-  messageDiv.style.color = "#007bff"; /* Loading message color */
+  messageDiv.style.color = "#333";
   messageDiv.textContent = "⏳ กำลังส่งข้อมูล...";
 
   try {
@@ -272,7 +148,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     const result = await response.json();
 
     if (result.result === "success") {
-      messageDiv.style.color = var(--accent-color); /* Success green */
+      messageDiv.style.color = "green";
       messageDiv.textContent = "✅ ลงทะเบียนสำเร็จ!";
       setTimeout(() => window.location.href = "Login.html", 1000);
     } else {
