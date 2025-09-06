@@ -116,7 +116,8 @@ async function initLiff() {
 }
 
 document.getElementById("submitBtn").addEventListener("click", async () => {
-  const empId = document.getElementById("empId").value.trim();
+  // ✅ บังคับให้ Employee ID เป็นตัวพิมพ์ใหญ่
+  const empId = document.getElementById("empId").value.trim().toUpperCase();
   const messageDiv = document.getElementById("message");
 
   if (!empId) {
@@ -132,7 +133,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "register",
-        employeeId: empId,
+        employeeId: empId,     // ✅ จะส่งเป็นตัวพิมพ์ใหญ่เสมอ
         lineUserId: lineUserId
       })
     });
@@ -152,6 +153,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
 
 initLiff();
 </script>
+
 
 </body>
 </html>
