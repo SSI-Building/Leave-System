@@ -205,9 +205,9 @@ userBtn.addEventListener('click', async () => {
     const result = await response.json();
 
     if (result.exists) {
-      window.location.href = "Dashboard.html"; // มีอยู่แล้ว
+      alert("✅ มีข้อมูล LineUserID นี้ในระบบแล้ว");
     } else {
-      window.location.href = "register.html"; // ยังไม่มี
+      alert("⚠️ ยังไม่มีข้อมูล LineUserID นี้ในระบบ");
     }
 
   } catch(e) {
@@ -218,6 +218,7 @@ userBtn.addEventListener('click', async () => {
     userBtn.textContent = "Login with LINE";
   }
 });
+
 
 // --- Admin Tab Username/Password Login ---
 const adminBtn = document.getElementById('adminLoginBtn');
