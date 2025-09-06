@@ -211,7 +211,7 @@
       const lineUserId = profile.userId;
 
       // TODO: ตรวจสอบ LineUserID ใน sheet2 ผ่าน Web App
-      const response = await fetch(`https://script.google.com/macros/s/YOUR_WEBAPP_ID/exec?tab=admin&lineUserId=${lineUserId}`);
+      const response = await fetch(`https://script.google.com/macros/s/AKfycby7rEQM3_i3hItuIDuHTOU02MC4t3htLN4wjzZ9ruX_7ru76KrT52d2uKaWepICk_78JQ/exec`);
       const result = await response.json();
       if (result.exists) window.location.href = "Dashboard-admin.html";
       else window.location.href = "register-admin.html";
