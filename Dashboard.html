@@ -3,154 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<title>Test Dashboard</title>
 <style>
-  body {
-    font-family: 'Prompt', sans-serif;
-    margin: 0;
-    padding: 20px;
-    background: #f0f2f5;
-    color: #333;
-  }
-  .container {
-    max-width: 600px;
-    margin: auto;
-  }
-  .header {
+  body { font-family: 'Prompt', sans-serif; padding: 20px; }
+  .loading {
+    position: fixed;
+    top: 0; left: 0; right:0; bottom:0;
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 30px;
-    background: linear-gradient(135deg, #1994b6, #36a761);
-    padding: 25px;
-    border-radius: 15px;
-    color: #fff;
-  }
-  .profile-pic {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid rgba(255, 255, 255, 0.5);
-  }
-  .greeting {
+    justify-content: center;
+    background: rgba(255,255,255,0.9);
     font-size: 20px;
-    font-weight: 600;
+    font-weight: bold;
+    z-index: 1000;
   }
-  .motivation {
-    font-size: 14px;
-    color: rgba(255,255,255,0.8);
-    margin-top: 5px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  th, td {
-    border: 1px solid #ccc;
-    padding: 12px;
-    text-align: center;
-  }
-  th {
-    background: #e0f7fa;
-  }
+
+  table { border-collapse: collapse; margin-bottom: 20px; width: 100%; display:none; }
+  th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+  th { background-color: #eee; }
 </style>
-<!-- โหลด LIFF SDK -->
-<script src="https://static.line-scdn.net/liff/edge/2.25/sdk.js"></script>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-const liffId = "2007956727-6V7DrnMD"; // <-- ใส่ LIFF ID ของคุณ
-const GAS_URL = "https://script.google.com/macros/s/AKfycbypGDcud4AH8zMe4ySfQpcG8CxvFpLaD83E8C0t739Nh8A2bRTnr1-4UpxGwqSJ0FRu/exec"; // <-- URL Web App ของ Apps Script
+const liffId = "2007956727-6V7DrnMD";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbypGDcud4AH8zMe4ySfQpcG8CxvFpLaD83E8C0t739Nh8A2bRTnr1-4UpxGwqSJ0FRu/exec";
 
-async function initDashboard() {
-  await liff.init({ liffId });
+async function loadData() {
+  const loadingDiv = document.getElementById("loading");
+  const balanceTable = document.getElementById("balanceTable");
+  const recordsTable = document.getElementById("recordsTable");
 
-  if (!liff.isLoggedIn()) {
-    liff.login();
-    return;
+  try {
+    await liff.init({ liffId });
+
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
+
+    const profile = await liff.getProfile();
+    const userId = profile.userId;
+
+    const res = await fetch(`${GAS_URL}?action=getBalance&userId=${userId}`);
+    const data = await res.json();
+
+    if (data.error) {
+      alert(data.error);
+      loadingDiv.innerText = "เกิดข้อผิดพลาด: ไม่พบข้อมูล";
+      return;
+    }
+
+    // สร้างตาราง Balance
+    const headerB = ["รหัสพนักงาน","ชื่อ-สกุล","ตำแหน่ง","พักร้อน","ป่วย","กิจ","-","LineUserID"];
+    let htmlB = "<tr>" + headerB.map(h => `<th>${h}</th>`).join("") + "</tr>";
+    htmlB += "<tr>" + data.set1.map(v => `<td>${v}</td>`).join("") + "</tr>";
+    balanceTable.innerHTML = htmlB;
+
+    // สร้างตาราง Records
+    const headerR = ["รหัสพนักงาน","ชื่อ-สกุล","ตำแหน่ง","พักร้อน","ป่วย","กิจ","ขาดงาน"];
+    let htmlR = "<tr>" + headerR.map(h => `<th>${h}</th>`).join("") + "</tr>";
+    htmlR += "<tr>" + data.set2.map(v => `<td>${v}</td>`).join("") + "</tr>";
+    recordsTable.innerHTML = htmlR;
+
+    // แสดงตารางและซ่อน loading
+    loadingDiv.style.display = "none";
+    balanceTable.style.display = "table";
+    recordsTable.style.display = "table";
+
+  } catch(err) {
+    console.error(err);
+    loadingDiv.innerText = "เกิดข้อผิดพลาดในการโหลดข้อมูล";
   }
-
-  const profile = await liff.getProfile();
-  document.getElementById("profilePic").src = profile.pictureUrl;
-
-  // เรียก Apps Script ดึงข้อมูล Balance + Records
-  fetch(`${GAS_URL}?action=getBalance&userId=${profile.userId}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        alert(data.error);
-        return;
-      }
-
-      // ชื่อพนักงาน จาก Column B หน้า Balance
-      document.getElementById("empName").innerText = data.set1[1];
-
-      // เก็บข้อมูลสำหรับตาราง
-      window.balanceSet1 = data.set1;
-      window.balanceSet2 = data.set2;
-
-      renderTables();
-    })
-    .catch(err => console.error(err));
 }
 
-// สร้างตารางแสดงสิทธิ
-function renderTables() {
-  if (!window.balanceSet1 || !window.balanceSet2) return;
-
-  const remainTable = document.getElementById("remainTable");
-  const usedTable = document.getElementById("usedTable");
-
-  // สิทธิลาคงเหลือ (จาก Balance)
-  const remainData = [
-    { type: "ลาพักร้อน", days: window.balanceSet1[3] },
-    { type: "ลาป่วย", days: window.balanceSet1[4] },
-    { type: "ลากิจ", days: window.balanceSet1[5] }
-  ];
-  remainData.forEach(row => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${row.type}</td><td>${row.days}</td>`;
-    remainTable.appendChild(tr);
-  });
-
-  // สิทธิลาที่ใช้ (จาก Records)
-  const usedData = [
-    { type: "ลาพักร้อน", days: window.balanceSet2[3] },
-    { type: "ลาป่วย", days: window.balanceSet2[4] },
-    { type: "ลากิจ", days: window.balanceSet2[5] },
-    { type: "ขาดงานสะสม", days: window.balanceSet2[6] }
-  ];
-  usedData.forEach(row => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${row.type}</td><td>${row.days}</td>`;
-    usedTable.appendChild(tr);
-  });
-}
-
-document.addEventListener("DOMContentLoaded", initDashboard);
+document.addEventListener("DOMContentLoaded", loadData);
 </script>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <img src="" alt="Profile" class="profile-pic" id="profilePic">
-    <div>
-      <div class="greeting">สวัสดี, <span id="empName">พนักงาน</span> 👋</div>
-      <div class="motivation">พักบ้างก็ได้ แต่ห้ามยอมแพ้ 💪</div>
-    </div>
-  </div>
+<div id="loading" class="loading">กำลังโหลดข้อมูล...</div>
 
-  <h3>สิทธิลาคงเหลือ</h3>
-  <table id="remainTable">
-    <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
-  </table>
+<h2>Balance</h2>
+<table id="balanceTable"></table>
 
-  <h3>สิทธิลาที่ใช้</h3>
-  <table id="usedTable">
-    <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
-  </table>
-</div>
+<h2>Records</h2>
+<table id="recordsTable"></table>
 </body>
 </html>
