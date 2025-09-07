@@ -7,178 +7,163 @@
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-  :root {
-    --primary-color-start: #1994b6;
-    --primary-color-end: #36a761;
-    --text-color: #333;
-    --light-text-color: #666;
-    --background-color: #f0f2f5;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #e0e0e0;
-  }
+:root {
+  --primary-color-start: #1994b6;
+  --primary-color-end: #36a761;
+  --text-color: #333;
+  --light-text-color: #666;
+  --background-color: #f0f2f5;
+  --card-background: #ffffff;
+  --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
+  --border-color: #e0e0e0;
+}
 
-  body {
-    font-family: 'Prompt', sans-serif;
-    background: var(--background-color);
-    margin: 0;
-    padding: 15px;
-    color: var(--text-color);
-  }
+body {
+  font-family: 'Prompt', sans-serif;
+  background: var(--background-color);
+  margin:0;
+  padding:20px;
+  color: var(--text-color);
+}
 
-  .container {
-    max-width: 600px;
-    margin: auto;
-    background: var(--card-background);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: var(--shadow-light);
-  }
+.container {
+  max-width: 700px;
+  margin:auto;
+  background: var(--card-background);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: var(--shadow-light);
+}
 
-  h2 {
-    text-align: center;
-    background: linear-gradient(135deg, var(--primary-color-start), var(--primary-color-end));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 700;
-    margin-bottom: 20px;
-    font-size: 1.4rem;
-  }
+h2 {
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary-color-start), var(--primary-color-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight:700;
+  margin-bottom:20px;
+}
 
-  .form-group {
-    margin-bottom: 15px;
-  }
+.form-row {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
 
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
+.form-group {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  margin-bottom:15px;
+}
 
-  input, select, textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 16px;
-    box-sizing: border-box;
-  }
+label {
+  margin-bottom:5px;
+  font-weight:500;
+  font-size:14px;
+}
 
-  textarea {
-    resize: vertical;
-    min-height: 80px;
-  }
+input, select, textarea {
+  width:100%;
+  padding:8px 10px;
+  border:1px solid var(--border-color);
+  border-radius:8px;
+  font-size:14px;
+  box-sizing:border-box;
+}
 
-  .date-group {
-    display: flex;
-    gap: 15px;
-  }
+textarea {
+  min-height:80px;
+  resize:vertical;
+}
 
-  .date-group > div {
-    flex: 1;
-  }
+.date-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: relative; /* เพิ่มบรรทัดนี้ */
+}
 
-  .leave-days {
-    margin-top: 10px;
-    font-weight: 600;
-    color: var(--primary-color-start);
-    font-size: 1rem;
-  }
+#leaveDaysDisplay {
+  position: absolute; /* ชิดขอบล่าง */
+  bottom: 0;
+  left: 20;
+  font-weight: 400;
+  font-size: 12px;
+  color: #444;
+}
 
-  .signature-pad {
-    border: 2px dashed var(--border-color);
-    border-radius: 8px;
-    height: 150px;
-    cursor: crosshair;
-    background: #fafafa;
-    width: 100%;
-  }
 
-  .clear-signature {
-    margin-top: 8px;
-    font-size: 14px;
-    padding: 6px 10px;
-    background: #f5f5f5;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    cursor: pointer;
-  }
+.signature-pad {
+  border:2px dashed var(--border-color);
+  border-radius:8px;
+  height:120px;
+  touch-action: none;
+  background:#fafafa;
+}
 
-  .buttons {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+.buttons {
+  margin-top:15px;
+  display:flex;
+  gap:10px;
+}
 
-  .btn {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: #fff;
-    background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+.btn {
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  color:#fff;
+  background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
+  box-shadow:0 4px 8px rgba(0,0,0,0.1);
+  transition:0.3s;
+}
 
-  .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  }
+.btn:hover {
+  transform:translateY(-2px);
+  box-shadow:0 6px 12px rgba(0,0,0,0.15);
+}
 
-  .btn-secondary {
-    background: #777;
-  }
+.btn-secondary {
+  background:#777;
+}
 
-  /* Responsive สำหรับมือถือ */
-  @media (max-width: 600px) {
-    .date-group {
-      flex-direction: column;
-    }
-    h2 {
-      font-size: 1.2rem;
-    }
-    input, select, textarea {
-      font-size: 15px;
-    }
-    .btn {
-      font-size: 15px;
-      padding: 12px;
-    }
-  }
+@media(max-width:480px){
+  .form-row { flex-direction:column; }
+}
 </style>
 </head>
 <body>
 <div class="container">
   <h2>ฟอร์มลาออนไลน์</h2>
 
-  <div class="form-group">
-    <label>ชื่อ-สกุล</label>
-    <input type="text" id="empName" readonly value="ชื่อจริง นามสกุล">
+  <div class="form-row">
+    <div class="form-group">
+      <label>ชื่อ-สกุล</label>
+      <input type="text" id="empName" readonly value="ชื่อจริง นามสกุล">
+    </div>
+    <div class="form-group">
+      <label>รหัสพนักงาน</label>
+      <input type="text" id="empId" readonly value="EMP001">
+    </div>
   </div>
 
-  <div class="form-group">
-    <label>รหัสพนักงาน</label>
-    <input type="text" id="empId" readonly value="EMP001">
-  </div>
-
-  <div class="form-group">
-    <label>ตำแหน่ง</label>
-    <input type="text" id="position" readonly value="พนักงานทั่วไป">
-  </div>
-
-  <div class="form-group">
-    <label>ฝ่าย</label>
-    <input type="text" id="department" readonly value="BUS">
+  <div class="form-row">
+    <div class="form-group">
+      <label>ตำแหน่ง</label>
+      <input type="text" id="position" readonly value="พนักงานทั่วไป">
+    </div>
+    <div class="form-group">
+      <label>ฝ่าย</label>
+      <input type="text" id="department" readonly value="BUS">
+    </div>
   </div>
 
   <div class="form-group">
@@ -195,23 +180,23 @@
     <textarea id="reason" placeholder="กรุณากรอกเหตุผล"></textarea>
   </div>
 
-  <div class="form-group date-group">
-    <div>
+  <div class="date-group">
+    <div class="form-group">
       <label>ตั้งแต่วันที่</label>
       <input type="datetime-local" id="startDate">
     </div>
-    <div>
+    <div class="form-group">
       <label>ถึงวันที่</label>
       <input type="datetime-local" id="endDate">
     </div>
+    <div id="leaveDaysDisplay"></div>
   </div>
 
-  <div id="leaveDays" class="leave-days">รวมวันลา: 0 วัน</div>
 
   <div class="form-group">
     <label>ลายเซ็นอิเล็กทรอนิกส์</label>
     <canvas id="signaturePad" class="signature-pad"></canvas>
-    <button type="button" class="clear-signature" onclick="clearSignature()">ล้างลายเซ็น</button>
+    <button type="button" onclick="clearSignature()" style="margin-top:5px; font-size:12px;">ล้างลายเซ็น</button>
   </div>
 
   <div class="buttons">
@@ -220,67 +205,72 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script>
+const canvas = document.getElementById('signaturePad');
+const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(0,0,0,0)' });
+
+function clearSignature() {
+  signaturePad.clear();
+}
+
+// ฟังก์ชันคำนวณวันลา
 function calculateLeaveDays(sDate, sTime, eDate, eTime) {
   if (!sDate || !sTime || !eDate || !eTime) return 0;
-
   const WORK_HOURS_PER_DAY = 8;
   const start = new Date(`${sDate}T${sTime}`);
   const end = new Date(`${eDate}T${eTime}`);
   if (end <= start) return 0;
-
   let totalHours = 0;
-  let current = new Date(start);
-  current.setHours(0, 0, 0, 0);
-
-  while (current <= end) {
+  let current = new Date(start); current.setHours(0,0,0,0);
+  while(current <= end){
     const dayOfWeek = current.getDay();
-    if (dayOfWeek !== 0) { // ข้ามวันอาทิตย์
-      const morningStart = new Date(current); morningStart.setHours(8, 0, 0, 0);
-      const morningEnd   = new Date(current); morningEnd.setHours(12, 0, 0, 0);
-      const afternoonStart = new Date(current); afternoonStart.setHours(13, 0, 0, 0);
-      const afternoonEnd   = new Date(current); afternoonEnd.setHours(17, 0, 0, 0);
+    if(dayOfWeek !== 0){ // skip Sunday
+      const morningStart = new Date(current); morningStart.setHours(8,0,0,0);
+      const morningEnd = new Date(current); morningEnd.setHours(12,0,0,0);
+      const afternoonStart = new Date(current); afternoonStart.setHours(13,0,0,0);
+      const afternoonEnd = new Date(current); afternoonEnd.setHours(17,0,0,0);
 
-      let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
-      let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
+      let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart))/1000/3600;
+      let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart))/1000/3600;
 
       totalHours += overlapMorning + overlapAfternoon;
     }
-    current.setDate(current.getDate() + 1);
-    current.setHours(0, 0, 0, 0);
+    current.setDate(current.getDate()+1);
+    current.setHours(0,0,0,0);
   }
-
-  return Math.round((totalHours / WORK_HOURS_PER_DAY) * 10) / 10;
+  return Math.round((totalHours/WORK_HOURS_PER_DAY)*10)/10;
 }
 
-// อัปเดตวันลา real-time
-document.addEventListener("DOMContentLoaded", () => {
+// คำนวณวันลาเรียลไทม์
+document.addEventListener("DOMContentLoaded", ()=>{
   const startDate = document.getElementById("startDate");
   const endDate = document.getElementById("endDate");
-  const leaveDaysElement = document.getElementById("leaveDays");
+  const leaveDisplay = document.getElementById("leaveDaysDisplay");
 
   function updateLeaveDays() {
-    if (!startDate.value || !endDate.value) {
-      leaveDaysElement.innerText = "รวมวันลา: 0 วัน";
-      return;
-    }
     const start = startDate.value.split("T");
     const end = endDate.value.split("T");
-    if (start.length < 2 || end.length < 2) return;
-
+    if(start.length<2 || end.length<2){ leaveDisplay.innerText=""; return; }
     const leaveDays = calculateLeaveDays(start[0], start[1], end[0], end[1]);
-    leaveDaysElement.innerText = `รวมวันลา: ${leaveDays} วัน`;
+    leaveDisplay.innerText = `รวมวันลา: ${leaveDays} วัน`;
   }
 
-  startDate.addEventListener("input", updateLeaveDays);
-  endDate.addEventListener("input", updateLeaveDays);
+  startDate.addEventListener("change", updateLeaveDays);
+  endDate.addEventListener("change", updateLeaveDays);
 });
 
-function clearSignature() {
-  const canvas = document.getElementById("signaturePad");
-  const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+// ปรับขนาด canvas ให้เต็ม width container
+function resizeCanvas() {
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  canvas.width = canvas.offsetWidth * ratio;
+  canvas.height = canvas.offsetHeight * ratio;
+  canvas.getContext("2d").scale(ratio, ratio);
+  signaturePad.clear();
 }
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
 </script>
 </body>
 </html>
