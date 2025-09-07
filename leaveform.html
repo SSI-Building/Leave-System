@@ -18,6 +18,16 @@
   --border-color: #E0E0E0;
 }
 
+/* ซ่อนแถบเลื่อนสำหรับ WebKit browsers (Chrome, Safari) */
+body::-webkit-scrollbar, .container::-webkit-scrollbar {
+    display: none;
+}
+
+/* ซ่อนแถบเลื่อนสำหรับ Firefox */
+body, .container {
+    scrollbar-width: none;
+}
+
 body {
   font-family: 'Prompt', sans-serif;
   background: var(--background-color);
@@ -28,6 +38,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .container {
@@ -38,6 +49,9 @@ body {
   border-radius: 20px;
   box-shadow: 0 10px 30px var(--shadow-color);
   transition: transform 0.3s ease;
+  overflow: hidden; /* ปรับเป็น hidden เพื่อซ่อนแถบเลื่อน */
+  max-height: calc(100vh - 40px);
+  box-sizing: border-box;
 }
 
 h2 {
@@ -131,7 +145,7 @@ textarea {
   flex-wrap: wrap;
   position: relative;
   align-items: flex-start;
-  padding-bottom: 25px; /* เพิ่มพื้นที่ด้านล่าง */
+  padding-bottom: 25px;
 }
 
 .date-group .form-group {
@@ -141,7 +155,7 @@ textarea {
 
 #leaveDaysDisplay {
   position: absolute;
-  bottom: 0; /* เปลี่ยนจาก -20px เป็น 0 */
+  bottom: 0;
   left: 0;
   font-weight: 500;
   font-size: 13px;
@@ -208,9 +222,95 @@ textarea {
 }
 
 @media(max-width: 650px) {
+  body {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .container {
+    padding: 15px;
+    border-radius: 10px;
+    margin: 0;
+    max-height: calc(100vh - 20px);
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+
+  h2::after {
+    bottom: -8px;
+  }
+
+  .form-section {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+
+  .form-section-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
   .form-row {
     flex-direction: column;
     gap: 0;
+  }
+
+  .form-row .form-group {
+    min-width: unset;
+    margin-bottom: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  label, input, select, textarea {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  textarea {
+    min-height: 80px;
+  }
+
+  .date-group {
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 20px;
+  }
+
+  #leaveDaysDisplay {
+    font-size: 12px;
+    bottom: -5px;
+  }
+
+  .signature-pad {
+    height: 100px;
+  }
+
+  .buttons {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .btn-secondary {
+    background: #B0B9C2;
+  }
+
+  .btn-clear {
+    padding: 6px 10px;
+    font-size: 11px;
   }
 }
 </style>
@@ -291,7 +391,12 @@ textarea {
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script>
 const canvas = document.getElementById('signaturePad');
-const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(0,0,0,0)' });
+const signaturePad = new SignaturePad(canvas, {
+  backgroundColor: 'rgba(0,0,0,0)',
+  minWidth: 0.5,
+  maxWidth: 2,
+  penColor: 'rgb(66, 133, 244)'
+});
 
 function clearSignature() {
   signaturePad.clear();
@@ -308,7 +413,7 @@ function calculateLeaveDays(sDate, sTime, eDate, eTime) {
   let current = new Date(start); current.setHours(0,0,0,0);
   while(current <= end){
     const dayOfWeek = current.getDay();
-    if(dayOfWeek !== 0){ // skip Sunday
+    if(dayOfWeek !== 0){
       const morningStart = new Date(current); morningStart.setHours(8,0,0,0);
       const morningEnd = new Date(current); morningEnd.setHours(12,0,0,0);
       const afternoonStart = new Date(current); afternoonStart.setHours(13,0,0,0);
