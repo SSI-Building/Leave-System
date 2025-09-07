@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ฟอร์มลาออนไลน์</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  :root {
+    --primary-color-start: #1994b6;
+    --primary-color-end: #36a761;
+    --text-color: #333;
+    --light-text-color: #666;
+    --background-color: #f0f2f5;
+    --card-background: #ffffff;
+    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+    --border-color: #e0e0e0;
+  }
+
+  body {
+    font-family: 'Prompt', sans-serif;
+    background: var(--background-color);
+    margin: 0;
+    padding: 15px;
+    color: var(--text-color);
+  }
+
+  .container {
+    max-width: 600px;
+    margin: auto;
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-light);
+  }
+
+  h2 {
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary-color-start), var(--primary-color-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .date-group {
+    display: flex;
+    gap: 15px;
+  }
+
+  .date-group > div {
+    flex: 1;
+  }
+
+  .leave-days {
+    margin-top: 10px;
+    font-weight: 600;
+    color: var(--primary-color-start);
+    font-size: 1rem;
+  }
+
+  .signature-pad {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    height: 150px;
+    cursor: crosshair;
+    background: #fafafa;
+    width: 100%;
+  }
+
+  .clear-signature {
+    margin-top: 8px;
+    font-size: 14px;
+    padding: 6px 10px;
+    background: #f5f5f5;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #fff;
+    background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-secondary {
+    background: #777;
+  }
+
+  /* Responsive สำหรับมือถือ */
+  @media (max-width: 600px) {
+    .date-group {
+      flex-direction: column;
+    }
+    h2 {
+      font-size: 1.2rem;
+    }
+    input, select, textarea {
+      font-size: 15px;
+    }
+    .btn {
+      font-size: 15px;
+      padding: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>ฟอร์มลาออนไลน์</h2>
+
+  <div class="form-group">
+    <label>ชื่อ-สกุล</label>
+    <input type="text" id="empName" readonly value="ชื่อจริง นามสกุล">
+  </div>
+
+  <div class="form-group">
+    <label>รหัสพนักงาน</label>
+    <input type="text" id="empId" readonly value="EMP001">
+  </div>
+
+  <div class="form-group">
+    <label>ตำแหน่ง</label>
+    <input type="text" id="position" readonly value="พนักงานทั่วไป">
+  </div>
+
+  <div class="form-group">
+    <label>ฝ่าย</label>
+    <input type="text" id="department" readonly value="BUS">
+  </div>
+
+  <div class="form-group">
+    <label>ประเภทการลา</label>
+    <select id="leaveType">
+      <option value="AL">ลาพักร้อน</option>
+      <option value="SL">ลาป่วย</option>
+      <option value="BL">ลากิจ</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>เหตุผลการลา</label>
+    <textarea id="reason" placeholder="กรุณากรอกเหตุผล"></textarea>
+  </div>
+
+  <div class="form-group date-group">
+    <div>
+      <label>ตั้งแต่วันที่</label>
+      <input type="datetime-local" id="startDate">
+    </div>
+    <div>
+      <label>ถึงวันที่</label>
+      <input type="datetime-local" id="endDate">
+    </div>
+  </div>
+
+  <div id="leaveDays" class="leave-days">รวมวันลา: 0 วัน</div>
+
+  <div class="form-group">
+    <label>ลายเซ็นอิเล็กทรอนิกส์</label>
+    <canvas id="signaturePad" class="signature-pad"></canvas>
+    <button type="button" class="clear-signature" onclick="clearSignature()">ล้างลายเซ็น</button>
+  </div>
+
+  <div class="buttons">
+    <button class="btn"><i class="fas fa-paper-plane"></i> ส่งคำขอ</button>
+    <button class="btn btn-secondary"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+  </div>
+</div>
+
+<script>
+function calculateLeaveDays(sDate, sTime, eDate, eTime) {
+  if (!sDate || !sTime || !eDate || !eTime) return 0;
+
+  const WORK_HOURS_PER_DAY = 8;
+  const start = new Date(`${sDate}T${sTime}`);
+  const end = new Date(`${eDate}T${eTime}`);
+  if (end <= start) return 0;
+
+  let totalHours = 0;
+  let current = new Date(start);
+  current.setHours(0, 0, 0, 0);
+
+  while (current <= end) {
+    const dayOfWeek = current.getDay();
+    if (dayOfWeek !== 0) { // ข้ามวันอาทิตย์
+      const morningStart = new Date(current); morningStart.setHours(8, 0, 0, 0);
+      const morningEnd   = new Date(current); morningEnd.setHours(12, 0, 0, 0);
+      const afternoonStart = new Date(current); afternoonStart.setHours(13, 0, 0, 0);
+      const afternoonEnd   = new Date(current); afternoonEnd.setHours(17, 0, 0, 0);
+
+      let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
+      let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
+
+      totalHours += overlapMorning + overlapAfternoon;
+    }
+    current.setDate(current.getDate() + 1);
+    current.setHours(0, 0, 0, 0);
+  }
+
+  return Math.round((totalHours / WORK_HOURS_PER_DAY) * 10) / 10;
+}
+
+// อัปเดตวันลา real-time
+document.addEventListener("DOMContentLoaded", () => {
+  const startDate = document.getElementById("startDate");
+  const endDate = document.getElementById("endDate");
+  const leaveDaysElement = document.getElementById("leaveDays");
+
+  function updateLeaveDays() {
+    if (!startDate.value || !endDate.value) {
+      leaveDaysElement.innerText = "รวมวันลา: 0 วัน";
+      return;
+    }
+    const start = startDate.value.split("T");
+    const end = endDate.value.split("T");
+    if (start.length < 2 || end.length < 2) return;
+
+    const leaveDays = calculateLeaveDays(start[0], start[1], end[0], end[1]);
+    leaveDaysElement.innerText = `รวมวันลา: ${leaveDays} วัน`;
+  }
+
+  startDate.addEventListener("input", updateLeaveDays);
+  endDate.addEventListener("input", updateLeaveDays);
+});
+
+function clearSignature() {
+  const canvas = document.getElementById("signaturePad");
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+</script>
+</body>
+</html>
