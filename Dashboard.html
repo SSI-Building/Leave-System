@@ -6,347 +6,64 @@
 <title>Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 <style>
-  /* Default Theme: Blue-Green */
-  :root {
-    --primary-color-start: #1994b6;
-    --primary-color-end: #36a761;
-    --text-color: #333;
-    --light-text-color: #666;
-    --background-color: #f0f2f5;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #e0e0e0;
-  }
+  /* --- THEMES --- */
+  :root { --primary-color-start:#1994b6; --primary-color-end:#36a761; --text-color:#333; --light-text-color:#666; --background-color:#f0f2f5; --card-background:#fff; --shadow-light:0 4px 15px rgba(0,0,0,0.08); --border-color:#e0e0e0; }
+  body.theme-orange-purple { --primary-color-start:#ff7e5f; --primary-color-end:#feb47b; --text-color:#4a4a4a; --light-text-color:#888; --background-color:#f7f3f1; --card-background:#fff; --shadow-light:0 4px 15px rgba(0,0,0,0.08); --border-color:#e8e2e0; }
+  body.theme-blue-violet { --primary-color-start:#42a5f5; --primary-color-end:#673ab7; --text-color:#263238; --light-text-color:#546e7a; --background-color:#e3f2fd; --card-background:#fff; --shadow-light:0 4px 15px rgba(0,0,0,0.08); --border-color:#bbdefb; }
+  body.theme-pink-purple { --primary-color-start:#ff69b4; --primary-color-end:#9c27b0; --text-color:#4a148c; --light-text-color:#7b1fa2; --background-color:#f3e5f5; --card-background:#fff; --shadow-light:0 4px 15px rgba(0,0,0,0.08); --border-color:#e1bee7; }
+  body.theme-dark { --primary-color-start:#282828; --primary-color-end:#414141; --text-color:#eee; --light-text-color:#bbb; --background-color:#121212; --card-background:#212121; --shadow-light:0 4px 15px rgba(255,255,255,0.08); --border-color:#383838; }
+  body.theme-green-gold { --primary-color-start:#43a047; --primary-color-end:#ffd700; --text-color:#333; --light-text-color:#666; --background-color:#e8f5e9; --card-background:#fff; --shadow-light:0 4px 15px rgba(0,0,0,0.08); --border-color:#c8e6c9; }
+  body.theme-red-orange { --primary-color-start:#f44336; --primary-color-end:#ff9800; --text-color:#4a4a4a; --light-text-color:#888; --background-color:#fce4ec; --card-background:#fff; --shadow-light:0 4px 15px rgba(0,0,0,0.08); --border-color:#ffcdd2; }
+  body.theme-teal-navy { --primary-color-start:#00897b; --primary-color-end:#0d47a1; --text-color:#263238; --light-text-color:#546e7a; --background-color:#e0f2f1; --card-background:#fff; --shadow-light:0 4px 15px rgba(0,0,0,0.08); --border-color:#b2dfdb; }
+  body.theme-monochrome { --primary-color-start:#5a5a5a; --primary-color-end:#333; --text-color:#333; --light-text-color:#666; --background-color:#f5f5f5; --card-background:#fff; --shadow-light:0 4px 15px rgba(0,0,0,0.08); --border-color:#ddd; }
 
-  /* Theme 2: Orange-Purple */
-  body.theme-orange-purple {
-    --primary-color-start: #ff7e5f;
-    --primary-color-end: #feb47b;
-    --text-color: #4a4a4a;
-    --light-text-color: #888;
-    --background-color: #f7f3f1;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #e8e2e0;
-  }
-  
-  /* Theme 3: Blue-Violet */
-  body.theme-blue-violet {
-    --primary-color-start: #42a5f5;
-    --primary-color-end: #673ab7;
-    --text-color: #263238;
-    --light-text-color: #546e7a;
-    --background-color: #e3f2fd;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #bbdefb;
-  }
+  body { font-family:'Prompt',sans-serif; background:var(--background-color); margin:0; padding:20px; color:var(--text-color); transition:background 0.3s ease,color 0.3s ease; }
 
-  /* Theme 4: Pink-Purple */
-  body.theme-pink-purple {
-    --primary-color-start: #ff69b4;
-    --primary-color-end: #9c27b0;
-    --text-color: #4a148c;
-    --light-text-color: #7b1fa2;
-    --background-color: #f3e5f5;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #e1bee7;
-  }
+  /* --- HEADER --- */
+  .container { max-width:600px; margin:auto; position:relative; }
+  .header { display:flex; align-items:center; gap:15px; margin-bottom:30px; background:linear-gradient(135deg,var(--primary-color-start),var(--primary-color-end)); padding:25px; border-radius:15px; color:#fff; box-shadow:var(--shadow-light); transition:background 0.3s ease; }
+  .profile-pic { width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.2); object-fit:cover; border:3px solid rgba(255,255,255,0.5); }
+  .greeting { font-size:20px; font-weight:600; }
+  .motivation { font-size:14px; color:rgba(255,255,255,0.8); font-weight:400; margin-top:5px; }
+  .settings-icon { position:absolute; top:30px; right:25px; font-size:24px; color:#fff; cursor:pointer; transition:transform 0.3s ease,color 0.3s ease; z-index:10; }
+  .settings-icon:hover { transform:rotate(90deg); }
 
-  /* Dark Mode */
-  body.theme-dark {
-    --primary-color-start: #282828;
-    --primary-color-end: #414141;
-    --text-color: #eee;
-    --light-text-color: #bbb;
-    --background-color: #121212;
-    --card-background: #212121;
-    --shadow-light: 0 4px 15px rgba(255, 255, 255, 0.08);
-    --border-color: #383838;
-  }
+  /* --- THEME SELECTOR --- */
+  .theme-selector { position:absolute; top:60px; right:25px; background:var(--card-background); padding:10px; border-radius:8px; box-shadow:var(--shadow-light); display:none; flex-direction:column; gap:10px; z-index:9; }
+  .theme-selector.active { display:flex; }
+  .theme-option { padding:8px 12px; border-radius:6px; cursor:pointer; font-size:14px; font-weight:500; border:1px solid var(--border-color); text-align:center; transition:background 0.3s ease,color 0.3s ease; }
+  .theme-option[data-theme="dark"] { background-color:#212121;color:#fff;border-color:#383838; }
+  .theme-option:hover { background:var(--background-color); }
+  .theme-save-btn { width:100%; padding:10px; margin-top:10px; border:none; border-radius:6px; background:linear-gradient(45deg,var(--primary-color-start),var(--primary-color-end)); color:#fff; font-weight:600; cursor:pointer; transition:all 0.3s ease; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+  .theme-save-btn:hover { opacity:0.9; transform:translateY(-1px); }
 
-  /* New Themes */
-  body.theme-green-gold {
-    --primary-color-start: #43a047;
-    --primary-color-end: #ffd700;
-    --text-color: #333;
-    --light-text-color: #666;
-    --background-color: #e8f5e9;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #c8e6c9;
-  }
+  /* --- TABS & TABLE --- */
+  .tabs-container { background:var(--card-background); padding:10px; border-radius:12px; box-shadow:var(--shadow-light); margin-bottom:20px; transition:background 0.3s ease; }
+  .tabs { display:flex; border-radius:8px; }
+  .tab { flex:1; text-align:center; padding:12px 0; cursor:pointer; font-weight:500; color:var(--light-text-color); transition:all 0.3s ease; }
+  .tab.active { background:linear-gradient(135deg,var(--primary-color-start),var(--primary-color-end)); color:#fff; font-weight:600; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+  .tab-content { display:none; padding-top:20px; animation:fadeIn 0.4s ease-in-out; }
+  .tab-content.active { display:block; }
+  @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .table-container { background:var(--card-background); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-light); transition:background 0.3s ease; }
+  table { width:100%; border-collapse:collapse; }
+  th,td { padding:15px; text-align:center; font-size:15px; border-bottom:1px solid var(--border-color); vertical-align:middle; }
+  th { background:var(--background-color); font-weight:600; color:var(--text-color); }
+  tr:last-child td { border-bottom:none; }
 
-  body.theme-red-orange {
-    --primary-color-start: #f44336;
-    --primary-color-end: #ff9800;
-    --text-color: #4a4a4a;
-    --light-text-color: #888;
-    --background-color: #fce4ec;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #ffcdd2;
-  }
-
-  body.theme-teal-navy {
-    --primary-color-start: #00897b;
-    --primary-color-end: #0d47a1;
-    --text-color: #263238;
-    --light-text-color: #546e7a;
-    --background-color: #e0f2f1;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #b2dfdb;
-  }
-
-  body.theme-monochrome {
-    --primary-color-start: #5a5a5a;
-    --primary-color-end: #333333;
-    --text-color: #333333;
-    --light-text-color: #666666;
-    --background-color: #f5f5f5;
-    --card-background: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --border-color: #dddddd;
-  }
-
-  body {
-    font-family: 'Prompt', sans-serif;
-    background: var(--background-color);
-    margin: 0;
-    padding: 20px;
-    color: var(--text-color);
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-
-  .container {
-    max-width: 600px;
-    margin: auto;
-    position: relative;
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 30px;
-    background: linear-gradient(135deg, var(--primary-color-start), var(--primary-color-end));
-    padding: 25px;
-    border-radius: 15px;
-    color: #fff;
-    box-shadow: var(--shadow-light);
-    transition: background 0.3s ease;
-  }
-
-  .profile-pic {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    object-fit: cover;
-    border: 3px solid rgba(255, 255, 255, 0.5);
-  }
-
-  .greeting {
-    font-size: 20px;
-    font-weight: 600;
-  }
-
-  .motivation {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 400;
-    margin-top: 5px;
-  }
-
-  .settings-icon {
-    position: absolute;
-    top: 30px;
-    right: 25px;
-    font-size: 24px;
-    color: #fff;
-    cursor: pointer;
-    transition: transform 0.3s ease, color 0.3s ease;
-    z-index: 10;
-  }
-
-  .settings-icon:hover {
-    transform: rotate(90deg);
-  }
-
-  .theme-selector {
-    position: absolute;
-    top: 60px;
-    right: 25px;
-    background: var(--card-background);
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-light);
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9;
-  }
-
-  .theme-selector.active {
-    display: flex;
-  }
-
-  .theme-option {
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid var(--border-color);
-    text-align: center;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-  
-  .theme-option[data-theme="dark"] {
-    background-color: #212121;
-    color: #fff;
-    border-color: #383838;
-  }
-
-  .theme-option:hover {
-    background: var(--background-color);
-  }
-
-  .tabs-container {
-    background: var(--card-background);
-    padding: 10px;
-    border-radius: 12px;
-    box-shadow: var(--shadow-light);
-    margin-bottom: 20px;
-    transition: background 0.3s ease;
-  }
-
-  .tabs {
-    display: flex;
-    border-radius: 8px;
-  }
-
-  .tab {
-    flex: 1;
-    text-align: center;
-    padding: 12px 0;
-    cursor: pointer;
-    font-weight: 500;
-    color: var(--light-text-color);
-    transition: all 0.3s ease;
-  }
-
-  .tab.active {
-    background: linear-gradient(135deg, var(--primary-color-start), var(--primary-color-end));
-    color: #fff;
-    font-weight: 600;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .tab-content {
-    display: none;
-    padding-top: 20px;
-    animation: fadeIn 0.4s ease-in-out;
-  }
-
-  .tab-content.active {
-    display: block;
-  }
-
-  @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(10px);}
-    to {opacity: 1; transform: translateY(0);}
-  }
-
-  .table-container {
-    background: var(--card-background);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: var(--shadow-light);
-    transition: background 0.3s ease;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    padding: 15px;
-    text-align: center;
-    font-size: 15px;
-    border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
-  }
-  
-  th {
-    background: var(--background-color);
-    font-weight: 600;
-    color: var(--text-color);
-  }
-
-  tr:last-child td {
-    border-bottom: none;
-  }
-
-  .buttons {
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-  }
-
-  .btn {
-    flex: 1;
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    color: #fff;
-    background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
-  }
-
-  .btn:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-  
-  .theme-save-btn {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 6px;
-    background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .theme-save-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-  }
+  /* --- BUTTONS --- */
+  .buttons { margin-top:20px; display:flex; gap:15px; }
+  .btn { flex:1; padding:15px; border:none; border-radius:10px; font-weight:600; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); color:#fff; background:linear-gradient(45deg,var(--primary-color-start),var(--primary-color-end)); transition:all 0.3s ease; }
+  .btn:hover { box-shadow:0 6px 12px rgba(0,0,0,0.15); transform:translateY(-2px); }
 </style>
 </head>
-<body>
 
+<body>
 <div class="container">
   <div class="header">
-    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop" alt="Profile" class="profile-pic" id="profilePic">
+    <img id="profilePic" src="" alt="Profile" class="profile-pic">
     <div>
       <div class="greeting">สวัสดี, <span id="empName">พนักงาน</span> 👋</div>
       <div class="motivation">พักบ้างก็ได้ แต่ห้ามยอมแพ้ 💪</div>
@@ -369,8 +86,8 @@
 
   <div class="tabs-container">
     <div class="tabs">
-      <div class="tab active" onclick="openTab(event, 'remain')">สิทธิลาคงเหลือ</div>
-      <div class="tab" onclick="openTab(event, 'used')">สิทธิลาที่ใช้</div>
+      <div class="tab active" onclick="openTab(event,'remain')">สิทธิลาคงเหลือ</div>
+      <div class="tab" onclick="openTab(event,'used')">สิทธิลาที่ใช้</div>
     </div>
   </div>
 
@@ -378,19 +95,18 @@
     <div id="remain" class="tab-content active">
       <table>
         <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
-        <tr class="table-row-light"><td>ลาพักร้อน</td><td>6</td></tr>
-        <tr class="table-row-light"><td>ลาป่วย</td><td>30</td></tr>
-        <tr class="table-row-light"><td>ลากิจ</td><td>6</td></tr>
+        <tr><td>ลาพักร้อน</td><td id="remainVacation">0</td></tr>
+        <tr><td>ลาป่วย</td><td id="remainSick">0</td></tr>
+        <tr><td>ลากิจ</td><td id="remainPersonal">0</td></tr>
       </table>
     </div>
-
     <div id="used" class="tab-content">
       <table>
         <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
-        <tr class="table-row-light"><td>ลาพักร้อน</td><td>2</td></tr>
-        <tr class="table-row-light"><td>ลาป่วย</td><td>5</td></tr>
-        <tr class="table-row-light"><td>ลากิจ</td><td>1</td></tr>
-        <tr class="table-row-light"><td>ขาดงานสะสม</td><td>0</td></tr>
+        <tr><td>ลาพักร้อน</td><td id="usedVacation">0</td></tr>
+        <tr><td>ลาป่วย</td><td id="usedSick">0</td></tr>
+        <tr><td>ลากิจ</td><td id="usedPersonal">0</td></tr>
+        <tr><td>ขาดงานสะสม</td><td id="usedAbsent">0</td></tr>
       </table>
     </div>
   </div>
@@ -401,48 +117,71 @@
   </div>
 </div>
 
+<!-- LIFF SDK + Script -->
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-function openTab(evt, tabId) {
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+const liffId = "2007956727-6V7DrnMD";
+const GAS_URL = "YOUR_SCRIPT_URL_HERE";
+
+let selectedTheme = null;
+
+function openTab(evt, tabId){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
   evt.currentTarget.classList.add("active");
   document.getElementById(tabId).classList.add("active");
 }
 
-document.getElementById('settingsIcon').addEventListener('click', function() {
+document.getElementById('settingsIcon').addEventListener('click',()=>{
   document.getElementById('themeSelector').classList.toggle('active');
 });
 
-let selectedTheme = null;
-
-// โหลดธีมที่บันทึกไว้เมื่อหน้าเว็บโหลด
-document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.body.className = savedTheme === 'default' ? '' : 'theme-' + savedTheme;
-        selectedTheme = savedTheme; // กำหนดธีมที่ถูกเลือกเริ่มต้น
-    }
-});
-
-// เมื่อผู้ใช้คลิกเลือกธีม
-document.querySelectorAll('.theme-option').forEach(option => {
-  option.addEventListener('click', function() {
+document.querySelectorAll('.theme-option').forEach(option=>{
+  option.addEventListener('click',function(){
     selectedTheme = this.getAttribute('data-theme');
-    document.body.className = selectedTheme === 'default' ? '' : 'theme-' + selectedTheme;
+    document.body.className = selectedTheme==='default'?'': 'theme-'+selectedTheme;
   });
 });
 
-// เมื่อผู้ใช้กดปุ่ม Save
-document.getElementById('saveThemeBtn').addEventListener('click', function() {
-  if (selectedTheme) {
-    localStorage.setItem('theme', selectedTheme);
+document.getElementById('saveThemeBtn').addEventListener('click',()=>{
+  if(selectedTheme){
+    localStorage.setItem('theme',selectedTheme);
     alert('บันทึกธีมเรียบร้อยแล้ว!');
     document.getElementById('themeSelector').classList.remove('active');
-  } else {
+  }else{
     alert('กรุณาเลือกธีมก่อนบันทึก');
   }
 });
-</script>
 
+document.addEventListener('DOMContentLoaded',async()=>{
+  // โหลดธีมที่บันทึกไว้
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme){
+    selectedTheme = savedTheme;
+    document.body.className = savedTheme==='default'?'': 'theme-'+savedTheme;
+  }
+
+  await liff.init({ liffId });
+  if(!liff.isLoggedIn()) liff.login();
+  const profile = await liff.getProfile();
+
+  fetch(GAS_URL+"?action=getBalance&userId="+profile.userId)
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.error){ alert(data.error); return; }
+      document.getElementById("empName").innerText = data.set1[1] || profile.displayName;
+      document.getElementById("profilePic").src = data.set1[2] || profile.pictureUrl;
+
+      document.getElementById("remainVacation").innerText = data.set1[3] || 0;
+      document.getElementById("remainSick").innerText = data.set1[4] || 0;
+      document.getElementById("remainPersonal").innerText = data.set1[5] || 0;
+
+      document.getElementById("usedVacation").innerText = data.set2[3] || 0;
+      document.getElementById("usedSick").innerText = data.set2[4] || 0;
+      document.getElementById("usedPersonal").innerText = data.set2[5] || 0;
+      document.getElementById("usedAbsent").innerText = data.set2[6] || 0;
+    }).catch(err=>console.error(err));
+});
+</script>
 </body>
 </html>
