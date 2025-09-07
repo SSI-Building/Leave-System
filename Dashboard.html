@@ -3,88 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Dashboard</title>
+<title>Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-  body { font-family: 'Prompt', sans-serif; padding: 20px; }
-  .loading {
-    position: fixed;
-    top: 0; left: 0; right:0; bottom:0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.9);
-    font-size: 20px;
-    font-weight: bold;
-    z-index: 1000;
+  :root {
+    --primary-color-start: #1994b6;
+    --primary-color-end: #36a761;
+    --text-color: #333;
+    --light-text-color: #666;
+    --background-color: #f0f2f5;
+    --card-background: #ffffff;
+    --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
+    --border-color: #e0e0e0;
   }
+  body { font-family: 'Prompt', sans-serif; margin:0; padding:20px; background:var(--background-color); color:var(--text-color); transition:0.3s; }
+  .container { max-width:600px; margin:auto; position:relative; }
+  .header { display:flex; align-items:center; gap:15px; margin-bottom:30px; background:linear-gradient(135deg, var(--primary-color-start), var(--primary-color-end)); padding:25px; border-radius:15px; color:#fff; box-shadow:var(--shadow-light); position:relative; }
+  .profile-pic { width:60px; height:60px; border-radius:50%; border:3px solid rgba(255,255,255,0.5); object-fit:cover; }
+  .greeting { font-size:20px; font-weight:600; }
+  .motivation { font-size:14px; color:rgba(255,255,255,0.8); margin-top:5px; }
+  .settings-icon { position:absolute; top:30px; right:25px; font-size:24px; cursor:pointer; transition:0.3s; }
+  .settings-icon:hover { transform:rotate(90deg); }
+  .theme-selector { position:absolute; top:60px; right:25px; background:var(--card-background); padding:10px; border-radius:8px; box-shadow:var(--shadow-light); display:none; flex-direction:column; gap:10px; z-index:9; }
+  .theme-selector.active { display:flex; }
+  .theme-option { padding:8px 12px; border-radius:6px; cursor:pointer; font-size:14px; font-weight:500; border:1px solid var(--border-color); text-align:center; transition:0.3s; }
+  .theme-option:hover { background:var(--background-color); }
+  .theme-save-btn { width:100%; padding:10px; margin-top:10px; border:none; border-radius:6px; background:linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end)); color:#fff; font-weight:600; cursor:pointer; transition:0.3s; }
+  .theme-save-btn:hover { opacity:0.9; transform:translateY(-1px); }
 
-  table { border-collapse: collapse; margin-bottom: 20px; width: 100%; display:none; }
-  th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-  th { background-color: #eee; }
+  .tabs-container { background:var(--card-background); padding:10px; border-radius:12px; box-shadow:var(--shadow-light); margin-bottom:20px; }
+  .tabs { display:flex; border-radius:8px; }
+  .tab { flex:1; text-align:center; padding:12px 0; cursor:pointer; font-weight:500; color:var(--light-text-color); transition:0.3s; }
+  .tab.active { background:linear-gradient(135deg, var(--primary-color-start), var(--primary-color-end)); color:#fff; font-weight:600; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+  .tab-content { display:none; padding-top:20px; animation:fadeIn 0.4s ease-in-out; }
+  .tab-content.active { display:block; }
+  @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
+  .table-container { background:var(--card-background); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-light); margin-bottom:20px; }
+  table { width:100%; border-collapse:collapse; display:none; }
+  th, td { padding:15px; text-align:center; font-size:15px; border-bottom:1px solid var(--border-color); vertical-align:middle; }
+  th { background:var(--background-color); font-weight:600; color:var(--text-color); }
+  tr:last-child td { border-bottom:none; }
+
+  .loading { position:fixed; top:0; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.9); font-size:20px; font-weight:bold; z-index:1000; }
+
+  .buttons { margin-top:20px; display:flex; gap:15px; }
+  .btn { flex:1; padding:15px; border:none; border-radius:10px; font-weight:600; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); color:#fff; background:linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end)); transition:0.3s; }
+  .btn:hover { box-shadow:0 6px 12px rgba(0,0,0,0.15); transform:translateY(-2px); }
 </style>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
 const liffId = "2007956727-6V7DrnMD";
-const GAS_URL = "https://script.google.com/macros/s/AKfycbypGDcud4AH8zMe4ySfQpcG8CxvFpLaD83E8C0t739Nh8A2bRTnr1-4UpxGwqSJ0FRu/exec";
+const GAS_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // เปลี่ยนเป็น Script ของคุณ
 
 async function loadData() {
   const loadingDiv = document.getElementById("loading");
   const balanceTable = document.getElementById("balanceTable");
   const recordsTable = document.getElementById("recordsTable");
+  const empName = document.getElementById("empName");
+  const profilePic = document.getElementById("profilePic");
 
   try {
     await liff.init({ liffId });
-
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
-    }
+    if (!liff.isLoggedIn()) { liff.login(); return; }
 
     const profile = await liff.getProfile();
     const userId = profile.userId;
+    profilePic.src = profile.pictureUrl || "https://via.placeholder.com/60";
 
     const res = await fetch(`${GAS_URL}?action=getBalance&userId=${userId}`);
     const data = await res.json();
 
-    if (data.error) {
-      alert(data.error);
-      loadingDiv.innerText = "เกิดข้อผิดพลาด: ไม่พบข้อมูล";
-      return;
-    }
+    if (data.error) { alert(data.error); loadingDiv.innerText="ไม่พบข้อมูล"; return; }
 
-    // สร้างตาราง Balance
+    empName.textContent = data.set1[1]; // ชื่อ-สกุลจาก Balance
+
+    // Balance Table
     const headerB = ["รหัสพนักงาน","ชื่อ-สกุล","ตำแหน่ง","พักร้อน","ป่วย","กิจ","-","LineUserID"];
-    let htmlB = "<tr>" + headerB.map(h => `<th>${h}</th>`).join("") + "</tr>";
-    htmlB += "<tr>" + data.set1.map(v => `<td>${v}</td>`).join("") + "</tr>";
+    let htmlB = "<tr>"+headerB.map(h=>`<th>${h}</th>`).join("")+"</tr>";
+    htmlB += "<tr>"+data.set1.map(v=>`<td>${v}</td>`).join("")+"</tr>";
     balanceTable.innerHTML = htmlB;
 
-    // สร้างตาราง Records
+    // Records Table
     const headerR = ["รหัสพนักงาน","ชื่อ-สกุล","ตำแหน่ง","พักร้อน","ป่วย","กิจ","ขาดงาน"];
-    let htmlR = "<tr>" + headerR.map(h => `<th>${h}</th>`).join("") + "</tr>";
-    htmlR += "<tr>" + data.set2.map(v => `<td>${v}</td>`).join("") + "</tr>";
+    let htmlR = "<tr>"+headerR.map(h=>`<th>${h}</th>`).join("")+"</tr>";
+    htmlR += "<tr>"+data.set2.map(v=>`<td>${v}</td>`).join("")+"</tr>";
     recordsTable.innerHTML = htmlR;
 
-    // แสดงตารางและซ่อน loading
     loadingDiv.style.display = "none";
     balanceTable.style.display = "table";
     recordsTable.style.display = "table";
-
   } catch(err) {
     console.error(err);
-    loadingDiv.innerText = "เกิดข้อผิดพลาดในการโหลดข้อมูล";
+    loadingDiv.innerText="เกิดข้อผิดพลาดในการโหลดข้อมูล";
   }
 }
 
 document.addEventListener("DOMContentLoaded", loadData);
+
+function openTab(evt, tabId) {
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+  evt.currentTarget.classList.add("active");
+  document.getElementById(tabId).classList.add("active");
+}
+
+document.getElementById('settingsIcon').addEventListener('click', function(){
+  document.getElementById('themeSelector').classList.toggle('active');
+});
+
+let selectedTheme = null;
+document.addEventListener('DOMContentLoaded', ()=>{
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme){ document.body.className = savedTheme==='default'?'':'theme-'+savedTheme; selectedTheme=savedTheme; }
+});
+
+document.querySelectorAll('.theme-option').forEach(option=>{
+  option.addEventListener('click', function(){
+    selectedTheme=this.getAttribute('data-theme');
+    document.body.className = selectedTheme==='default'?'':'theme-'+selectedTheme;
+  });
+});
+
+document.getElementById('saveThemeBtn').addEventListener('click', function(){
+  if(selectedTheme){ localStorage.setItem('theme', selectedTheme); alert('บันทึกธีมเรียบร้อยแล้ว!'); document.getElementById('themeSelector').classList.remove('active'); }
+  else{ alert('กรุณาเลือกธีมก่อนบันทึก'); }
+});
 </script>
 </head>
 <body>
 <div id="loading" class="loading">กำลังโหลดข้อมูล...</div>
+<div class="container">
+  <div class="header">
+    <img src="" alt="Profile" class="profile-pic" id="profilePic">
+    <div>
+      <div class="greeting">สวัสดี, <span id="empName">พนักงาน</span> 👋</div>
+      <div class="motivation">พักบ้างก็ได้ แต่ห้ามยอมแพ้ 💪</div>
+    </div>
+    <i class="fas fa-cog settings-icon" id="settingsIcon"></i>
+  </div>
 
-<h2>Balance</h2>
-<table id="balanceTable"></table>
+  <div class="theme-selector" id="themeSelector">
+    <div class="theme-option" data-theme="default">สีเริ่มต้น (ฟ้า-เขียว)</div>
+    <div class="theme-option" data-theme="orange-purple">สีส้ม-ม่วง</div>
+    <div class="theme-option" data-theme="blue-violet">สีฟ้า-ม่วง</div>
+    <div class="theme-option" data-theme="pink-purple">สีชมพู-ม่วง</div>
+    <div class="theme-option" data-theme="green-gold">สีเขียว-ทอง</div>
+    <div class="theme-option" data-theme="red-orange">สีแดง-ส้ม</div>
+    <div class="theme-option" data-theme="teal-navy">สีเขียวอมน้ำเงิน-กรมท่า</div>
+    <div class="theme-option" data-theme="monochrome">Monochrome</div>
+    <div class="theme-option" data-theme="dark">Dark Mode</div>
+    <button id="saveThemeBtn" class="theme-save-btn">บันทึกธีม</button>
+  </div>
 
-<h2>Records</h2>
-<table id="recordsTable"></table>
+  <div class="tabs-container">
+    <div class="tabs">
+      <div class="tab active" onclick="openTab(event,'remain')">สิทธิลาคงเหลือ</div>
+      <div class="tab" onclick="openTab(event,'used')">สิทธิลาที่ใช้</div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <div id="remain" class="tab-content active">
+      <table id="balanceTable"></table>
+    </div>
+    <div id="used" class="tab-content">
+      <table id="recordsTable"></table>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="btn"><i class="fas fa-calendar-plus"></i> ลาออนไลน์</button>
+    <button class="btn"><i class="fas fa-clock"></i> ตรวจสอบสถานะ</button>
+  </div>
+</div>
 </body>
 </html>
