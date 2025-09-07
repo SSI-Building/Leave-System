@@ -80,47 +80,27 @@ async function loadDashboard() {
 document.addEventListener("DOMContentLoaded", ()=>{
   loadDashboard();
 
+  // โหลดธีมที่บันทึก
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme){ document.body.className = savedTheme==='default'? '':'theme-'+savedTheme; selectedTheme=savedTheme; }
 
-// Settings icon
-document.getElementById('settingsIcon').addEventListener('click', () => {
-  document.getElementById('themeSelector').classList.toggle('active');
-});
+  // Settings icon
+  document.getElementById('settingsIcon').addEventListener('click', ()=>document.getElementById('themeSelector').classList.toggle('active'));
 
-// เลือกธีม
-document.querySelectorAll('.theme-option').forEach(option => {
-  option.addEventListener('click', function() {
-    selectedTheme = this.getAttribute('data-theme');
+  // เลือกธีม
+  document.querySelectorAll('.theme-option').forEach(option=>{
+    option.addEventListener('click', function(){
+      selectedTheme=this.getAttribute('data-theme');
+      document.body.className=selectedTheme==='default'? '':'theme-'+selectedTheme;
+    });
+  });
 
-    // ลบคลาส theme เก่า
-    document.body.className = '';
-    if(selectedTheme && selectedTheme !== 'default') {
-      document.body.classList.add('theme-' + selectedTheme);
-    }
+  // บันทึกธีม
+  document.getElementById('saveThemeBtn').addEventListener('click', ()=>{
+    if(selectedTheme){ localStorage.setItem('theme',selectedTheme); alert('บันทึกธีมเรียบร้อยแล้ว!'); document.getElementById('themeSelector').classList.remove('active'); }
+    else{ alert('กรุณาเลือกธีมก่อนบันทึก'); }
   });
 });
-
-// บันทึกธีม
-document.getElementById('saveThemeBtn').addEventListener('click', () => {
-  if(selectedTheme){
-    localStorage.setItem('theme', selectedTheme);
-    alert('บันทึกธีมเรียบร้อยแล้ว!');
-    document.getElementById('themeSelector').classList.remove('active');
-  } else {
-    alert('กรุณาเลือกธีมก่อนบันทึก');
-  }
-});
-
-// โหลดธีมที่บันทึกไว้
-document.addEventListener('DOMContentLoaded', () => {
-  const savedTheme = localStorage.getItem('theme');
-  if(savedTheme){
-    selectedTheme = savedTheme;
-    if(savedTheme !== 'default'){
-      document.body.classList.add('theme-' + savedTheme);
-    }
-  }
-});
-
 
 function openTab(evt, tabId){
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
