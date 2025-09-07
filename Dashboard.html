@@ -150,6 +150,15 @@ tr:last-child td { border-bottom:none; }
 const liffId = "2007956727-6V7DrnMD";
 const GAS_URL = "https://script.google.com/macros/s/AKfycbypGDcud4AH8zMe4ySfQpcG8CxvFpLaD83E8C0t739Nh8A2bRTnr1-4UpxGwqSJ0FRu/exec";
 let selectedTheme = null;
+// ------------------ ข้อความกำลังใจ ------------------
+const messages = [
+  "ยินดีต้อนรับเข้าสู่ระบบ!", "ดีใจที่เจอคุณวันนี้!", "สู้ ๆ กับวันใหม่ครับ!",
+  "ขอให้วันนี้เป็นวันที่ดี!", "ยิ้มรับความท้าทายวันนี้!", "ขอให้มีความสุขกับการทำงาน!",
+  "มาสำรวจสิทธิ์ลาของคุณกัน!", "วันนี้ก็ทำได้ดีแน่นอนครับ!", "เริ่มต้นวันใหม่ด้วยพลังบวกกันเถอะ!",
+  "ไม่ว่าอะไรเกิดขึ้น คุณก็เอาอยู่!", "ยินดีที่ได้เจอกันอีกครั้งนะครับ!", "ขอบคุณที่ตั้งใจทำงานเสมอ!",
+  "มาลุยงานกันอย่างเต็มที่เลยครับ!", "พักบ้างก็ได้นะ แต่ห้ามยอมแพ้!", "เชื่อมั่นในตัวเอง แล้วก้าวต่อไปครับ!",
+  "วันนี้อาจเจอความท้าทาย แต่คุณเก่งพอ!", "ขอให้วันนี้มีรอยยิ้มเยอะ ๆ นะครับ!"
+];
 
 async function loadDashboard() {
   await liff.init({ liffId });
@@ -158,6 +167,10 @@ async function loadDashboard() {
   const profile = await liff.getProfile();
   const userId = profile.userId;
   document.getElementById("profilePic").src = profile.pictureUrl;
+
+    // สุ่มข้อความกำลังใจ
+  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  document.getElementById("motivation").textContent = randomMessage;
 
   fetch(`${GAS_URL}?action=getBalance&userId=${userId}`)
     .then(res=>res.json())
@@ -222,20 +235,7 @@ function openTab(evt, tabId){
   document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
   evt.currentTarget.classList.add("active");
   document.getElementById(tabId).classList.add("active");
-};
-const messages = [
-  "ยินดีต้อนรับเข้าสู่ระบบ!", "ดีใจที่เจอคุณวันนี้!", "สู้ ๆ กับวันใหม่ครับ!",
-  "ขอให้วันนี้เป็นวันที่ดี!", "ยิ้มรับความท้าทายวันนี้!", "ขอให้มีความสุขกับการทำงาน!",
-  "มาสำรวจสิทธิ์ลาของคุณกัน!", "วันนี้ก็ทำได้ดีแน่นอนครับ!", "เริ่มต้นวันใหม่ด้วยพลังบวกกันเถอะ!",
-  "ไม่ว่าอะไรเกิดขึ้น คุณก็เอาอยู่!", "ยินดีที่ได้เจอกันอีกครั้งนะครับ!", "ขอบคุณที่ตั้งใจทำงานเสมอ!",
-  "มาลุยงานกันอย่างเต็มที่เลยครับ!", "พักบ้างก็ได้นะ แต่ห้ามยอมแพ้!", "เชื่อมั่นในตัวเอง แล้วก้าวต่อไปครับ!",
-  "วันนี้อาจเจอความท้าทาย แต่คุณเก่งพอ!", "ขอให้วันนี้มีรอยยิ้มเยอะ ๆ นะครับ!"
-];
-// สุ่มข้อความกำลังใจ
-const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-document.getElementById("motivation").textContent = randomMessage;
-
-  
+}
 </script>
 </head>
 <body>
