@@ -461,8 +461,49 @@ document.getElementById("submitBtn").addEventListener("click", () => {
         alert(`จำนวนวันลาที่ขอ (${leaveDays}) เกินวันลาคงเหลือ (${maxDays})`);
         return;
     }
-    alert("ส่งคำขอเรียบร้อยแล้ว");
-});
+     // เตรียมข้อมูลส่งไป Sheet
+  const payload = {
+    empId: document.getElementById("empId").value,
+    empName: document.getElementById("empName").value,
+    position: document.getElementById("position").value,
+    department: document.getElementById("department").value,
+    leaveType: (() => {
+      switch(leaveType){
+        case "AL": return "vacation";
+        case "SL": return "sick";
+        case "BL": return "personal";
+      }
+    })(),
+    startDate: startDate.value.split("T")[0],       // yyyy-mm-dd
+    startTime: startDate.value.split("T")[1],       // HH:mm
+    endDate: endDate.value.split("T")[0],           // yyyy-mm-dd
+    endTime: endDate.value.split("T")[1],           // HH:mm
+    leaveDays: leaveDays,
+    status: "Pending",
+    submitDate: new Date().toISOString(),           // วันที่+เวลา ตอนส่ง
+    reason: document.getElementById("reason").value,
+    signature: signaturePad.toDataURL("image/png"), // ลายเซ็น base64 (PNG พื้นหลังโปร่งใส)
+    attachment: "No",                                // ถ้าอนาคตมีไฟล์แนบ ค่อยเปลี่ยนเป็น Yes
+    lineUserId: leaveSet1[7]                         // Column H ของ set1
+  };
+
+  // ส่งข้อมูลไปยัง Google Apps Script
+  fetch("https://script.google.com/macros/s/AKfycbw_utiPZNwRP100ipvBqfP-lHjYWZUIxfoLmifiY4eY2kY19clwp6eoISIOofoaWAPV/exec", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.result === "success"){
+      alert("ส่งคำขอเรียบร้อยแล้ว");
+    } else {
+      alert("เกิดข้อผิดพลาด: " + data.error);
+    }
+  })
+  .catch(err => {
+    alert("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
+    console.error(err);
+  });
 </script>
 </body>
 </html>
