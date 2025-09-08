@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview ข้อมูลการลา</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+body {
+    font-family: 'Prompt', sans-serif;
+    background: #f2f4f8;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    max-width: 700px;
+    width: 100%;
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+}
+
+h2 {
+    text-align: center;
+    color: #34495e;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.section {
+    background: #fdfdfd;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+}
+
+.section h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.field {
+    background: #eef2f6;
+    padding: 12px 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.field-label {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin-bottom: 3px;
+}
+
+.field-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    word-break: break-word;
+}
+
+.signature-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#signaturePreview {
+    width: 100%;
+    height: 180px;
+    border-radius: 15px;
+    border: 2px dashed #d0d0d0;
+    background-color: #fafafa;
+    margin-top: 10px;
+}
+
+.buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.btn {
+    flex: 1;
+    max-width: 200px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-edit { background: #95a5a6; color: #fff; }
+.btn-submit { background: #4a90e2; color: #fff; }
+
+.btn-edit:hover { background: #7f8c8d; }
+.btn-submit:hover { background: #357ABD; }
+
+@media(max-width: 500px) {
+    .data-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Preview ข้อมูลการลา</h2>
+
+    <div class="section" id="employeeSection">
+        <h3><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</h3>
+        <div class="data-grid">
+            <div class="field"><span class="field-label">ชื่อ-สกุล</span><span id="empName" class="field-value">นายสมชาย ใจดี</span></div>
+            <div class="field"><span class="field-label">รหัสพนักงาน</span><span id="empId" class="field-value">EMP001</span></div>
+            <div class="field"><span class="field-label">ตำแหน่ง</span><span id="position" class="field-value">เจ้าหน้าที่</span></div>
+            <div class="field"><span class="field-label">ฝ่าย</span><span id="department" class="field-value">BUS</span></div>
+        </div>
+    </div>
+
+    <div class="section" id="leaveDetailSection">
+        <h3><i class="fas fa-file-alt"></i> รายละเอียดการลา</h3>
+        <div class="data-grid">
+            <div class="field"><span class="field-label">ประเภทการลา</span><span id="leaveTypeDisplay" class="field-value">ลาพักร้อน</span></div>
+            <div class="field"><span class="field-label">เอกสารประกอบ</span><span id="hasDocumentDisplay" class="field-value">มี</span></div>
+            <div class="field" style="grid-column: 1 / -1;"><span class="field-label">เหตุผลการลา</span><span id="reasonDisplay" class="field-value">พักผ่อนประจำปี</span></div>
+        </div>
+    </div>
+
+    <div class="section" id="leaveTimeSection">
+        <h3><i class="fas fa-clock"></i> ระยะเวลาการลา</h3>
+        <div class="data-grid">
+            <div class="field"><span class="field-label">ตั้งแต่</span><span id="startDisplay" class="field-value">9 ก.ย. 2025 เวลา 08:00</span></div>
+            <div class="field"><span class="field-label">ถึง</span><span id="endDisplay" class="field-value">9 ก.ย. 2025 เวลา 17:00</span></div>
+            <div class="field"><span class="field-label">รวมวันลา</span><span id="leaveDaysDisplay" class="field-value">1 วัน</span></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3><i class="fas fa-signature"></i> ลายเซ็น</h3>
+        <div class="signature-box">
+            <canvas id="signaturePreview"></canvas>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="btn btn-edit"><i class="fas fa-arrow-left"></i> แก้ไข</button>
+        <button class="btn btn-submit"><i class="fas fa-paper-plane"></i> ยืนยันและส่ง</button>
+    </div>
+</div>
+</body>
+</html>
