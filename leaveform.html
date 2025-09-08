@@ -402,6 +402,7 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 document.getElementById("submitBtn").addEventListener("click", () => {
+    // ... โค้ดตรวจสอบข้อมูลเดิม
     const fields = [{
         el: document.getElementById("empName")
     }, {
@@ -461,7 +462,45 @@ document.getElementById("submitBtn").addEventListener("click", () => {
         alert(`จำนวนวันลาที่ขอ (${leaveDays}) เกินวันลาคงเหลือ (${maxDays})`);
         return;
     }
-    alert("ส่งคำขอเรียบร้อยแล้ว");
+
+    // ส่วนใหม่ที่จะเพิ่มเพื่อส่งข้อมูล
+    const leaveData = {
+        empId: document.getElementById("empId").value,
+        empName: document.getElementById("empName").value,
+        position: document.getElementById("position").value,
+        department: document.getElementById("department").value,
+        leaveType: leaveType,
+        leaveReason: document.getElementById("reason").value,
+        startDate: document.getElementById("startDate").value.split("T")[0],
+        startTime: document.getElementById("startDate").value.split("T")[1],
+        endDate: document.getElementById("endDate").value.split("T")[0],
+        endTime: document.getElementById("endDate").value.split("T")[1],
+        leaveDays: leaveDays,
+        signature: signaturePad.toDataURL('image/png'),
+        hasDocument: document.querySelector('input[name="hasDocument"]:checked').value === "มี" ? "Yes" : "No",
+        lineUserId: leaveSet1[7] // ดึงจากตำแหน่งที่ 8
+    };
+
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbzJNwe9IWKcagE5-cac3O1nKEaVNCGfOmonH1s_fBbhS-5JCTMcAxe_bHJjlUaDOUvI/execL'; // **ใส้ URL ของ Web App ที่คุณสร้างในขั้นตอนที่ 1**
+    
+    fetch(webAppUrl, {
+        method: "POST",
+        mode: "no-cors",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        body: JSON.stringify(leaveData),
+    })
+    .then(response => {
+        alert("ส่งคำขอเรียบร้อยแล้ว");
+        //window.location.href = 'Dashboard.html'; // อาจเพิ่มให้กลับไปหน้า Dashboard หลังจากส่งสำเร็จ
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+    });
 });
 </script>
 </body>
