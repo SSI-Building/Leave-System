@@ -74,7 +74,6 @@ h2 { text-align: center; color: #34495e; font-weight: 700; margin-bottom: 30px; 
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // ตรวจสอบข้อมูลจาก localStorage
     let leaveData = localStorage.getItem("leavePreviewData");
     if (!leaveData) {
         alert("ไม่พบข้อมูลการลา กรุณากรอกข้อมูลก่อน");
@@ -106,17 +105,15 @@ document.addEventListener("DOMContentLoaded", () => {
         `${endDateTime.toLocaleDateString('th-TH', optionsDate)} เวลา ${endDateTime.toLocaleTimeString('th-TH', optionsTime)}`;
     document.getElementById("leaveDaysDisplay").textContent = `${leaveData.leaveDays || 0} วัน`;
 
-    // แสดงลายเซ็นบน canvas
+    // ลายเซ็น
     const canvas = document.getElementById("signaturePreview");
     const ctx = canvas.getContext("2d");
     if (leaveData.signatureData) {
         const img = new Image();
         img.onload = () => {
-            const ratio = window.devicePixelRatio || 1;
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            ctx.scale(ratio, ratio);
-            ctx.drawImage(img, 0, 0, canvas.offsetWidth, canvas.offsetHeight);
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         };
         img.src = leaveData.signatureData;
     }
@@ -126,14 +123,14 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "leaveform.html";
     });
 
-    // ปุ่มยืนยันและส่ง
+    // ปุ่มส่ง
     document.querySelector(".btn-submit").addEventListener("click", async () => {
-        leaveData.signature = canvas.toDataURL();
+        leaveData.signature = canvas.toDataURL(); // เพิ่ม signature
         try {
-            const response = await fetch("https://script.google.com/macros/s/AKfycbxbsO6aawtTcBQ1FSVCePsVAL4AZAi7BErDF_W89rs4pNLEhTBc2BdKb025kz3gPczM/exec", {
+            const response = await fetch("https://script.google.com/macros/s/AKfycbwviyKkV7geROoSiWGxPy0HtqFvjOtXF4SXR2SdXTPoGRDyrfwSIe0bxfelBmtYlfl4/exec", {
                 method: "POST",
-                body: JSON.stringify(leaveData),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(leaveData)
             });
             const result = await response.json();
             if (result.status === "success") {
