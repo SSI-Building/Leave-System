@@ -41,6 +41,25 @@ textarea { min-height: 100px; resize: vertical; }
 .btn-secondary { background: #B0B9C2; }
 .btn-clear { margin-top: 10px; padding: 8px 12px; font-size: 12px; color: var(--text-color-light); background: transparent; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
 .btn-clear:hover { background: #f0f0f0; color: var(--text-color-dark); }
+
+/* --- CSS สำหรับ Radio Button --- */
+.radio-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-top: 8px;
+}
+.radio-group label {
+  margin-bottom: 0;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--text-color-dark);
+  cursor: pointer;
+}
+.radio-group input[type="radio"] {
+  margin-right: 5px;
+}
+
 @media(max-width: 650px) { .form-row { flex-direction: column; gap: 0; } }
 </style>
 </head>
@@ -85,6 +104,14 @@ textarea { min-height: 100px; resize: vertical; }
     <div class="form-group">
       <label>เหตุผลการลา</label>
       <textarea id="reason" placeholder="กรุณากรอกเหตุผล"></textarea>
+    </div>
+    <!-- เพิ่ม Radio Button เอกสารประกอบ -->
+    <div class="form-group">
+      <label>เอกสารประกอบ</label>
+      <div class="radio-group">
+        <label><input type="radio" name="hasDocument" value="มี"> มี</label>
+        <label><input type="radio" name="hasDocument" value="ไม่มี"> ไม่มี</label>
+      </div>
     </div>
   </div>
 
@@ -250,6 +277,13 @@ document.getElementById("submitBtn").addEventListener("click", ()=>{
     }
   });
 
+  // ตรวจสอบ Radio Button เอกสารประกอบ
+  const docRadios = document.getElementsByName("hasDocument");
+  if (!Array.from(docRadios).some(r => r.checked)) {
+    alert("กรุณาเลือกว่ามีเอกสารประกอบหรือไม่");
+    return;
+  }
+
   if(hasEmpty){
     alert("กรุณากรอกข้อมูลให้ครบทุกช่อง (กรอบสีแดงคือช่องที่ว่าง)");
     return;
@@ -280,7 +314,6 @@ document.getElementById("submitBtn").addEventListener("click", ()=>{
 
   alert("ส่งคำขอเรียบร้อยแล้ว");
 });
-
 </script>
 </body>
 </html>
