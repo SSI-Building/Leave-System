@@ -207,6 +207,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
   endDate.addEventListener("change", updateLeaveDays);
 });
 
+// สร้าง SignaturePad
+const canvas = document.getElementById('signaturePad');
+const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(0,0,0,0)' });
+
+// ฟังก์ชันล้างลายเซ็น
+function clearSignature() {
+  signaturePad.clear();
+}
+
 // ปรับขนาด canvas ให้เต็ม width container
 function resizeCanvas() {
   const ratio = Math.max(window.devicePixelRatio || 1, 1);
