@@ -134,28 +134,28 @@ h2 {
     <div class="section" id="employeeSection">
         <h3><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</h3>
         <div class="data-grid">
-            <div class="field"><span class="field-label">ชื่อ-สกุล</span><span id="empName" class="field-value">นายสมชาย ใจดี</span></div>
-            <div class="field"><span class="field-label">รหัสพนักงาน</span><span id="empId" class="field-value">EMP001</span></div>
-            <div class="field"><span class="field-label">ตำแหน่ง</span><span id="position" class="field-value">เจ้าหน้าที่</span></div>
-            <div class="field"><span class="field-label">ฝ่าย</span><span id="department" class="field-value">BUS</span></div>
+            <div class="field"><span class="field-label">ชื่อ-สกุล</span><span id="empName" class="field-value"></span></div>
+            <div class="field"><span class="field-label">รหัสพนักงาน</span><span id="empId" class="field-value"></span></div>
+            <div class="field"><span class="field-label">ตำแหน่ง</span><span id="position" class="field-value"></span></div>
+            <div class="field"><span class="field-label">ฝ่าย</span><span id="department" class="field-value"></span></div>
         </div>
     </div>
 
     <div class="section" id="leaveDetailSection">
         <h3><i class="fas fa-file-alt"></i> รายละเอียดการลา</h3>
         <div class="data-grid">
-            <div class="field"><span class="field-label">ประเภทการลา</span><span id="leaveTypeDisplay" class="field-value">ลาพักร้อน</span></div>
-            <div class="field"><span class="field-label">เอกสารประกอบ</span><span id="hasDocumentDisplay" class="field-value">มี</span></div>
-            <div class="field" style="grid-column: 1 / -1;"><span class="field-label">เหตุผลการลา</span><span id="reasonDisplay" class="field-value">พักผ่อนประจำปี</span></div>
+            <div class="field"><span class="field-label">ประเภทการลา</span><span id="leaveTypeDisplay" class="field-value"></span></div>
+            <div class="field"><span class="field-label">เอกสารประกอบ</span><span id="hasDocumentDisplay" class="field-value"></span></div>
+            <div class="field" style="grid-column: 1 / -1;"><span class="field-label">เหตุผลการลา</span><span id="reasonDisplay" class="field-value"></span></div>
         </div>
     </div>
 
     <div class="section" id="leaveTimeSection">
         <h3><i class="fas fa-clock"></i> ระยะเวลาการลา</h3>
         <div class="data-grid">
-            <div class="field"><span class="field-label">ตั้งแต่</span><span id="startDisplay" class="field-value">9 ก.ย. 2025 เวลา 08:00</span></div>
-            <div class="field"><span class="field-label">ถึง</span><span id="endDisplay" class="field-value">9 ก.ย. 2025 เวลา 17:00</span></div>
-            <div class="field"><span class="field-label">รวมวันลา</span><span id="leaveDaysDisplay" class="field-value">1 วัน</span></div>
+            <div class="field"><span class="field-label">ตั้งแต่</span><span id="startDisplay" class="field-value"></span></div>
+            <div class="field"><span class="field-label">ถึง</span><span id="endDisplay" class="field-value"></span></div>
+            <div class="field"><span class="field-label">รวมวันลา</span><span id="leaveDaysDisplay" class="field-value"></span></div>
         </div>
     </div>
 
@@ -171,5 +171,69 @@ h2 {
         <button class="btn btn-submit"><i class="fas fa-paper-plane"></i> ยืนยันและส่ง</button>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const leaveData = JSON.parse(localStorage.getItem("leavePreviewData"));
+    if (!leaveData) {
+        alert("ไม่พบข้อมูลการลา กรุณากรอกข้อมูลก่อน");
+        window.location.href = "leaveform.html";
+        return;
+    }
+
+    // ข้อมูลพนักงาน
+    document.getElementById("empName").textContent = leaveData.empName;
+    document.getElementById("empId").textContent = leaveData.empId;
+    document.getElementById("position").textContent = leaveData.position;
+    document.getElementById("department").textContent = leaveData.department;
+
+    // รายละเอียดการลา
+    let leaveTypeText = "";
+    switch(leaveData.leaveType) {
+        case "AL": leaveTypeText = "ลาพักร้อน"; break;
+        case "SL": leaveTypeText = "ลาป่วย"; break;
+        case "BL": leaveTypeText = "ลากิจ"; break;
+    }
+    document.getElementById("leaveTypeDisplay").textContent = leaveTypeText;
+    document.getElementById("hasDocumentDisplay").textContent = leaveData.hasDocument;
+    document.getElementById("reasonDisplay").textContent = leaveData.reason;
+
+    // ระยะเวลาการลา
+    const startDateTime = new Date(`${leaveData.startDate}T${leaveData.startTime}`);
+    const endDateTime = new Date(`${leaveData.endDate}T${leaveData.endTime}`);
+    const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
+    const optionsTime = { hour: '2-digit', minute: '2-digit' };
+
+    document.getElementById("startDisplay").textContent =
+        `${startDateTime.toLocaleDateString('th-TH', optionsDate)} เวลา ${startDateTime.toLocaleTimeString('th-TH', optionsTime)}`;
+    document.getElementById("endDisplay").textContent =
+        `${endDateTime.toLocaleDateString('th-TH', optionsDate)} เวลา ${endDateTime.toLocaleTimeString('th-TH', optionsTime)}`;
+    document.getElementById("leaveDaysDisplay").textContent =
+        `${leaveData.leaveDays} วัน`;
+
+    // แสดงลายเซ็น
+    const canvas = document.getElementById('signaturePreview');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    }
+    img.src = leaveData.signatureData;
+
+    // ปุ่มแก้ไข
+    document.querySelector(".btn-edit").addEventListener("click", () => {
+        window.location.href = "leaveform.html";
+    });
+
+    // ปุ่มยืนยันส่ง
+    document.querySelector(".btn-submit").addEventListener("click", () => {
+        alert("ส่งคำขอเรียบร้อยแล้ว");
+        localStorage.removeItem("leavePreviewData");
+        window.location.href = "Dashboard.html";
+    });
+});
+</script>
 </body>
 </html>
