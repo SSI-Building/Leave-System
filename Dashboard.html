@@ -176,6 +176,10 @@ async function loadDashboard() {
     .then(res=>res.json())
     .then(data=>{
       if(data.error){ alert(data.error); return; }
+      
+            // เก็บข้อมูลชุดที่ 1 (A–H) ไว้ใน localStorage
+      localStorage.setItem("leaveSet1", JSON.stringify(data.set1));
+      
       document.getElementById("empName").textContent = data.set1[1];
       document.getElementById("remainTable").innerHTML = `
         <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
