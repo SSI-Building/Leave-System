@@ -225,36 +225,38 @@ textarea {
 <div class="container">
   <h2>ฟอร์มลาออนไลน์ <i class="fas fa-file-contract"></i></h2>
 
+  <!-- ข้อมูลพนักงาน -->
   <section class="form-section">
     <h3 class="form-section-title"><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</h3>
     <div class="form-grid">
       <div class="form-group">
         <label for="empName">ชื่อ-สกุล</label>
-        <input type="text" id="empName" readonly value="ชื่อจริง นามสกุล">
+        <input type="text" id="empName" readonly>
       </div>
       <div class="form-group">
         <label for="empId">รหัสพนักงาน</label>
-        <input type="text" id="empId" readonly value="EMP001">
+        <input type="text" id="empId" readonly>
       </div>
       <div class="form-group">
         <label for="position">ตำแหน่ง</label>
-        <input type="text" id="position" readonly value="พนักงานทั่วไป">
+        <input type="text" id="position" readonly>
       </div>
       <div class="form-group">
         <label for="department">ฝ่าย</label>
-        <input type="text" id="department" readonly value="BUS">
+        <input type="text" id="department" readonly>
       </div>
     </div>
   </section>
 
+  <!-- รายละเอียดการลา -->
   <section class="form-section">
     <h3 class="form-section-title"><i class="fas fa-file-alt"></i> รายละเอียดการลา</h3>
     <div class="form-group">
       <label for="leaveType">ประเภทการลา</label>
       <select id="leaveType">
-        <option value="AL">ลาพักร้อน</option>
-        <option value="SL">ลาป่วย</option>
-        <option value="BL">ลากิจ</option>
+        <option value="vacation">ลาพักร้อน</option>
+        <option value="sick">ลาป่วย</option>
+        <option value="personal">ลากิจ</option>
       </select>
     </div>
     <div class="form-group">
@@ -264,12 +266,13 @@ textarea {
     <div class="form-group">
       <label>เอกสารประกอบ</label>
       <div class="radio-group">
-        <label><input type="radio" name="hasDocument" value="มี"> มี</label>
-        <label><input type="radio" name="hasDocument" value="ไม่มี"> ไม่มี</label>
+        <label><input type="radio" name="hasDocument" value="Yes"> มี</label>
+        <label><input type="radio" name="hasDocument" value="No"> ไม่มี</label>
       </div>
     </div>
   </section>
 
+  <!-- ระยะเวลาการลา -->
   <section class="form-section">
     <h3 class="form-section-title"><i class="fas fa-clock"></i> ระยะเวลาการลา</h3>
     <div class="date-group">
@@ -285,6 +288,7 @@ textarea {
     </div>
   </section>
   
+  <!-- ลายเซ็น -->
   <section class="form-section">
     <h3 class="form-section-title"><i class="fas fa-signature"></i> ลายเซ็นอิเล็กทรอนิกส์</h3>
     <div class="form-group">
@@ -293,6 +297,7 @@ textarea {
     </div>
   </section>
 
+  <!-- ปุ่ม -->
   <div class="buttons">
     <button class="btn" id="submitBtn"><i class="fas fa-paper-plane"></i> ส่งคำขอ</button>
     <button class="btn btn-secondary"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
@@ -301,167 +306,155 @@ textarea {
 
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script>
-// --- ส่วน JavaScript ไม่มีการเปลี่ยนแปลง ---
-// โค้ดส่วนนี้ยังคงเดิมทั้งหมด เพื่อให้แน่ใจว่าฟังก์ชันการทำงานยังคงเหมือนเดิม
+const GAS_URL = "https://script.google.com/macros/s/AKfycbw_utiPZNwRP100ipvBqfP-lHjYWZUIxfoLmifiY4eY2kY19clwp6eoISIOofoaWAPV/exec"; // 👉 ใส่ URL ของ Apps Script web app ตรงนี้
+
+// โหลดข้อมูลพนักงาน
 document.addEventListener("DOMContentLoaded", () => {
-    const set1 = JSON.parse(localStorage.getItem("leaveSet1"));
-    if (!set1) {
-        alert("ไม่พบข้อมูลพนักงาน กรุณากลับไปหน้า Dashboard");
-        return;
-    }
-    document.getElementById("empId").value = set1[0];
-    document.getElementById("empName").value = set1[1];
-    document.getElementById("position").value = set1[2];
-    document.getElementById("department").value = "BUS";
-    const leaveType = document.getElementById("leaveType");
-    const leaveBalanceInfo = document.createElement("div");
-    leaveBalanceInfo.style.fontSize = "13px";
-    leaveBalanceInfo.style.marginTop = "5px";
-    leaveBalanceInfo.style.color = "#7F8C8D";
-    leaveType.insertAdjacentElement("afterend", leaveBalanceInfo);
-    function updateLeaveBalance() {
-        let msg = "";
-        switch (leaveType.value) {
-            case "AL": msg = `วันลาพักร้อนคงเหลือ: ${set1[3]} วัน`; break;
-            case "SL": msg = `วันลาป่วยคงเหลือ: ${set1[4]} วัน`; break;
-            case "BL": msg = `วันลากิจคงเหลือ: ${set1[5]} วัน`; break;
-        }
-        leaveBalanceInfo.textContent = msg;
-    }
-    leaveType.addEventListener("change", updateLeaveBalance);
-    updateLeaveBalance();
+  const set1 = JSON.parse(localStorage.getItem("leaveSet1"));
+  if (!set1) {
+    alert("ไม่พบข้อมูลพนักงาน กรุณากลับไปหน้า Dashboard");
+    return;
+  }
+  document.getElementById("empId").value = set1[0];
+  document.getElementById("empName").value = set1[1];
+  document.getElementById("position").value = set1[2];
+  document.getElementById("department").value = set1[3];
 });
 
+// คำนวณวันลา
 function calculateLeaveDays(sDate, sTime, eDate, eTime) {
-    if (!sDate || !sTime || !eDate || !eTime) return 0;
-    const WORK_HOURS_PER_DAY = 8;
-    const start = new Date(`${sDate}T${sTime}`);
-    const end = new Date(`${eDate}T${eTime}`);
-    if (end <= start) return 0;
-    let totalHours = 0;
-    let current = new Date(start);
+  if (!sDate || !sTime || !eDate || !eTime) return 0;
+  const WORK_HOURS_PER_DAY = 8;
+  const start = new Date(`${sDate}T${sTime}`);
+  const end = new Date(`${eDate}T${eTime}`);
+  if (end <= start) return 0;
+  let totalHours = 0;
+  let current = new Date(start);
+  current.setHours(0, 0, 0, 0);
+  while (current <= end) {
+    const dayOfWeek = current.getDay();
+    if (dayOfWeek !== 0) {
+      const morningStart = new Date(current);
+      morningStart.setHours(8, 0, 0, 0);
+      const morningEnd = new Date(current);
+      morningEnd.setHours(12, 0, 0, 0);
+      const afternoonStart = new Date(current);
+      afternoonStart.setHours(13, 0, 0, 0);
+      const afternoonEnd = new Date(current);
+      afternoonEnd.setHours(17, 0, 0, 0);
+      let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
+      let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
+      totalHours += overlapMorning + overlapAfternoon;
+    }
+    current.setDate(current.getDate() + 1);
     current.setHours(0, 0, 0, 0);
-    while (current <= end) {
-        const dayOfWeek = current.getDay();
-        if (dayOfWeek !== 0) {
-            const morningStart = new Date(current);
-            morningStart.setHours(8, 0, 0, 0);
-            const morningEnd = new Date(current);
-            morningEnd.setHours(12, 0, 0, 0);
-            const afternoonStart = new Date(current);
-            afternoonStart.setHours(13, 0, 0, 0);
-            const afternoonEnd = new Date(current);
-            afternoonEnd.setHours(17, 0, 0, 0);
-            let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
-            let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
-            totalHours += overlapMorning + overlapAfternoon;
-        }
-        current.setDate(current.getDate() + 1);
-        current.setHours(0, 0, 0, 0);
-    }
-    return Math.round((totalHours / WORK_HOURS_PER_DAY) * 10) / 10;
+  }
+  return Math.round((totalHours / WORK_HOURS_PER_DAY) * 10) / 10;
 }
+
 document.addEventListener("DOMContentLoaded", () => {
-    const startDate = document.getElementById("startDate");
-    const endDate = document.getElementById("endDate");
-    const leaveDisplay = document.getElementById("leaveDaysDisplay");
-    function updateLeaveDays() {
-        const start = startDate.value.split("T");
-        const end = endDate.value.split("T");
-        if (start.length < 2 || end.length < 2) {
-            leaveDisplay.innerText = "";
-            return;
-        }
-        const leaveDays = calculateLeaveDays(start[0], start[1], end[0], end[1]);
-        leaveDisplay.innerText = `รวมวันลา: ${leaveDays} วัน`;
+  const startDate = document.getElementById("startDate");
+  const endDate = document.getElementById("endDate");
+  const leaveDisplay = document.getElementById("leaveDaysDisplay");
+  function updateLeaveDays() {
+    const start = startDate.value.split("T");
+    const end = endDate.value.split("T");
+    if (start.length < 2 || end.length < 2) {
+      leaveDisplay.innerText = "";
+      return;
     }
-    startDate.addEventListener("change", updateLeaveDays);
-    endDate.addEventListener("change", updateLeaveDays);
+    const leaveDays = calculateLeaveDays(start[0], start[1], end[0], end[1]);
+    leaveDisplay.innerText = `รวมวันลา: ${leaveDays} วัน`;
+  }
+  startDate.addEventListener("change", updateLeaveDays);
+  endDate.addEventListener("change", updateLeaveDays);
 });
 
+// Signature Pad
 const canvas = document.getElementById('signaturePad');
 const signaturePad = new SignaturePad(canvas, {
-    backgroundColor: 'rgba(0,0,0,0)',
-    penColor: 'black',
-    minWidth: 0.5,
-    maxWidth: 2.5,
-    velocityFilterWeight: 0.7
+  backgroundColor: 'rgba(0,0,0,0)',
+  penColor: 'black',
+  minWidth: 0.5,
+  maxWidth: 2.5,
+  velocityFilterWeight: 0.7
 });
-
-function clearSignature() {
-    signaturePad.clear();
-}
+function clearSignature() { signaturePad.clear(); }
 function resizeCanvas() {
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = canvas.offsetHeight * ratio;
-    canvas.getContext("2d").scale(ratio, ratio);
-    signaturePad.clear();
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  canvas.width = canvas.offsetWidth * ratio;
+  canvas.height = canvas.offsetHeight * ratio;
+  canvas.getContext("2d").scale(ratio, ratio);
+  signaturePad.clear();
 }
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
+// ส่งฟอร์ม
 document.getElementById("submitBtn").addEventListener("click", () => {
-    const fields = [{
-        el: document.getElementById("empName")
-    }, {
-        el: document.getElementById("empId")
-    }, {
-        el: document.getElementById("position")
-    }, {
-        el: document.getElementById("department")
-    }, {
-        el: document.getElementById("leaveType")
-    }, {
-        el: document.getElementById("reason")
-    }, {
-        el: document.getElementById("startDate")
-    }, {
-        el: document.getElementById("endDate")
-    }, ];
-    let hasEmpty = false;
-    fields.forEach(f => f.el.style.borderColor = '#E0E0E0');
-    fields.forEach(f => {
-        if (!f.el.value.trim()) {
-            f.el.style.borderColor = 'red';
-            hasEmpty = true;
-        }
-    });
-    const docRadios = document.getElementsByName("hasDocument");
-    if (!Array.from(docRadios).some(r => r.checked)) {
-        alert("กรุณาเลือกว่ามีเอกสารประกอบหรือไม่");
-        return;
+  const leaveSet1 = JSON.parse(localStorage.getItem("leaveSet1"));
+
+  const empId = document.getElementById("empId").value;
+  const empName = document.getElementById("empName").value;
+  const position = document.getElementById("position").value;
+  const department = document.getElementById("department").value;
+  const leaveType = document.getElementById("leaveType").value;
+  const reason = document.getElementById("reason").value;
+
+  const docRadios = document.getElementsByName("hasDocument");
+  const hasDocument = Array.from(docRadios).find(r => r.checked)?.value || "";
+
+  const startDateTime = document.getElementById("startDate").value;
+  const endDateTime = document.getElementById("endDate").value;
+
+  if (!startDateTime || !endDateTime) {
+    alert("กรุณาเลือกช่วงเวลาการลา");
+    return;
+  }
+  const [sDate, sTime] = startDateTime.split("T");
+  const [eDate, eTime] = endDateTime.split("T");
+
+  // รวมวันลา
+  const leaveDisplay = document.getElementById("leaveDaysDisplay").innerText;
+  const leaveDaysMatch = leaveDisplay.match(/รวมวันลา: (\d+(\.\d+)?) วัน/);
+  const leaveDays = leaveDaysMatch ? parseFloat(leaveDaysMatch[1]) : 0;
+
+  if (signaturePad.isEmpty()) {
+    alert("กรุณาเซ็นชื่อก่อนส่ง");
+    return;
+  }
+  const signatureDataUrl = signaturePad.toDataURL("image/png");
+
+  // เตรียมข้อมูลส่ง
+  const payload = {
+    empId, empName, position, department,
+    leaveType, reason,
+    sDate, sTime, eDate, eTime,
+    leaveDays,
+    status: "Pending",
+    createdAt: new Date().toISOString(),
+    signature: signatureDataUrl,
+    hasDocument,
+    lineUserId: leaveSet1[7]
+  };
+
+  fetch(GAS_URL, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.result === "success") {
+      alert("ส่งคำขอเรียบร้อยแล้ว");
+    } else {
+      alert("เกิดข้อผิดพลาด: " + res.error);
     }
-    if (hasEmpty) {
-        alert("กรุณากรอกข้อมูลให้ครบทุกช่อง (กรอบสีแดงคือช่องที่ว่าง)");
-        return;
-    }
-    if (signaturePad.isEmpty()) {
-        alert("กรุณาเซ็นชื่อก่อนส่ง");
-        return;
-    }
-    const leaveDisplay = document.getElementById("leaveDaysDisplay").innerText;
-    const leaveDaysMatch = leaveDisplay.match(/รวมวันลา: (\d+(\.\d+)?) วัน/);
-    const leaveDays = leaveDaysMatch ? parseFloat(leaveDaysMatch[1]) : 0;
-    const leaveSet1 = JSON.parse(localStorage.getItem("leaveSet1"));
-    const leaveType = document.getElementById("leaveType").value;
-    let maxDays = 0;
-    switch (leaveType) {
-        case "AL":
-            maxDays = leaveSet1[3];
-            break;
-        case "SL":
-            maxDays = leaveSet1[4];
-            break;
-        case "BL":
-            maxDays = leaveSet1[5];
-            break;
-    }
-    if (leaveDays > maxDays) {
-        alert(`จำนวนวันลาที่ขอ (${leaveDays}) เกินวันลาคงเหลือ (${maxDays})`);
-        return;
-    }
-    alert("ส่งคำขอเรียบร้อยแล้ว");
+  })
+  .catch(err => {
+    console.error(err);
+    alert("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
+  });
 });
 </script>
 </body>
