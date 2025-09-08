@@ -112,7 +112,7 @@ textarea { min-height: 100px; resize: vertical; }
   </div>
 
   <div class="buttons">
-    <button class="btn"><i class="fas fa-paper-plane"></i> ส่งคำขอ</button>
+    <button class="btn" id="submitBtn"><i class="fas fa-paper-plane"></i> ส่งคำขอ</button>
     <button class="btn btn-secondary"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
   </div>
 </div>
@@ -127,13 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // ใส่ข้อมูลพนักงาน
-  document.getElementById("empId").value = set1[0];       // Column A
-  document.getElementById("empName").value = set1[1];     // Column B
-  document.getElementById("position").value = set1[2];    // Column C
-  document.getElementById("department").value = "BUS";  // Column G
+  document.getElementById("empId").value = set1[0];       
+  document.getElementById("empName").value = set1[1];     
+  document.getElementById("position").value = set1[2];    
+  document.getElementById("department").value = "BUS";  
 
-  // แสดงวันลาคงเหลือใต้ select
   const leaveType = document.getElementById("leaveType");
   const leaveBalanceInfo = document.createElement("div");
   leaveBalanceInfo.style.fontSize = "13px";
@@ -172,7 +170,7 @@ function calculateLeaveDays(sDate, sTime, eDate, eTime) {
   let current = new Date(start); current.setHours(0,0,0,0);
   while(current <= end){
     const dayOfWeek = current.getDay();
-    if(dayOfWeek !== 0){ // skip Sunday
+    if(dayOfWeek !== 0){
       const morningStart = new Date(current); morningStart.setHours(8,0,0,0);
       const morningEnd = new Date(current); morningEnd.setHours(12,0,0,0);
       const afternoonStart = new Date(current); afternoonStart.setHours(13,0,0,0);
@@ -207,7 +205,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   endDate.addEventListener("change", updateLeaveDays);
 });
 
-// --- SignaturePad v4.x ลื่นเหมือนลายมือ ---
+// --- SignaturePad v4.x ---
 const canvas = document.getElementById('signaturePad');
 const signaturePad = new SignaturePad(canvas, {
   backgroundColor: 'rgba(0,0,0,0)',
@@ -216,13 +214,7 @@ const signaturePad = new SignaturePad(canvas, {
   maxWidth: 2.5,
   velocityFilterWeight: 0.7
 });
-
-// ฟังก์ชันล้างลายเซ็น
-function clearSignature() {
-  signaturePad.clear();
-}
-
-// ปรับขนาด canvas ให้เต็ม width container
+function clearSignature() { signaturePad.clear(); }
 function resizeCanvas() {
   const ratio = Math.max(window.devicePixelRatio || 1, 1);
   canvas.width = canvas.offsetWidth * ratio;
@@ -230,9 +222,51 @@ function resizeCanvas() {
   canvas.getContext("2d").scale(ratio, ratio);
   signaturePad.clear();
 }
-
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
+
+// --- ตรวจสอบก่อนส่ง ---
+document.getElementById("submitBtn").addEventListener("click", ()=>{
+  const empName = document.getElementById("empName").value.trim();
+  const empId = document.getElementById("empId").value.trim();
+  const position = document.getElementById("position").value.trim();
+  const department = document.getElementById("department").value.trim();
+  const leaveType = document.getElementById("leaveType").value;
+  const reason = document.getElementById("reason").value.trim();
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+  const leaveDisplay = document.getElementById("leaveDaysDisplay").innerText;
+  
+  // ฟิลด์ว่าง
+  if(!empName || !empId || !position || !department || !leaveType || !reason || !start || !end){
+    alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+    return;
+  }
+
+  // ตรวจสอบลายเซ็น
+  if(signaturePad.isEmpty()){
+    alert("กรุณาเซ็นชื่อก่อนส่ง");
+    return;
+  }
+
+  // ตรวจสอบวันลา
+  const leaveDaysMatch = leaveDisplay.match(/รวมวันลา: (\d+(\.\d+)?) วัน/);
+  const leaveDays = leaveDaysMatch ? parseFloat(leaveDaysMatch[1]) : 0;
+  const leaveSet1 = JSON.parse(localStorage.getItem("leaveSet1"));
+  let maxDays = 0;
+  switch(leaveType){
+    case "AL": maxDays = leaveSet1[3]; break;
+    case "SL": maxDays = leaveSet1[4]; break;
+    case "BL": maxDays = leaveSet1[5]; break;
+  }
+  if(leaveDays > maxDays){
+    alert(`จำนวนวันลาที่ขอ (${leaveDays}) เกินวันลาคงเหลือ (${maxDays})`);
+    return;
+  }
+
+  alert("ส่งคำขอเรียบร้อยแล้ว");
+  // สามารถเพิ่มโค้ดส่งข้อมูลไป server หรือ Google Sheet ต่อที่นี่
+});
 </script>
 </body>
 </html>
