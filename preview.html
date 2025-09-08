@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".btn-submit").addEventListener("click", async () => {
         leaveData.signature = canvas.toDataURL();
         try {
-            const response = await fetch("https://script.google.com/macros/s/AKfycbxbsO6aawtTcBQ1FSVCePsVAL4AZAi7BErDF_W89rs4pNLEhTBc2BdKb025kz3gPczM/exec", {
+            const response = await fetch("https://script.google.com/macros/library/d/1FdMTiI5xUuF0amkBWJmaRNsXmVQwKN9HSJKPsCToUzxv-Vu1_CU6CU7V/12", {
                 method: "POST",
                 body: JSON.stringify(leaveData),
                 headers: { "Content-Type": "application/json" }
