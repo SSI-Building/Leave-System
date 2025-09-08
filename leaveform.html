@@ -402,31 +402,26 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 document.getElementById("submitBtn").addEventListener("click", () => {
-    const fields = [{
-        el: document.getElementById("empName")
-    }, {
-        el: document.getElementById("empId")
-    }, {
-        el: document.getElementById("position")
-    }, {
-        el: document.getElementById("department")
-    }, {
-        el: document.getElementById("leaveType")
-    }, {
-        el: document.getElementById("reason")
-    }, {
-        el: document.getElementById("startDate")
-    }, {
-        el: document.getElementById("endDate")
-    }, ];
+    const fields = [
+        document.getElementById("empName"),
+        document.getElementById("empId"),
+        document.getElementById("position"),
+        document.getElementById("department"),
+        document.getElementById("leaveType"),
+        document.getElementById("reason"),
+        document.getElementById("startDate"),
+        document.getElementById("endDate")
+    ];
+
     let hasEmpty = false;
-    fields.forEach(f => f.el.style.borderColor = '#E0E0E0');
+    fields.forEach(f => f.style.borderColor = '#E0E0E0');
     fields.forEach(f => {
-        if (!f.el.value.trim()) {
-            f.el.style.borderColor = 'red';
+        if (!f.value.trim()) {
+            f.style.borderColor = 'red';
             hasEmpty = true;
         }
     });
+
     const docRadios = document.getElementsByName("hasDocument");
     if (!Array.from(docRadios).some(r => r.checked)) {
         alert("กรุณาเลือกว่ามีเอกสารประกอบหรือไม่");
@@ -440,6 +435,8 @@ document.getElementById("submitBtn").addEventListener("click", () => {
         alert("กรุณาเซ็นชื่อก่อนส่ง");
         return;
     }
+
+    // --- ตรวจสอบจำนวนวันลาไม่เกินสิทธิ ---
     const leaveDisplay = document.getElementById("leaveDaysDisplay").innerText;
     const leaveDaysMatch = leaveDisplay.match(/รวมวันลา: (\d+(\.\d+)?) วัน/);
     const leaveDays = leaveDaysMatch ? parseFloat(leaveDaysMatch[1]) : 0;
@@ -447,21 +444,36 @@ document.getElementById("submitBtn").addEventListener("click", () => {
     const leaveType = document.getElementById("leaveType").value;
     let maxDays = 0;
     switch (leaveType) {
-        case "AL":
-            maxDays = leaveSet1[3];
-            break;
-        case "SL":
-            maxDays = leaveSet1[4];
-            break;
-        case "BL":
-            maxDays = leaveSet1[5];
-            break;
+        case "AL": maxDays = leaveSet1[3]; break;
+        case "SL": maxDays = leaveSet1[4]; break;
+        case "BL": maxDays = leaveSet1[5]; break;
     }
     if (leaveDays > maxDays) {
         alert(`จำนวนวันลาที่ขอ (${leaveDays}) เกินวันลาคงเหลือ (${maxDays})`);
         return;
     }
-    alert("ส่งคำขอเรียบร้อยแล้ว");
+
+    // --- เก็บข้อมูลลง localStorage ---
+    const leaveData = {
+        empId: document.getElementById("empId").value,
+        empName: document.getElementById("empName").value,
+        position: document.getElementById("position").value,
+        department: document.getElementById("department").value,
+        leaveType: leaveType,
+        reason: document.getElementById("reason").value,
+        hasDocument: Array.from(docRadios).find(r => r.checked).value,
+        startDate: document.getElementById("startDate").value.split("T")[0],
+        startTime: document.getElementById("startDate").value.split("T")[1],
+        endDate: document.getElementById("endDate").value.split("T")[0],
+        endTime: document.getElementById("endDate").value.split("T")[1],
+        leaveDays: leaveDays,
+        signatureData: signaturePad.toDataURL()
+    };
+
+    localStorage.setItem("leavePreviewData", JSON.stringify(leaveData));
+
+    // --- ไปหน้า Preview ---
+    window.location.href = "preview.html";
 });
 </script>
 </body>
