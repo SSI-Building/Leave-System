@@ -318,7 +318,29 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("empId").value = set1[0];
   document.getElementById("empName").value = set1[1];
   document.getElementById("position").value = set1[2];
-  document.getElementById("department").value = set1[3];
+  document.getElementById("department").value = "BUS";
+  
+    // --- แสดงสิทธิลาคงเหลือ ---
+    const leaveType = document.getElementById("leaveType");
+    const leaveBalanceInfo = document.createElement("div");
+    leaveBalanceInfo.style.marginTop = "8px";
+    leaveBalanceInfo.style.fontSize = "13px";
+    leaveBalanceInfo.style.color = "#7F8C8D";
+    leaveType.parentNode.appendChild(leaveBalanceInfo);
+
+    function updateLeaveBalance() {
+      let msg = "";
+      switch (leaveType.value) {
+        case "AL": msg = `วันลาพักร้อนคงเหลือ: ${set1[3]} วัน`; break;
+        case "SL": msg = `วันลาป่วยคงเหลือ: ${set1[4]} วัน`; break;
+        case "BL": msg = `วันลากิจคงเหลือ: ${set1[5]} วัน`; break;
+      }
+      leaveBalanceInfo.textContent = msg;
+    }
+
+    leaveType.addEventListener("change", updateLeaveBalance);
+    updateLeaveBalance();
+  
 });
 
 // คำนวณวันลา
