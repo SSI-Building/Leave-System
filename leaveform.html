@@ -207,9 +207,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
   endDate.addEventListener("change", updateLeaveDays);
 });
 
-// สร้าง SignaturePad
+// --- SignaturePad v4.x ลื่นเหมือนลายมือ ---
 const canvas = document.getElementById('signaturePad');
-const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(0,0,0,0)' });
+const signaturePad = new SignaturePad(canvas, {
+  backgroundColor: 'rgba(0,0,0,0)',
+  penColor: 'black',
+  minWidth: 0.5,
+  maxWidth: 2.5,
+  velocityFilterWeight: 0.7
+});
 
 // ฟังก์ชันล้างลายเซ็น
 function clearSignature() {
