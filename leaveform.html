@@ -227,19 +227,31 @@ resizeCanvas();
 
 // --- ตรวจสอบก่อนส่ง ---
 document.getElementById("submitBtn").addEventListener("click", ()=>{
-  const empName = document.getElementById("empName").value.trim();
-  const empId = document.getElementById("empId").value.trim();
-  const position = document.getElementById("position").value.trim();
-  const department = document.getElementById("department").value.trim();
-  const leaveType = document.getElementById("leaveType").value;
-  const reason = document.getElementById("reason").value.trim();
-  const start = document.getElementById("startDate").value;
-  const end = document.getElementById("endDate").value;
-  const leaveDisplay = document.getElementById("leaveDaysDisplay").innerText;
-  
-  // ฟิลด์ว่าง
-  if(!empName || !empId || !position || !department || !leaveType || !reason || !start || !end){
-    alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+  const fields = [
+    {el: document.getElementById("empName")},
+    {el: document.getElementById("empId")},
+    {el: document.getElementById("position")},
+    {el: document.getElementById("department")},
+    {el: document.getElementById("leaveType")},
+    {el: document.getElementById("reason")},
+    {el: document.getElementById("startDate")},
+    {el: document.getElementById("endDate")}
+  ];
+
+  let hasEmpty = false;
+
+  // รีเซ็ตกรอบ
+  fields.forEach(f => f.el.style.borderColor = '#E0E0E0');
+
+  fields.forEach(f => {
+    if(!f.el.value.trim()){
+      f.el.style.borderColor = 'red';
+      hasEmpty = true;
+    }
+  });
+
+  if(hasEmpty){
+    alert("กรุณากรอกข้อมูลให้ครบทุกช่อง (กรอบสีแดงคือช่องที่ว่าง)");
     return;
   }
 
@@ -250,9 +262,11 @@ document.getElementById("submitBtn").addEventListener("click", ()=>{
   }
 
   // ตรวจสอบวันลา
+  const leaveDisplay = document.getElementById("leaveDaysDisplay").innerText;
   const leaveDaysMatch = leaveDisplay.match(/รวมวันลา: (\d+(\.\d+)?) วัน/);
   const leaveDays = leaveDaysMatch ? parseFloat(leaveDaysMatch[1]) : 0;
   const leaveSet1 = JSON.parse(localStorage.getItem("leaveSet1"));
+  const leaveType = document.getElementById("leaveType").value;
   let maxDays = 0;
   switch(leaveType){
     case "AL": maxDays = leaveSet1[3]; break;
@@ -265,8 +279,8 @@ document.getElementById("submitBtn").addEventListener("click", ()=>{
   }
 
   alert("ส่งคำขอเรียบร้อยแล้ว");
-  // สามารถเพิ่มโค้ดส่งข้อมูลไป server หรือ Google Sheet ต่อที่นี่
 });
+
 </script>
 </body>
 </html>
