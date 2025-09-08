@@ -462,36 +462,6 @@ document.getElementById("submitBtn").addEventListener("click", () => {
         return;
     }
     alert("ส่งคำขอเรียบร้อยแล้ว");
-  // ---------------- เพิ่มโค้ดส่งไป Google Sheet ----------------
-const start = document.getElementById("startDate").value.split("T");
-const end = document.getElementById("endDate").value.split("T");
-
-const payload = {
-    empId: document.getElementById("empId").value,
-    empName: document.getElementById("empName").value,
-    position: document.getElementById("position").value,
-    department: document.getElementById("department").value,
-    leaveType: document.getElementById("leaveType").value,
-    startDate: start[0],
-    startTime: start[1],
-    endDate: end[0],
-    endTime: end[1],
-    leaveDays: leaveDays,
-    status: "pending",
-    submittedAt: new Date().toISOString(),
-    reason: document.getElementById("reason").value,
-    signature: signaturePad.toDataURL(),
-    hasDocument: document.querySelector("input[name='hasDocument']:checked").value === "มี" ? "Yes" : "No"
-};
-
-fetch("https://script.google.com/macros/s/AKfycbxbsO6aawtTcBQ1FSVCePsVAL4AZAi7BErDF_W89rs4pNLEhTBc2BdKb025kz3gPczM/exec", {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" }
-})
-.then(res => res.json())
-.then(data => console.log("ส่งสำเร็จ:", data))
-.catch(err => console.error("เกิดข้อผิดพลาด:", err));
 });
 </script>
 </body>
