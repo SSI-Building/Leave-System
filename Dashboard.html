@@ -50,7 +50,7 @@ body.theme-monochrome {
 body.theme-dark {
   --primary-color-start: #141E30;
   --primary-color-end: #243B55;
-  --text-color: #eee;
+  --text-color: #fff;
   --light-text-color: #bbb;
   --background-color: #181818;
   --card-background: #242424;
@@ -98,15 +98,16 @@ body {
   transition: all 0.3s ease;
 }
 .theme-option:hover { background: var(--background-color); }
-.theme-save-btn {
-  width:100%; padding:10px; margin-top:10px;
-  border:none; border-radius:6px;
-  background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
-  color:#fff; font-weight:600; cursor:pointer;
-  transition: all 0.3s ease;
-  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+.theme-preview {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+    background: linear-gradient(45deg, var(--color-start), var(--color-end));
 }
-.theme-save-btn:hover { opacity:0.9; transform:translateY(-1px); }
+
 
 /* Tabs */
 .tabs-container { background: var(--card-background); padding:10px; border-radius:12px; box-shadow: var(--shadow-light); margin-bottom:20px; }
@@ -157,6 +158,9 @@ tr:last-child td { border-bottom:none; }
   align-items: center;
   z-index: 9999;
   transition: opacity 0.3s ease;
+}
+body.theme-dark .loading-screen {
+    background-color: rgba(24, 24, 24, 0.9);
 }
 
 .spinner {
@@ -234,34 +238,26 @@ async function loadDashboard() {
 document.addEventListener("DOMContentLoaded", ()=>{
   loadDashboard();
 
-  const savedTheme = localStorage.getItem('theme');
-  if(savedTheme && savedTheme !== 'default'){
-    document.body.classList.add('theme-'+savedTheme);
-    selectedTheme = savedTheme;
+  // Load saved theme from localStorage
+  const savedTheme = localStorage.getItem('selectedTheme');
+  if (savedTheme) {
+      document.body.className = savedTheme;
   }
+  
+  const settingsIcon = document.getElementById('settingsIcon');
+  const themeSelector = document.getElementById('themeSelector');
 
-  document.getElementById('settingsIcon').addEventListener('click', ()=>{
-    document.getElementById('themeSelector').classList.toggle('active');
+  settingsIcon.addEventListener('click', () => {
+      themeSelector.classList.toggle('active');
   });
 
-  document.querySelectorAll('.theme-option').forEach(option=>{
-    option.addEventListener('click', function(){
-      selectedTheme = this.getAttribute('data-theme');
-      document.body.className = '';
-      if(selectedTheme !== 'default'){
-        document.body.classList.add('theme-'+selectedTheme);
-      }
-    });
-  });
-
-  document.getElementById('saveThemeBtn').addEventListener('click', ()=>{
-    if(selectedTheme){
-      localStorage.setItem('theme', selectedTheme);
-      alert('บันทึกธีมเรียบร้อยแล้ว!');
-      document.getElementById('themeSelector').classList.remove('active');
-    } else {
-      alert('กรุณาเลือกธีมก่อนบันทึก');
-    }
+  document.querySelectorAll('.theme-option').forEach(option => {
+      option.addEventListener('click', function() {
+          const theme = this.getAttribute('data-theme');
+          document.body.className = theme;
+          localStorage.setItem('selectedTheme', theme); // บันทึกอัตโนมัติ
+          themeSelector.classList.remove('active'); // ปิด dropdown หลังเลือก
+      });
   });
 });
 
@@ -289,16 +285,33 @@ function openTab(evt, tabId){
   </div>
 
   <div class="theme-selector" id="themeSelector">
-    <div class="theme-option" data-theme="default">Default color (Blue-Green)</div>
-    <div class="theme-option" data-theme="orange-purple">Orange-Purple</div>
-    <div class="theme-option" data-theme="blue-violet">Blue-Purple</div>
-    <div class="theme-option" data-theme="pink-purple">Pink-Purple</div>
-    <div class="theme-option" data-theme="green-gold">Green-Gold</div>
-    <div class="theme-option" data-theme="red-orange">Red-Orange</div>
-    <div class="theme-option" data-theme="teal-navy">Teal-Navy</div>
-    <div class="theme-option" data-theme="monochrome">Monochrome</div>
-    <div class="theme-option" data-theme="dark">Dark Mode</div>
-    <button id="saveThemeBtn" class="theme-save-btn">Save Theme</button>
+    <div class="theme-option" data-theme="theme-default">
+      <span class="theme-preview" style="--color-start: #1994b6; --color-end: #36a761;"></span>Default color (Blue-Green)
+    </div>
+    <div class="theme-option" data-theme="theme-orange-purple">
+      <span class="theme-preview" style="--color-start: #ff7e5f; --color-end: #6a11cb;"></span>Orange-Purple
+    </div>
+    <div class="theme-option" data-theme="theme-blue-violet">
+      <span class="theme-preview" style="--color-start: #36d1dc; --color-end: #5b86e5;"></span>Blue-Purple
+    </div>
+    <div class="theme-option" data-theme="theme-pink-purple">
+      <span class="theme-preview" style="--color-start: #ff758c; --color-end: #8e44ad;"></span>Pink-Purple
+    </div>
+    <div class="theme-option" data-theme="theme-green-gold">
+      <span class="theme-preview" style="--color-start: #11998e; --color-end: #fbc531;"></span>Green-Gold
+    </div>
+    <div class="theme-option" data-theme="theme-red-orange">
+      <span class="theme-preview" style="--color-start: #f12711; --color-end: #f5af19;"></span>Red-Orange
+    </div>
+    <div class="theme-option" data-theme="theme-teal-navy">
+      <span class="theme-preview" style="--color-start: #2b5876; --color-end: #4e4376;"></span>Teal-Navy
+    </div>
+    <div class="theme-option" data-theme="theme-monochrome">
+      <span class="theme-preview" style="--color-start: #555; --color-end: #999;"></span>Monochrome
+    </div>
+    <div class="theme-option" data-theme="theme-dark">
+      <span class="theme-preview" style="--color-start: #141E30; --color-end: #243B55;"></span>Dark Mode
+    </div>
   </div>
 
   <div class="tabs-container">
