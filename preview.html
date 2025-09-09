@@ -1,142 +1,232 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Preview การลา</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-body {
-    font-family: 'Prompt', sans-serif;
-    background: #f0f2f5;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview การลา</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #50E3C2;
+            --text-color: #2c3e50;
+            --sub-text-color: #7f8c8d;
+            --background-color: #f0f4f8;
+            --card-background: #ffffff;
+            --border-color: #e0e6ed;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition-speed: 0.3s;
+        }
 
-.container {
-    max-width: 700px;
-    width: 100%;
-    background: #fff;
-    padding: 30px 35px;
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-    position: relative;
-}
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: var(--background-color);
+            margin: 0;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
 
-h2 {
-    text-align: center;
-    color: #4A90E2;
-    margin-bottom: 35px;
-    position: relative;
-}
-h2::after {
-    content: '';
-    width: 100px;
-    height: 4px;
-    background-color: #50E3C2;
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 2px;
-}
+        .container {
+            max-width: 720px;
+            width: 100%;
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background: #fafafa;
-    border-radius: 15px;
-    border: 1px solid #e0e0e0;
-}
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            font-size: 2rem;
+            font-weight: 600;
+            position: relative;
+        }
 
-.section-title {
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #2c3e50;
-    font-size: 16px;
-    border-bottom: 1px solid #dfe3e6;
-    padding-bottom: 5px;
-}
+        h2::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: var(--background-color);
+            border-radius: 18px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .section:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
 
-.label {
-    font-weight: 500;
-    color: #7f8c8d;
-    margin-top: 10px;
-    display: block;
-    font-size: 14px;
-}
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-.value {
-    font-size: 15px;
-    margin-bottom: 10px;
-    color: #2c3e50;
-    display: block;
-    word-break: break-word;
-}
+        .section-title::before {
+            content: '•';
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            line-height: 1;
+        }
 
-.canvas-container {
-    border: 2px dashed #ccc;
-    border-radius: 10px;
-    height: 180px;
-    overflow: hidden;
-}
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
 
-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
+        .data-item {
+            display: flex;
+            flex-direction: column;
+        }
 
-.buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 25px;
-}
+        .label {
+            font-weight: 500;
+            color: var(--sub-text-color);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
 
-.btn {
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    flex: 1;
-    color: #fff;
-    font-size: 15px;
-    transition: all 0.3s ease;
-}
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
+        .value {
+            font-size: 1rem;
+            color: var(--text-color);
+            font-weight: 400;
+            word-break: break-word;
+            padding-left: 5px;
+            line-height: 1.5;
+        }
 
-.btn-primary { background: #4A90E2; }
-.btn-secondary { background: #B0B9C2; }
+        .canvas-container {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            height: 200px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fcfcfc;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
 
-#loadingOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    color: #4A90E2;
-    font-weight: 600;
-    border-radius: 20px;
-    display: none;
-}
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
 
-@media(max-width: 650px) {
-    .container { padding: 20px; }
-    .buttons { flex-direction: column; }
-}
-</style>
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            color: var(--card-background);
+            font-size: 1.1rem;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary { 
+            background: var(--primary-color); 
+        }
+
+        .btn-secondary { 
+            background: #B0B9C2; 
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #loadingOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            border-radius: 25px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: var(--primary-color);
+            animation: spin 1s ease infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media(max-width: 650px) {
+            .container { 
+                padding: 30px 20px; 
+                border-radius: 20px;
+            }
+            .buttons { 
+                flex-direction: column; 
+                gap: 15px;
+            }
+            h2 { font-size: 1.8rem; }
+            .btn { font-size: 1rem; }
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -144,30 +234,54 @@ canvas {
 
     <div class="section">
         <div class="section-title">ข้อมูลพนักงาน</div>
-        <span class="label">ชื่อ-สกุล:</span>
-        <span class="value" id="empName"></span>
-        <span class="label">รหัสพนักงาน:</span>
-        <span class="value" id="empId"></span>
-        <span class="label">ตำแหน่ง:</span>
-        <span class="value" id="position"></span>
-        <span class="label">ฝ่าย:</span>
-        <span class="value" id="department"></span>
+        <div class="data-grid">
+            <div class="data-item">
+                <span class="label">ชื่อ-สกุล:</span>
+                <span class="value" id="empName"></span>
+            </div>
+            <div class="data-item">
+                <span class="label">รหัสพนักงาน:</span>
+                <span class="value" id="empId"></span>
+            </div>
+            <div class="data-item">
+                <span class="label">ตำแหน่ง:</span>
+                <span class="value" id="position"></span>
+            </div>
+            <div class="data-item">
+                <span class="label">ฝ่าย:</span>
+                <span class="value" id="department"></span>
+            </div>
+        </div>
     </div>
 
     <div class="section">
         <div class="section-title">รายละเอียดการลา</div>
-        <span class="label">ประเภทการลา:</span>
-        <span class="value" id="leaveTypeDisplay"></span>
-        <span class="label">จำนวนวันลา:</span>
-        <span class="value" id="leaveDaysDisplay"></span>
-        <span class="label">เหตุผล:</span>
-        <span class="value" id="reasonDisplay"></span>
-        <span class="label">เอกสารประกอบ:</span>
-        <span class="value" id="hasDocumentDisplay"></span>
-        <span class="label">ตั้งแต่:</span>
-        <span class="value" id="startDisplay"></span>
-        <span class="label">ถึง:</span>
-        <span class="value" id="endDisplay"></span>
+        <div class="data-grid">
+            <div class="data-item">
+                <span class="label">ประเภทการลา:</span>
+                <span class="value" id="leaveTypeDisplay"></span>
+            </div>
+            <div class="data-item">
+                <span class="label">จำนวนวันลา:</span>
+                <span class="value" id="leaveDaysDisplay"></span>
+            </div>
+            <div class="data-item">
+                <span class="label">เหตุผล:</span>
+                <span class="value" id="reasonDisplay"></span>
+            </div>
+            <div class="data-item">
+                <span class="label">เอกสารประกอบ:</span>
+                <span class="value" id="hasDocumentDisplay"></span>
+            </div>
+            <div class="data-item">
+                <span class="label">ตั้งแต่:</span>
+                <span class="value" id="startDisplay"></span>
+            </div>
+            <div class="data-item">
+                <span class="label">ถึง:</span>
+                <span class="value" id="endDisplay"></span>
+            </div>
+        </div>
     </div>
 
     <div class="section">
@@ -182,7 +296,10 @@ canvas {
         <button class="btn btn-primary" id="btnSubmit">ยืนยันและส่ง</button>
     </div>
 
-    <div id="loadingOverlay">กำลังส่งข้อมูล...</div>
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        กำลังส่งข้อมูล...
+    </div>
 </div>
 
 <script>
