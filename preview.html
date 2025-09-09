@@ -33,23 +33,15 @@
 
       fetch(url, {
         method: "POST",
+        mode: "no-cors",   // 👈 ใส่ตรงนี้
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
       })
       .then(res => {
-        console.log("Response Status:", res.status);
-        return res.text(); // ใช้ text() ก่อน กันกรณี response ไม่ใช่ JSON
-      })
-      .then(txt => {
-        console.log("Response Raw:", txt);
-        try {
-          const json = JSON.parse(txt);
-          console.log("Response JSON:", json);
-        } catch (e) {
-          console.warn("ไม่สามารถ parse JSON:", e);
-        }
+        // ⚠️ no-cors จะไม่สามารถอ่าน response ได้
+        console.log("ส่งเรียบร้อย ✅ (แต่จะอ่าน response ไม่ได้)");
       })
       .catch(err => {
         console.error("Fetch Error:", err);
