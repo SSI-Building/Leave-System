@@ -1,52 +1,82 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <title>Preview Test</title>
-</head>
-<body>
-  <h2>ทดสอบส่งข้อมูลไป Google Apps Script</h2>
-  <button id="sendBtn">ส่งข้อมูล</button>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // ตรวจสอบข้อมูลจาก localStorage
+    let leaveData = localStorage.getItem("leavePreviewData");
+    if (!leaveData) {
+        alert("ไม่พบข้อมูลการลา กรุณากรอกข้อมูลก่อน");
+        window.location.href = "leaveform.html";
+        return;
+    }
+    leaveData = JSON.parse(leaveData);
 
-  <script>
-    document.getElementById("sendBtn").addEventListener("click", () => {
-      // ✅ ข้อมูลทดสอบ
-      const data = {
-        empId: "1234",
-        empName: "นายทดสอบ",
-        position: "Programmer",
-        department: "IT",
-        leaveType: "Vacation",
-        startDate: "2025-09-09T08:00:00",
-        endDate: "2025-09-09T17:00:00",
-        leaveDays: 1,
-        reason: "ไปธุระ",
-        hasDocument: "ไม่มี",
-        signature: "" // ถ้ามี base64 ค่อยใส่
-      };
+    // ข้อมูลพนักงาน
+    document.getElementById("empName").textContent = leaveData.empName || "";
+    document.getElementById("empId").textContent = leaveData.empId || "";
+    document.getElementById("position").textContent = leaveData.position || "";
+    document.getElementById("department").textContent = leaveData.department || "";
 
-      // ✅ ใส่ URL ของ Web App ที่ Deploy แล้ว (ต้องเป็น /exec)
-      const url = "https://script.google.com/macros/s/AKfycbwviyKkV7geROoSiWGxPy0HtqFvjOtXF4SXR2SdXTPoGRDyrfwSIe0bxfelBmtYlfl4/exec";
+    // รายละเอียดการลา
+    const leaveTypeMap = { AL: "ลาพักร้อน", SL: "ลาป่วย", BL: "ลากิจ", Vacation: "ลาพักร้อน" };
+    document.getElementById("leaveTypeDisplay").textContent = leaveTypeMap[leaveData.leaveType] || "";
+    document.getElementById("hasDocumentDisplay").textContent = leaveData.hasDocument || "";
+    document.getElementById("reasonDisplay").textContent = leaveData.reason || "";
 
-      console.log("กำลังส่งไปที่:", url);
-      console.log("Data ที่ส่ง:", data);
+    // ระยะเวลาการลา
+    const startDateTime = new Date(`${leaveData.startDate}T${leaveData.startTime}`);
+    const endDateTime = new Date(`${leaveData.endDate}T${leaveData.endTime}`);
+    const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
+    const optionsTime = { hour: '2-digit', minute: '2-digit' };
+    document.getElementById("startDisplay").textContent =
+        `${startDateTime.toLocaleDateString('th-TH', optionsDate)} เวลา ${startDateTime.toLocaleTimeString('th-TH', optionsTime)}`;
+    document.getElementById("endDisplay").textContent =
+        `${endDateTime.toLocaleDateString('th-TH', optionsDate)} เวลา ${endDateTime.toLocaleTimeString('th-TH', optionsTime)}`;
+    document.getElementById("leaveDaysDisplay").textContent = `${leaveData.leaveDays || 0} วัน`;
 
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",   // 👈 ใส่ตรงนี้
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      .then(res => {
-        // ⚠️ no-cors จะไม่สามารถอ่าน response ได้
-        console.log("ส่งเรียบร้อย ✅ (แต่จะอ่าน response ไม่ได้)");
-      })
-      .catch(err => {
-        console.error("Fetch Error:", err);
-      });
+    // แสดงลายเซ็นบน canvas
+    const canvas = document.getElementById("signaturePreview");
+    const ctx = canvas.getContext("2d");
+    if (leaveData.signatureData) {
+        const img = new Image();
+        img.onload = () => {
+            const ratio = window.devicePixelRatio || 1;
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            ctx.scale(ratio, ratio);
+            ctx.drawImage(img, 0, 0, canvas.offsetWidth, canvas.offsetHeight);
+        };
+        img.src = leaveData.signatureData;
+    }
+
+    // ปุ่มแก้ไข
+    document.querySelector(".btn-edit").addEventListener("click", () => {
+        window.location.href = "leaveform.html";
     });
-  </script>
-</body>
-</html>
+
+    // ปุ่มยืนยันและส่ง
+    document.querySelector(".btn-submit").addEventListener("click", () => {
+        leaveData.signature = canvas.toDataURL();
+
+        // URL Google Apps Script ของคุณ (ต้องเป็น /exec)
+        const url = "https://script.google.com/macros/s/AKfycbwviyKkV7geROoSiWGxPy0HtqFvjOtXF4SXR2SdXTPoGRDyrfwSIe0bxfelBmtYlfl4/exec";
+
+        fetch(url, {
+            method: "POST",
+            mode: "no-cors", // ป้องกัน CORS
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(leaveData)
+        })
+        .then(() => {
+            // ⚠️ no-cors จะไม่สามารถอ่าน response ได้
+            alert("ส่งคำขอเรียบร้อยแล้ว");
+            localStorage.removeItem("leavePreviewData");
+            window.location.href = "Dashboard.html";
+        })
+        .catch(err => {
+            console.error("Fetch Error:", err);
+            alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+        });
+    });
+});
+</script>
