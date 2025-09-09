@@ -43,7 +43,7 @@
       try {
         await liff.init({ liffId: "2007956727-6V7DrnMD" }); // ใส่ LIFF ID ของคุณ
         const profile = await liff.getProfile();
-        const lineUserId = profile.userId;
+        const lineUserId = "U8c0b01f75527c50232ee1ff613363af9";
 
         const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
         const resp = await fetch(webAppUrl);
