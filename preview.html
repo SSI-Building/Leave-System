@@ -5,40 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preview การลา</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ===== Theme Variables (จาก leaveform.html) ===== */
         :root {
-            --primary-color: #4A90E2;
-            --secondary-color: #50E3C2;
-            --text-color-dark: #2C3E50;
-            --text-color-light: #7F8C8D;
-            --background-color: #F8F9FA;
-            --card-background: #FFFFFF;
-            --shadow-color: rgba(0, 0, 0, 0.08);
-            --border-color: #E0E0E0;
+            --primary-color-start: #1994b6;
+            --primary-color-end: #36a761;
+            --text-color-dark: #333;
+            --text-color-light: #666;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
+            --border-color: #e0e0e0;
             --focus-ring-color: rgba(74, 144, 226, 0.2);
             --transition-speed: 0.4s;
         }
 
+        body.theme-dark {
+            --primary-color-start: #141E30;
+            --primary-color-end: #243B55;
+            --text-color-dark: #fff;
+            --text-color-light: #bbb;
+            --background-color: #181818;
+            --card-background: #242424;
+            --border-color: #444;
+            --shadow-light: 0 4px 15px rgba(255,255,255,0.08);
+            --focus-ring-color: rgba(36, 59, 85, 0.2);
+        }
+
+        body.theme-orange-purple { --primary-color-start: #ff7e5f; --primary-color-end: #6a11cb; }
+        body.theme-blue-violet { --primary-color-start: #36d1dc; --primary-color-end: #5b86e5; }
+        body.theme-pink-purple { --primary-color-start: #ff758c; --primary-color-end: #8e44ad; }
+        body.theme-green-gold { --primary-color-start: #11998e; --primary-color-end: #fbc531; }
+        body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
+        body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
+        body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
+
+        /* ===== Base Styles ===== */
         body {
             font-family: 'Prompt', sans-serif;
             background: var(--background-color);
             margin: 0;
-            padding: 20px 15px; /* ลด padding เพื่อให้มีพื้นที่มากขึ้น */
+            padding: 20px 15px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
             color: var(--text-color-dark);
-            box-sizing: border-box; /* สำคัญมากสำหรับ responsive design */
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
-            max-width: 600px; /* ลด max-width เพื่อให้ดูดีขึ้นบนมือถือ */
+            max-width: 600px;
             width: 100%;
             background: var(--card-background);
-            padding: 25px 20px; /* ลด padding */
+            padding: 25px 20px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-light);
             position: relative;
             animation: fadeIn 0.8s ease-out;
             overflow: hidden;
@@ -52,104 +76,80 @@
 
         h2 {
             text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 25px; /* ลด margin */
-            font-size: 1.6rem; /* ปรับขนาดให้เล็กลง */
             font-weight: 700;
+            margin-bottom: 30px;
+            font-size: 1.8em;
             position: relative;
+            background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        h2::after {
-            content: '';
-            width: 60px; /* ปรับขนาดให้เล็กลง */
-            height: 4px;
-            background-color: var(--secondary-color);
-            position: absolute;
-            bottom: -10px; /* เลื่อนขึ้น */
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 2px;
+        h2 i {
+            -webkit-text-fill-color: var(--primary-color-end);
+        }
+        body.theme-dark h2 {
+            -webkit-text-fill-color: var(--text-color-dark);
+            background: none;
+        }
+        body.theme-dark h2 i {
+            color: var(--primary-color-end);
         }
 
         .section {
-            margin-bottom: 20px; /* ลด margin */
-            padding: 20px; /* ลด padding */
-            background: #fdfdfd;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: var(--background-color);
             border-radius: 15px;
             border: 1px solid var(--border-color);
             transition: all var(--transition-speed) ease;
         }
         
-        .section:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
         .section-title {
+            font-size: 1.1em;
             font-weight: 600;
-            margin-bottom: 15px; /* ลด margin */
             color: var(--text-color-dark);
-            font-size: 1rem; /* ปรับขนาดให้เล็กลงเล็กน้อย */
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 8px; /* ลด padding */
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 10px; /* ลด gap */
+            gap: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
         }
-
-        .section-title::before {
-            content: '•';
-            color: var(--secondary-color);
-            font-size: 1.2rem; /* ปรับขนาดให้เล็กลง */
-            line-height: 1;
+        .section-title i {
+            color: var(--primary-color-end);
         }
 
         .data-item {
             display: flex;
-            flex-direction: column;
-            margin-bottom: 10px; /* ลด margin */
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         .label {
             font-weight: 500;
             color: var(--text-color-light);
-            font-size: 0.85rem; /* ปรับขนาดให้เล็กลง */
-            margin-bottom: 3px; /* ลด margin */
-        }
-
-        .value {
-            font-size: 0.95rem; /* ปรับขนาดให้เล็กลง */
-            color: var(--text-color-dark);
-            font-weight: 400;
-            word-break: break-word;
-            line-height: 1.4; /* ปรับ line-height */
-        }
-        
-        /* สลับการแสดงผล label และ value บนมือถือเพื่อความกะทัดรัด */
-        .data-item {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 10px;
-        }
-        
-        .label {
-            margin-bottom: 0;
+            font-size: 0.9rem;
             flex-shrink: 0;
         }
-        
-        .value {
-            text-align: right;
-            font-weight: 500;
-            color: var(--text-color-dark);
-        }
 
+        .value {
+            font-size: 0.95rem;
+            color: var(--text-color-dark);
+            font-weight: 500;
+            word-break: break-word;
+            line-height: 1.4;
+            text-align: right;
+        }
+        
         .canvas-container {
             border: 2px dashed var(--border-color);
             border-radius: 12px;
-            height: 150px; /* ลดความสูง */
+            height: 150px;
             overflow: hidden;
-            background-color: #fafafa;
+            background-color: var(--card-background);
+            transition: all 0.3s ease;
         }
         
         canvas {
@@ -160,32 +160,42 @@
 
         .buttons {
             display: flex;
-            gap: 15px; /* ลด gap */
+            flex-direction: column;
+            gap: 10px;
             justify-content: center;
-            margin-top: 30px; /* ลด margin */
+            margin-top: 30px;
         }
 
         .btn {
             flex: 1;
-            padding: 15px; /* ลด padding */
+            padding: 15px;
             border: none;
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 1rem; /* ปรับขนาดให้เล็กลง */
+            font-size: 1rem;
             color: #fff;
             box-shadow: 0 6px 15px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-primary { 
-            background: var(--primary-color); 
+            background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        body.theme-dark .btn-primary {
+             background: linear-gradient(45deg, var(--primary-color-end), var(--primary-color-start));
         }
 
         .btn-secondary { 
             background: #B0B9C2; 
+            box-shadow: none;
         }
-
+        
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
@@ -195,7 +205,7 @@
             transform: translateY(0);
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        
+
         #loadingOverlay {
             position: absolute;
             top: 0;
@@ -208,12 +218,16 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
-            color: var(--primary-color);
+            color: var(--text-color-dark);
             font-weight: 600;
             border-radius: 20px;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.4s ease, visibility 0s 0.4s;
+            z-index: 1000;
+        }
+        body.theme-dark #loadingOverlay {
+             background: rgba(24, 24, 24, 0.95);
         }
 
         #loadingOverlay.visible {
@@ -225,8 +239,8 @@
         .spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid #e0e6ed;
-            border-top-color: var(--primary-color);
+            border: 5px solid var(--border-color);
+            border-top-color: var(--primary-color-end);
             border-radius: 50%;
             animation: spin 1s cubic-bezier(0.5, 0.25, 0.75, 1) infinite;
             margin-bottom: 15px;
@@ -248,17 +262,19 @@
             50% { transform: scale(1.05); opacity: 0.8; }
         }
 
-        /* ไม่ต้องใช้ @media(max-width: 650px) แล้ว เพราะการออกแบบใหม่รองรับ mobile-first */
-        /* การจัดเรียง .data-item ในบรรทัดเดียวกันจะทำให้หน้าสั้นลงมาก */
-
+        @media(min-width: 480px) {
+            .buttons {
+                flex-direction: row;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>Preview การลา</h2>
+    <h2>Preview การลา <i class="fas fa-search"></i></h2>
 
     <div class="section">
-        <div class="section-title">ข้อมูลพนักงาน</div>
+        <div class="section-title"><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</div>
         <div class="data-item">
             <span class="label">ชื่อ-สกุล:</span>
             <span class="value" id="empName"></span>
@@ -278,7 +294,7 @@
     </div>
 
     <div class="section">
-        <div class="section-title">รายละเอียดการลา</div>
+        <div class="section-title"><i class="fas fa-file-alt"></i> รายละเอียดการลา</div>
         <div class="data-item">
             <span class="label">ประเภทการลา:</span>
             <span class="value" id="leaveTypeDisplay"></span>
@@ -306,15 +322,15 @@
     </div>
 
     <div class="section">
-        <div class="section-title">ลายเซ็น</div>
+        <div class="section-title"><i class="fas fa-signature"></i> ลายเซ็น</div>
         <div class="canvas-container">
             <canvas id="signaturePreview"></canvas>
         </div>
     </div>
 
     <div class="buttons">
-        <button class="btn btn-secondary" id="btnEdit">แก้ไข</button>
-        <button class="btn btn-primary" id="btnSubmit">ยืนยันและส่ง</button>
+        <button class="btn btn-secondary" id="btnEdit"><i class="fas fa-edit"></i> แก้ไข</button>
+        <button class="btn btn-primary" id="btnSubmit"><i class="fas fa-paper-plane"></i> ยืนยันและส่ง</button>
     </div>
 
     <div id="loadingOverlay">
@@ -325,6 +341,12 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    // โหลดธีมจาก localStorage ทันทีที่ DOM โหลดเสร็จ
+    const savedTheme = localStorage.getItem('selectedTheme');
+    if (savedTheme) {
+        document.body.className = savedTheme;
+    }
+
     let leaveData = localStorage.getItem("leavePreviewData");
     if (!leaveData) {
         alert("ไม่พบข้อมูลการลา กรุณากรอกข้อมูลก่อน");
@@ -348,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // แปลง startDate / startTime / endDate / endTime เป็น format yyyy-MM-dd / HH:mm
     const startDateTime = new Date(`${leaveData.startDate}T${leaveData.startTime}`);
-    const endDateTime   = new Date(`${leaveData.endDate}T${leaveData.endTime}`);
+    const endDateTime = new Date(`${leaveData.endDate}T${leaveData.endTime}`);
 
     const startDateStr = startDateTime.getFullYear() + '-' +
         String(startDateTime.getMonth()+1).padStart(2,'0') + '-' +
@@ -363,8 +385,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     leaveData.startDateFormatted = startDateStr;
     leaveData.startTimeFormatted = startTimeStr;
-    leaveData.endDateFormatted   = endDateStr;
-    leaveData.endTimeFormatted   = endTimeStr;
+    leaveData.endDateFormatted = endDateStr;
+    leaveData.endTimeFormatted = endTimeStr;
 
     // แสดง start / end ใน preview
     const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
