@@ -3,10 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History</title>
+    <title>ประวัติการลา</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== Theme Variables ===== */
+        :root {
+            --primary-color-start: #1994b6;
+            --primary-color-end: #36a761;
+            --text-color-dark: #333;
+            --text-color-light: #666;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
+            --border-color: #e0e0e0;
+        }
+
+        body.theme-dark {
+            --primary-color-start: #141E30;
+            --primary-color-end: #243B55;
+            --text-color-dark: #fff;
+            --text-color-light: #bbb;
+            --background-color: #181818;
+            --card-background: #242424;
+            --border-color: #444;
+            --shadow-light: 0 4px 15px rgba(255,255,255,0.08);
+        }
+
+        /* General Theme Variants */
+        body.theme-orange-purple { --primary-color-start: #ff7e5f; --primary-color-end: #6a11cb; }
+        body.theme-blue-violet { --primary-color-start: #36d1dc; --primary-color-end: #5b86e5; }
+        body.theme-pink-purple { --primary-color-start: #ff758c; --primary-color-end: #8e44ad; }
+        body.theme-green-gold { --primary-color-start: #11998e; --primary-color-end: #fbc531; }
+        body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
+        body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
+        body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
+        
+        /* ===== Base Styles ===== */
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: var(--background-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        h2 i {
+            -webkit-text-fill-color: var(--primary-color-end);
+        }
+        body.theme-dark h2 {
+            -webkit-text-fill-color: var(--text-color-dark);
+            background: none;
+        }
+        body.theme-dark h2 i {
+            color: var(--primary-color-end);
+        }
+        
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .history-card {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .history-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--text-color-dark);
+            flex-grow: 1;
+        }
+
+        .card-status {
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.8em;
+            color: #fff;
+        }
+        .status-pending { background-color: #ffc107; }
+        .status-approved { background-color: #4caf50; }
+        .status-rejected { background-color: #f44336; }
+
+        .card-info {
+            font-size: 0.9em;
+            color: var(--text-color-light);
+            line-height: 1.6;
+        }
+        .card-info strong {
+            color: var(--text-color-dark);
+        }
+
+        .card-actions {
+            margin-top: 15px;
+            text-align: right;
+        }
+        .detail-link {
+            text-decoration: none;
+            color: var(--primary-color-end);
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+        .detail-link:hover {
+            color: var(--primary-color-start);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #fff;
+            background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+        
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-color-light);
+            box-shadow: none;
+        }
+        body.theme-dark .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-color-dark);
+        }
+        .btn-secondary:hover {
+            background: #d5d5d5;
+            color: #333;
+        }
+        body.theme-dark .btn-secondary:hover {
+            background: #555;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-    <h1>History</h1>
-    <p>History</p>
+    <div class="container">
+        <h2><i class="fas fa-history"></i> ประวัติการลา</h2>
+        
+        <div class="history-list" id="historyList">
+            <div class="history-card">
+                <div class="card-header">
+                    <span class="card-title">ลาป่วย</span>
+                    <span class="card-status status-pending">รออนุมัติ</span>
+                </div>
+                <div class="card-info">
+                    <p><strong>ยื่นวันที่:</strong> 15 ส.ค. 2568</p>
+                    <p><strong>ตั้งแต่วันที่:</strong> 16 ส.ค. 2568 - 17 ส.ค. 2568</p>
+                    <p><strong>รวม:</strong> 2 วัน</p>
+                </div>
+                <div class="card-actions">
+                    <a href="#" class="detail-link">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+
+            <div class="history-card">
+                <div class="card-header">
+                    <span class="card-title">ลาพักร้อน</span>
+                    <span class="card-status status-approved">อนุมัติแล้ว</span>
+                </div>
+                <div class="card-info">
+                    <p><strong>ยื่นวันที่:</strong> 25 ก.ค. 2568</p>
+                    <p><strong>ตั้งแต่วันที่:</strong> 1 ส.ค. 2568 - 2 ส.ค. 2568</p>
+                    <p><strong>รวม:</strong> 2 วัน</p>
+                </div>
+                <div class="card-actions">
+                    <a href="#" class="detail-link">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+
+            <div class="history-card">
+                <div class="card-header">
+                    <span class="card-title">ลากิจ</span>
+                    <span class="card-status status-rejected">ไม่อนุมัติ</span>
+                </div>
+                <div class="card-info">
+                    <p><strong>ยื่นวันที่:</strong> 10 มิ.ย. 2568</p>
+                    <p><strong>ตั้งแต่วันที่:</strong> 15 มิ.ย. 2568</p>
+                    <p><strong>รวม:</strong> 1 วัน</p>
+                </div>
+                <div class="card-actions">
+                    <a href="#" class="detail-link">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-secondary" onclick="window.location.href='Dashboard.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme) {
+                document.body.className = savedTheme;
+            }
+        });
+        
+        // ส่วนนี้ไว้สำหรับเขียน JavaScript เพื่อดึงข้อมูลประวัติการลามาแสดงผล
+        // ข้อมูลตัวอย่างที่ใส่ไว้ใน HTML สามารถลบออกได้เมื่อคุณพร้อมที่จะเพิ่มโค้ดจริง
+    </script>
 </body>
 </html>
