@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>ตรวจสอบประวัติการลา</title>
+  <title>ตรวจสอบประวัติการลา (LIFF)</title>
   <style>
     body { font-family: "Prompt", sans-serif; padding: 20px; background: #f5f5f5; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
@@ -15,9 +15,21 @@
   <table id="historyTable">
     <thead>
       <tr>
-        <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
-        <th>F</th><th>G</th><th>H</th><th>I</th><th>J</th>
-        <th>K</th><th>L</th><th>M</th><th>N (Signature URL)</th><th>O</th>
+        <th>Column A</th>
+        <th>Column B</th>
+        <th>Column C</th>
+        <th>Column D</th>
+        <th>Column E</th>
+        <th>Column F</th>
+        <th>Column G</th>
+        <th>Column H</th>
+        <th>Column I</th>
+        <th>Column J</th>
+        <th>Column K</th>
+        <th>Column L</th>
+        <th>Column M</th>
+        <th>Column N (File ID)</th>
+        <th>Column O</th>
       </tr>
     </thead>
     <tbody id="historyBody">
@@ -25,46 +37,46 @@
     </tbody>
   </table>
 
-<script>
-  async function fetchHistory() {
-    const lineUserId = "2007956727-6V7DrnMD"; // จำลองค่าจาก LIFF
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
-    
-    try {
-      const resp = await fetch(webAppUrl);
-      const data = await resp.json();
-      const tbody = document.getElementById("historyBody");
-      tbody.innerHTML = "";
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    async function fetchHistory() {
+      try {
+        await liff.init({ liffId: "2007956727-6V7DrnMD" }); // ใส่ LIFF ID ของคุณ
+        const profile = await liff.getProfile();
+        const lineUserId = profile.userId;
 
-      if (!data || data.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='15'>❌ ไม่พบข้อมูล</td></tr>";
-        return;
-      }
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
+        const resp = await fetch(webAppUrl);
+        const data = await resp.json();
 
-      data.forEach(item => {
-        const row = document.createElement("tr");
-        for (let i = 0; i < 15; i++) {
-          let value = item.rawRow[i] || "";
-          const td = document.createElement("td");
+        const tbody = document.getElementById("historyBody");
+        tbody.innerHTML = "";
 
-          // ✅ ถ้าเป็น Column N (index 13) → แสดง File ID เฉยๆ
-          if (i === 13 && value) {
-            td.textContent = value; 
-          } else {
-            td.textContent = value;
-          }
-
-          row.appendChild(td);
+        if (!data || data.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='15'>❌ ไม่พบข้อมูล</td></tr>";
+          return;
         }
-        tbody.appendChild(row);
-      });
-    } catch (err) {
-      console.error(err);
-      document.getElementById("historyBody").innerHTML = "<tr><td colspan='15'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
-    }
-  }
 
-  fetchHistory();
-</script>
+        data.forEach(item => {
+          const row = document.createElement("tr");
+          for (let i = 0; i < 15; i++) {
+            let value = item.rawRow[i] || "";
+            // Column N = File ID (index 13)
+            if (i === 13) value = item.rawRow[13] || "";
+            const td = document.createElement("td");
+            td.textContent = value;
+            row.appendChild(td);
+          }
+          tbody.appendChild(row);
+        });
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById("historyBody").innerHTML = "<tr><td colspan='15'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
+      }
+    }
+
+    fetchHistory();
+  </script>
 </body>
 </html>
