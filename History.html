@@ -9,7 +9,6 @@
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #eee; }
   </style>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
   <h2>ตรวจสอบประวัติการลา</h2>
@@ -27,49 +26,45 @@
   </table>
 
   <script>
-  async function main() {
-    await liff.init({ liffId: "2007956727-6V7DrnMD" });
-    const profile = await liff.getProfile();
-    const lineUserId = profile.userId;
+    async function fetchHistory() {
+      const lineUserId = "2007956727-6V7DrnMD"; // จำลองค่าจาก LIFF
+      const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
+      
+      try {
+        const resp = await fetch(webAppUrl);
+        const data = await resp.json();
+        const tbody = document.getElementById("historyBody");
+        tbody.innerHTML = "";
 
-    // เรียก Web App URL ของคุณ
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + encodeURIComponent(lineUserId);
+        if (!data || data.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='15'>❌ ไม่พบข้อมูล</td></tr>";
+          return;
+        }
 
-    try {
-      const resp = await fetch(webAppUrl);
-      const data = await resp.json();
-      renderHistory(data);
-    } catch (err) {
-      console.error(err);
-      document.getElementById("historyBody").innerHTML =
-        "<tr><td colspan='15'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
-    }
-  }
+        data.forEach(item => {
+          const row = document.createElement("tr");
+          for (let i = 0; i < 15; i++) {
+            let value = item.rawRow[i] || "";
+            const td = document.createElement("td");
 
-  function renderHistory(data) {
-    const tbody = document.getElementById("historyBody");
-    tbody.innerHTML = "";
+            // ✅ ถ้าเป็น Column N → แสดงลิงก์กดได้
+            if (i === 13 && value.startsWith("http")) {
+              td.innerHTML = `<a href="${value}" target="_blank">ดูไฟล์</a>`;
+            } else {
+              td.textContent = value;
+            }
 
-    if (!data || data.length === 0) {
-      tbody.innerHTML = "<tr><td colspan='15'>❌ ไม่พบข้อมูล</td></tr>";
-      return;
-    }
-
-    data.forEach(item => {
-      const row = document.createElement("tr");
-      for (let i = 0; i < 15; i++) {
-        let value = item.rawRow[i] || "";
-        if (i === 13) value = item.signatureUrl || ""; // Column N
-        const td = document.createElement("td");
-        td.textContent = value;
-        row.appendChild(td);
+            row.appendChild(td);
+          }
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById("historyBody").innerHTML = "<tr><td colspan='15'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
       }
-      tbody.appendChild(row);
-    });
-  }
+    }
 
-  main();
-</script>
-
+    fetchHistory();
+  </script>
 </body>
 </html>
