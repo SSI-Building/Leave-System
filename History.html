@@ -1,35 +1,25 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>ตรวจสอบประวัติการลา (LIFF)</title>
-  <style>
-    body { font-family: "Prompt", sans-serif; padding: 20px; background: #f5f5f5; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #eee; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตรวจสอบประวัติการลา (LIFF)</title>
+<style>
+  body { font-family: "Prompt", sans-serif; padding: 20px; background: #f5f5f5; }
+  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  th { background-color: #eee; }
+</style>
 </head>
 <body>
   <h2>ตรวจสอบประวัติการลา</h2>
   <table id="historyTable">
     <thead>
       <tr>
-        <th>Column A</th>
-        <th>Column B</th>
-        <th>Column C</th>
-        <th>Column D</th>
-        <th>Column E</th>
-        <th>Column F</th>
-        <th>Column G</th>
-        <th>Column H</th>
-        <th>Column I</th>
-        <th>Column J</th>
-        <th>Column K</th>
-        <th>Column L</th>
-        <th>Column M</th>
-        <th>Column N (File ID)</th>
-        <th>Column O</th>
+        <th>Column A</th><th>Column B</th><th>Column C</th><th>Column D</th>
+        <th>Column E</th><th>Column F</th><th>Column G</th><th>Column H</th>
+        <th>Column I</th><th>Column J</th><th>Column K</th><th>Column L</th>
+        <th>Column M</th><th>Column N (File ID)</th><th>Column O</th>
       </tr>
     </thead>
     <tbody id="historyBody">
@@ -41,10 +31,15 @@
   <script>
     async function fetchHistory() {
       try {
-        await liff.init({ liffId: "2007956727-6V7DrnMD" }); // ใส่ LIFF ID ของคุณ
-        const profile = await liff.getProfile();
-        const lineUserId = "U8c0b01f75527c50232ee1ff613363af9";
+        // เริ่ม LIFF
+        await liff.init({ liffId: "2007956727-6V7DrnMD" });
+        if (!liff.isLoggedIn()) { liff.login(); return; }
 
+        // ดึง lineUserId จาก LIFF profile
+        const profile = await liff.getProfile();
+        const lineUserId = profile.userId;
+
+        // URL Web App พร้อมส่ง lineUserId
         const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
         const resp = await fetch(webAppUrl);
         const data = await resp.json();
@@ -57,22 +52,21 @@
           return;
         }
 
-        data.forEach(item => {
-          const row = document.createElement("tr");
-          for (let i = 0; i < 15; i++) {
-            let value = item.rawRow[i] || "";
-            // Column N = File ID (index 13)
-            if (i === 13) value = item.rawRow[13] || "";
+        // ใส่ข้อมูลลงตาราง
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          row.forEach((cell, idx) => {
             const td = document.createElement("td");
-            td.textContent = value;
-            row.appendChild(td);
-          }
-          tbody.appendChild(row);
+            td.textContent = cell || "";
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
         });
 
       } catch (err) {
         console.error(err);
-        document.getElementById("historyBody").innerHTML = "<tr><td colspan='15'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
+        document.getElementById("historyBody").innerHTML =
+          "<tr><td colspan='15'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
       }
     }
 
