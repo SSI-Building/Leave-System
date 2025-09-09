@@ -1,312 +1,155 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติการลา</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* ===== Theme Variables & Base Styles (ตามที่คุณให้มา) ===== */
-        :root {
-            --primary-color-start: #1994b6;
-            --primary-color-end: #36a761;
-            --text-color-dark: #333;
-            --text-color-light: #666;
-            --background-color: #f0f2f5;
-            --card-background: #ffffff;
-            --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
-            --border-color: #e0e0e0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตรวจสอบประวัติการลา (LIFF)</title>
+<style>
+  /* นำเข้าฟอนต์ Prompt จาก Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap');
 
-        body.theme-dark {
-            --primary-color-start: #141E30;
-            --primary-color-end: #243B55;
-            --text-color-dark: #fff;
-            --text-color-light: #bbb;
-            --background-color: #181818;
-            --card-background: #242424;
-            --border-color: #444;
-            --shadow-light: 0 4px 15px rgba(255,255,255,0.08);
-        }
+  /* การตั้งค่าพื้นฐานสำหรับ body */
+  body {
+    font-family: 'Prompt', sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    padding: 16px;
+    margin: 0;
+  }
 
-        /* General Theme Variants */
-        body.theme-orange-purple { --primary-color-start: #ff7e5f; --primary-color-end: #6a11cb; }
-        body.theme-blue-violet { --primary-color-start: #36d1dc; --primary-color-end: #5b86e5; }
-        body.theme-pink-purple { --primary-color-start: #ff758c; --primary-color-end: #8e44ad; }
-        body.theme-green-gold { --primary-color-start: #11998e; --primary-color-end: #fbc531; }
-        body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
-        body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
-        body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
-        
-        /* ===== Base Styles ===== */
-        body {
-            font-family: 'Prompt', sans-serif;
-            background: var(--background-color);
-            margin: 0;
-            padding: 20px;
-            color: var(--text-color-dark);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+  /* จัดรูปแบบสำหรับ heading */
+  h2 {
+    color: #1a237e;
+    text-align: center;
+    margin-bottom: 24px;
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
 
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background: var(--card-background);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-light);
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        h2 {
-            text-align: center;
-            font-weight: 700;
-            margin-bottom: 25px;
-            font-size: 1.8em;
-            background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-        h2 i {
-            -webkit-text-fill-color: var(--primary-color-end);
-        }
-        body.theme-dark h2 {
-            -webkit-text-fill-color: var(--text-color-dark);
-            background: none;
-        }
-        body.theme-dark h2 i {
-            color: var(--primary-color-end);
-        }
-        
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+  /* จัดรูปแบบตาราง */
+  .table-container {
+    overflow-x: auto; /* ทำให้ตารางเลื่อนไปด้านข้างได้เมื่อเนื้อหาเยอะ */
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px; /* กำหนดความกว้างขั้นต่ำของตารางเพื่อให้แสดงผลได้ดี */
+  }
+  
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border: 1px solid #e0e0e0;
+  }
+  
+  thead {
+    background-color: #e8f5e9;
+    color: #388e3c;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 
-        .history-card {
-            background: var(--background-color);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-        }
-        .history-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-        }
+  th {
+    white-space: nowrap; /* ป้องกันข้อความในหัวตารางขึ้นบรรทัดใหม่ */
+  }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
 
-        .card-title {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: var(--text-color-dark);
-            flex-grow: 1;
-        }
+  tbody tr:hover {
+    background-color: #e3f2fd;
+    cursor: pointer;
+  }
+  
+  td {
+    word-wrap: break-word; /* ทำให้ข้อความยาวๆ ขึ้นบรรทัดใหม่ได้ */
+  }
 
-        .card-status {
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.8em;
-            color: #fff;
-        }
-        .status-pending { background-color: #ffc107; }
-        .status-approved { background-color: #4caf50; }
-        .status-rejected { background-color: #f44336; }
+  /* จัดรูปแบบข้อความแสดงสถานะ */
+  .status-message {
+    text-align: center;
+    padding: 24px;
+    font-size: 1.1rem;
+    color: #757575;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-top: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
 
-        .card-info {
-            font-size: 0.9em;
-            color: var(--text-color-light);
-            line-height: 1.6;
-        }
-        .card-info strong {
-            color: var(--text-color-dark);
-        }
-
-        .card-actions {
-            margin-top: 15px;
-            text-align: right;
-        }
-        .detail-link {
-            text-decoration: none;
-            color: var(--primary-color-end);
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: color 0.3s ease;
-        }
-        .detail-link:hover {
-            color: var(--primary-color-start);
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #fff;
-            background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        }
-        
-        .btn-secondary {
-            background: var(--border-color);
-            color: var(--text-color-light);
-            box-shadow: none;
-        }
-        body.theme-dark .btn-secondary {
-            background: var(--border-color);
-            color: var(--text-color-dark);
-        }
-        .btn-secondary:hover {
-            background: #d5d5d5;
-            color: #333;
-        }
-        body.theme-dark .btn-secondary:hover {
-            background: #555;
-            color: #fff;
-        }
-        
-        /* Styles for "No Data" or "Error" messages */
-        .status-message {
-            text-align: center;
-            padding: 20px;
-            font-size: 1em;
-            color: var(--text-color-light);
-        }
-        .status-message.error {
-            color: #d32f2f;
-        }
-    </style>
+  .status-message.error {
+    color: #d32f2f;
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h2><i class="fas fa-history"></i> ประวัติการลา</h2>
-        
-        <div class="history-list" id="historyList">
-            <div class="status-message">⏳ กำลังโหลด...</div>
-        </div>
 
-        <div class="buttons">
-            <button class="btn btn-secondary" onclick="window.location.href='Dashboard.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
-        </div>
-    </div>
-    
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script>
-        // Use the original fetch function that works
-        async function fetchHistory() {
-            try {
-                // เริ่ม LIFF
-                await liff.init({ liffId: "2007956727-6V7DrnMD" });
-                if (!liff.isLoggedIn()) { liff.login(); return; }
+  <h2>ตรวจสอบประวัติการลา</h2>
 
-                // ดึง lineUserId จาก LIFF profile
-                const profile = await liff.getProfile();
-                const lineUserId = profile.userId;
+  <div class="table-container">
+    <table id="historyTable">
+      <thead>
+        <tr>
+          <th>Column A</th><th>Column B</th><th>Column C</th><th>Column D</th>
+          <th>Column E</th><th>Column F</th><th>Column G</th><th>Column H</th>
+          <th>Column I</th><th>Column J</th><th>Column K</th><th>Column L</th>
+          <th>Column M</th><th>Column N (File ID)</th><th>Column O</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <tr><td colspan="15" class="status-message">⏳ กำลังโหลด...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    async function fetchHistory() {
+      try {
+        await liff.init({ liffId: "2007956727-6V7DrnMD" });
+        if (!liff.isLoggedIn()) { liff.login(); return; }
 
-                // URL Web App พร้อมส่ง lineUserId
-                const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
-                const resp = await fetch(webAppUrl);
-                const data = await resp.json();
+        const profile = await liff.getProfile();
+        const lineUserId = profile.userId;
 
-                const historyList = document.getElementById("historyList");
-                historyList.innerHTML = ""; // Clear existing content
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
+        const resp = await fetch(webAppUrl);
+        const data = await resp.json();
 
-                if (!data || data.length === 0) {
-                    historyList.innerHTML = '<div class="status-message">❌ ไม่พบข้อมูล</div>';
-                    return;
-                }
+        const tbody = document.getElementById("historyBody");
+        tbody.innerHTML = "";
 
-                // ปรับปรุงส่วนนี้เพื่อสร้างการ์ดแทนตาราง
-                data.forEach(row => {
-                    const card = document.createElement("div");
-                    card.className = "history-card";
-                    
-                    // แมปข้อมูลจาก Array (ซึ่งตรงกับคอลัมน์ในตารางดั้งเดิมของคุณ)
-                    const leaveType = row[3] || 'ไม่ระบุ';         // Column 4
-                    const status = row[9] || 'รออนุมัติ';          // Column 10
-                    const startDate = row[4] || 'ไม่ระบุ';         // Column 5
-                    const startTime = row[5] || '';                // Column 6
-                    const endDate = row[6] || 'ไม่ระบุ';           // Column 7
-                    const endTime = row[7] || '';                  // Column 8
-                    const duration = row[8] || 'ไม่ระบุ';          // Column 9
-                    const requestDateTime = row[10] || 'ไม่ระบุ';   // Column 11
-                    const fileId = row[13] || '#';                 // Column 14
-
-                    // Get status class for styling
-                    let statusText = 'รออนุมัติ';
-                    let statusClass = 'status-pending';
-                    if (status.includes('อนุมัติ')) {
-                        statusText = 'อนุมัติแล้ว';
-                        statusClass = 'status-approved';
-                    } else if (status.includes('ไม่อนุมัติ')) {
-                        statusText = 'ไม่อนุมัติ';
-                        statusClass = 'status-rejected';
-                    }
-
-                    // Card HTML template
-                    card.innerHTML = `
-                        <div class="card-header">
-                            <span class="card-title">${leaveType}</span>
-                            <span class="card-status ${statusClass}">${statusText}</span>
-                        </div>
-                        <div class="card-info">
-                            <p><strong>ลาตั้งแต่วันที่:</strong> ${startDate} เวลา ${startTime} ถึงวันที่ ${endDate} เวลา ${endTime}</p>
-                            <p><strong>รวมวันลา:</strong> ${duration}</p>
-                            <p><strong>ยื่นลาวันที่:</strong> ${requestDateTime}</p>
-                        </div>
-                        <div class="card-actions">
-                            <a href="${fileId !== '#' ? 'https://docs.google.com/open?id=' + fileId : '#'}" class="detail-link" target="_blank">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>
-                        </div>
-                    `;
-                    historyList.appendChild(card);
-                });
-
-            } catch (err) {
-                console.error(err);
-                const historyList = document.getElementById("historyList");
-                historyList.innerHTML = '<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
-            }
+        if (!data || data.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='15' class='status-message'>❌ ไม่พบข้อมูล</td></tr>";
+          return;
         }
-        
-        fetchHistory();
-    </script>
+
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          row.forEach((cell, idx) => {
+            const td = document.createElement("td");
+            td.textContent = cell || "";
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById("historyBody").innerHTML =
+          "<tr><td colspan='15' class='status-message error'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
+      }
+    }
+
+    fetchHistory();
+  </script>
 </body>
 </html>
