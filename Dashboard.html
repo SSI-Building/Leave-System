@@ -244,7 +244,7 @@ async function loadDashboard() {
   const userId = profile.userId;
   document.getElementById("profilePic").src = profile.pictureUrl;
 
-  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  const randomMessage = messages[Math.or(Math.random() * messages.length)];
   document.getElementById("motivation").textContent = randomMessage;
 
   fetch(`${GAS_URL}?action=getBalance&userId=${userId}`)
@@ -293,12 +293,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
 
   logoutIcon.addEventListener('click', () => {
-    if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
-      // ไม่ต้องลบ localStorage.clear() เพื่อคงค่าธีมไว้
-      window.location.href = 'Login.html';
-    }
+    window.location.href = 'Login.html';
   });
-
 
   document.querySelectorAll('.theme-option').forEach(option => {
       option.addEventListener('click', function() {
