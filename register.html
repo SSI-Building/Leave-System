@@ -130,9 +130,14 @@
     body.theme-dark #submitBtn {
         background: linear-gradient(45deg, var(--primary-color-end), var(--primary-color-start));
     }
-    #submitBtn:hover {
+    #submitBtn:hover:not(:disabled) {
         transform: translateY(-3px);
         box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    #submitBtn:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
     }
 
     .back-btn {
@@ -200,9 +205,15 @@ if (!storedLineUserId) {
 
 // --- ปุ่ม Register ---
 document.getElementById("submitBtn").addEventListener("click", async () => {
+    const submitBtn = document.getElementById("submitBtn");
     const empId = document.getElementById("empId").value.trim();
     const lineUserId = document.getElementById("lineUserId").value.trim();
     const messageDiv = document.getElementById("message");
+
+    // ป้องกันการกดซ้ำ
+    if (submitBtn.disabled) {
+        return;
+    }
 
     if (!empId || !lineUserId) {
         messageDiv.style.color = "red";
@@ -210,6 +221,8 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
         return;
     }
 
+    // เริ่มต้นการส่งข้อมูล: ปิดการใช้งานปุ่ม
+    submitBtn.disabled = true;
     messageDiv.style.color = "var(--text-color-dark)";
     messageDiv.textContent = "⏳ กำลังส่งข้อมูล...";
 
@@ -232,12 +245,14 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
         } else {
             messageDiv.style.color = "red";
             messageDiv.textContent = "❌ " + result.message;
+            submitBtn.disabled = false; // เปิดการใช้งานปุ่มอีกครั้งเมื่อเกิดข้อผิดพลาด
         }
 
     } catch (err) {
         console.error("Fetch Error:", err);
         messageDiv.style.color = "red";
         messageDiv.textContent = "❌ เกิดข้อผิดพลาด";
+        submitBtn.disabled = false; // เปิดการใช้งานปุ่มอีกครั้งเมื่อเกิดข้อผิดพลาด
     }
 });
 </script>
