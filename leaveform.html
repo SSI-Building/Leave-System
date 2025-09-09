@@ -408,11 +408,11 @@
                 document.body.className = savedTheme;
             }
 
-            // หน่วงเวลา 3 วินาทีแล้วแสดงหน้าหลัก
+            // หน่วงเวลา 1 วินาทีแล้วแสดงหน้าหลัก
             setTimeout(() => {
                 loadingScreen.classList.add('hidden');
                 mainContainer.classList.add('loaded');
-            }, 3000); // 3 วินาที
+            }, 1000); // 1 วินาที
 
             // --- ส่วน JavaScript ไม่มีการเปลี่ยนแปลงจากโค้ดเดิม ---
             const set1 = JSON.parse(localStorage.getItem("leaveSet1"));
