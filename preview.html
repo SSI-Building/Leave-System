@@ -23,26 +23,28 @@
             font-family: 'Prompt', sans-serif;
             background: var(--background-color);
             margin: 0;
-            padding: 30px 20px;
+            padding: 20px 15px; /* ลด padding เพื่อให้มีพื้นที่มากขึ้น */
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
             color: var(--text-color-dark);
+            box-sizing: border-box; /* สำคัญมากสำหรับ responsive design */
         }
 
         .container {
-            max-width: 720px;
+            max-width: 600px; /* ลด max-width เพื่อให้ดูดีขึ้นบนมือถือ */
             width: 100%;
             background: var(--card-background);
-            padding: 40px;
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            padding: 25px 20px; /* ลด padding */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             position: relative;
             animation: fadeIn 0.8s ease-out;
-            overflow: hidden; /* เพื่อป้องกันเงาปุ่มเกินกรอบ */
+            overflow: hidden;
+            box-sizing: border-box;
         }
-        
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -51,29 +53,29 @@
         h2 {
             text-align: center;
             color: var(--primary-color);
-            margin-bottom: 40px;
-            font-size: 2rem;
+            margin-bottom: 25px; /* ลด margin */
+            font-size: 1.6rem; /* ปรับขนาดให้เล็กลง */
             font-weight: 700;
             position: relative;
         }
 
         h2::after {
             content: '';
-            width: 80px;
-            height: 5px;
+            width: 60px; /* ปรับขนาดให้เล็กลง */
+            height: 4px;
             background-color: var(--secondary-color);
             position: absolute;
-            bottom: -15px;
+            bottom: -10px; /* เลื่อนขึ้น */
             left: 50%;
             transform: translateX(-50%);
-            border-radius: 2.5px;
+            border-radius: 2px;
         }
-        
+
         .section {
-            margin-bottom: 35px;
-            padding: 25px;
+            margin-bottom: 20px; /* ลด margin */
+            padding: 20px; /* ลด padding */
             background: #fdfdfd;
-            border-radius: 18px;
+            border-radius: 15px;
             border: 1px solid var(--border-color);
             transition: all var(--transition-speed) ease;
         }
@@ -85,48 +87,67 @@
 
         .section-title {
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* ลด margin */
             color: var(--text-color-dark);
-            font-size: 1.1rem;
+            font-size: 1rem; /* ปรับขนาดให้เล็กลงเล็กน้อย */
             border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
+            padding-bottom: 8px; /* ลด padding */
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px; /* ลด gap */
         }
 
         .section-title::before {
             content: '•';
             color: var(--secondary-color);
-            font-size: 1.5rem;
+            font-size: 1.2rem; /* ปรับขนาดให้เล็กลง */
             line-height: 1;
         }
 
         .data-item {
             display: flex;
             flex-direction: column;
-            margin-bottom: 15px;
+            margin-bottom: 10px; /* ลด margin */
         }
 
         .label {
             font-weight: 500;
             color: var(--text-color-light);
-            font-size: 0.9rem;
-            margin-bottom: 5px;
+            font-size: 0.85rem; /* ปรับขนาดให้เล็กลง */
+            margin-bottom: 3px; /* ลด margin */
         }
 
         .value {
-            font-size: 1rem;
+            font-size: 0.95rem; /* ปรับขนาดให้เล็กลง */
             color: var(--text-color-dark);
             font-weight: 400;
             word-break: break-word;
-            line-height: 1.5;
+            line-height: 1.4; /* ปรับ line-height */
+        }
+        
+        /* สลับการแสดงผล label และ value บนมือถือเพื่อความกะทัดรัด */
+        .data-item {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+        }
+        
+        .label {
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+        
+        .value {
+            text-align: right;
+            font-weight: 500;
+            color: var(--text-color-dark);
         }
 
         .canvas-container {
             border: 2px dashed var(--border-color);
             border-radius: 12px;
-            height: 200px;
+            height: 150px; /* ลดความสูง */
             overflow: hidden;
             background-color: #fafafa;
         }
@@ -139,21 +160,21 @@
 
         .buttons {
             display: flex;
-            gap: 20px;
+            gap: 15px; /* ลด gap */
             justify-content: center;
-            margin-top: 40px;
+            margin-top: 30px; /* ลด margin */
         }
 
         .btn {
             flex: 1;
-            padding: 18px; /* เพิ่ม padding ให้ปุ่มใหญ่ขึ้น */
+            padding: 15px; /* ลด padding */
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1rem; /* ปรับขนาดให้เล็กลง */
             color: #fff;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* เพิ่มเงาให้ดูมีมิติ */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
         }
 
@@ -166,8 +187,8 @@
         }
 
         .btn:hover {
-            transform: translateY(-5px); /* เลื่อนขึ้นเยอะกว่าเดิม */
-            box-shadow: 0 12px 25px rgba(0,0,0,0.2); /* เงาใหญ่ขึ้นเมื่อ hover */
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
         
         .btn:active {
@@ -175,7 +196,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         
-        /* Loading Overlay */
         #loadingOverlay {
             position: absolute;
             top: 0;
@@ -187,10 +207,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--primary-color);
             font-weight: 600;
-            border-radius: 25px;
+            border-radius: 20px;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.4s ease, visibility 0s 0.4s;
@@ -203,13 +223,13 @@
         }
 
         .spinner {
-            width: 60px; /* ขนาดใหญ่ขึ้น */
-            height: 60px; /* ขนาดใหญ่ขึ้น */
-            border: 6px solid #e0e6ed;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e6ed;
             border-top-color: var(--primary-color);
             border-radius: 50%;
-            animation: spin 1s cubic-bezier(0.5, 0.25, 0.75, 1) infinite; /* ใช้ cubic-bezier เพื่อแอนิเมชันที่ดูดีขึ้น */
-            margin-bottom: 20px;
+            animation: spin 1s cubic-bezier(0.5, 0.25, 0.75, 1) infinite;
+            margin-bottom: 15px;
         }
         
         @keyframes spin {
@@ -217,10 +237,9 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Message after spinner */
         .loading-message {
             animation: pulse 1.5s infinite ease-in-out;
-            font-size: 1.1em;
+            font-size: 1em;
             color: var(--text-color-light);
         }
 
@@ -229,18 +248,9 @@
             50% { transform: scale(1.05); opacity: 0.8; }
         }
 
-        @media(max-width: 650px) {
-            .container { 
-                padding: 30px 20px; 
-                border-radius: 20px;
-            }
-            .buttons { 
-                flex-direction: column; 
-                gap: 15px;
-            }
-            h2 { font-size: 1.8rem; }
-            .btn { font-size: 1rem; }
-        }
+        /* ไม่ต้องใช้ @media(max-width: 650px) แล้ว เพราะการออกแบบใหม่รองรับ mobile-first */
+        /* การจัดเรียง .data-item ในบรรทัดเดียวกันจะทำให้หน้าสั้นลงมาก */
+
     </style>
 </head>
 <body>
@@ -390,11 +400,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let isSubmitting = false;
 
     btnSubmit.addEventListener("click", () => {
-        if (isSubmitting) return; // ป้องกันการกดซ้ำ
+        if (isSubmitting) return;
         isSubmitting = true;
 
         btnSubmit.disabled = true;
-        loadingOverlay.classList.add("visible"); // เพิ่ม class เพื่อแสดงผลแบบมี transition
+        loadingOverlay.classList.add("visible");
 
         leaveData.signature = canvas.toDataURL();
         const leaveDataToSend = {
@@ -422,7 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
             isSubmitting = false;
             btnSubmit.disabled = false;
-            loadingOverlay.classList.remove("visible"); // ซ่อน overlay
+            loadingOverlay.classList.remove("visible");
         });
     });
 });
