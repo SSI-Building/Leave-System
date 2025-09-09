@@ -1,302 +1,314 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ฟอร์มลาออนไลน์</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-:root {
-  --primary-color: #4A90E2;
-  --secondary-color: #50E3C2;
-  --text-color-dark: #2C3E50;
-  --text-color-light: #7F8C8D;
-  --background-color: #F8F9FA;
-  --card-background: #FFFFFF;
-  --shadow-color: rgba(0, 0, 0, 0.08);
-  --border-color: #E0E0E0;
-  --focus-ring-color: rgba(74, 144, 226, 0.2);
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ฟอร์มลาออนไลน์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #50E3C2;
+            --text-color-dark: #2C3E50;
+            --text-color-light: #7F8C8D;
+            --background-color: #F8F9FA;
+            --card-background: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --border-color: #E0E0E0;
+            --focus-ring-color: rgba(74, 144, 226, 0.2);
+        }
 
-body {
-  font-family: 'Prompt', sans-serif;
-  background: var(--background-color);
-  margin: 0;
-  padding: 20px;
-  color: var(--text-color-dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: var(--background-color);
+            margin: 0;
+            padding: 15px; /* ลด padding เพื่อให้มีพื้นที่มากขึ้น */
+            color: var(--text-color-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box; /* สำคัญมากสำหรับ responsive design */
+        }
 
-.container {
-  max-width: 650px;
-  width: 95%;
-  background: var(--card-background);
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 15px 40px var(--shadow-color);
-}
+        .container {
+            max-width: 650px;
+            width: 100%;
+            background: var(--card-background);
+            padding: 25px; /* ลด padding */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            box-sizing: border-box;
+        }
 
-h2 {
-  text-align: center;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin-bottom: 40px;
-  position: relative;
-}
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 30px; /* ลด margin */
+            font-size: 1.8em; /* ปรับขนาดให้เล็กลงเล็กน้อย */
+            position: relative;
+        }
 
-h2::after {
-  content: '';
-  width: 80px;
-  height: 5px;
-  background-color: var(--secondary-color);
-  position: absolute;
-  bottom: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 2.5px;
-}
+        h2::after {
+            content: '';
+            width: 60px; /* ลดขนาด */
+            height: 4px; /* ลดขนาด */
+            background-color: var(--secondary-color);
+            position: absolute;
+            bottom: -10px; /* เลื่อนขึ้น */
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
 
-.form-section {
-  background: #fdfdfd;
-  padding: 25px;
-  border-radius: 15px;
-  margin-bottom: 30px;
-  border: 1px solid var(--border-color);
-}
+        .form-section {
+            background: #fdfdfd;
+            padding: 20px; /* ลด padding */
+            border-radius: 15px;
+            margin-bottom: 20px; /* ลด margin */
+            border: 1px solid var(--border-color);
+        }
 
-.form-section-title {
-  font-size: 1.1em;
-  font-weight: 600;
-  color: var(--text-color-dark);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+        .form-section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--text-color-dark);
+            margin-bottom: 15px; /* ลด margin */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* ปรับ minmax ให้เล็กลง */
+            gap: 15px; /* ลด gap */
+        }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
 
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: var(--text-color-light);
-  font-size: 14px;
-}
+        label {
+            display: block;
+            margin-bottom: 5px; /* ลด margin */
+            font-weight: 500;
+            color: var(--text-color-light);
+            font-size: 13px; /* ปรับขนาดให้เล็กลง */
+        }
 
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  font-size: 15px;
-  box-sizing: border-box;
-  background: #fff;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
+        input, select, textarea {
+            width: 100%;
+            padding: 10px; /* ลด padding */
+            border: 1px solid var(--border-color);
+            border-radius: 8px; /* ปรับ border-radius */
+            font-size: 14px; /* ปรับขนาดให้เล็กลง */
+            box-sizing: border-box;
+            background: #fff;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
 
-input:focus, select:focus, textarea:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px var(--focus-ring-color);
-  outline: none;
-}
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--focus-ring-color); /* ลดขนาด shadow */
+            outline: none;
+        }
 
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
+        textarea {
+            min-height: 100px; /* ลดความสูง */
+            resize: vertical;
+        }
+        
+        /* ปรับปรุง Date Group เพื่อให้รวมเป็นหนึ่งเดียว */
+        .date-group {
+            position: relative;
+            padding-bottom: 25px; /* ลด padding */
+        }
+        .date-group .form-group {
+            margin-bottom: 15px; /* เพิ่ม margin ระหว่าง input */
+        }
 
-.date-group {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  position: relative;
-  padding-bottom: 30px;
-}
+        #leaveDaysDisplay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            font-weight: 500;
+            font-size: 12px; /* ลดขนาดตัวอักษร */
+            color: var(--text-color-light);
+        }
 
-#leaveDaysDisplay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  font-weight: 500;
-  font-size: 13px;
-  color: var(--text-color-light);
-}
+        .signature-pad-container {
+            position: relative; /* สำหรับจัดวางปุ่มล้างลายเซ็น */
+        }
+        .signature-pad {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            height: 150px; /* ลดความสูง */
+            touch-action: none;
+            background: #fafafa;
+        }
+        .btn-clear {
+            position: absolute;
+            top: 10px; /* เลื่อนไปมุมบนขวา */
+            right: 10px;
+            z-index: 10;
+            margin-top: 0;
+            padding: 6px 10px; /* ลดขนาดปุ่ม */
+            font-size: 11px; /* ลดขนาดตัวอักษร */
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-clear:hover {
+            background: #f0f0f0;
+            color: var(--text-color-dark);
+        }
 
-.signature-pad {
-  border: 2px dashed var(--border-color);
-  border-radius: 10px;
-  height: 180px;
-  touch-action: none;
-  background: #fafafa;
-}
+        .buttons {
+            margin-top: 20px; /* ลด margin */
+            display: flex;
+            flex-direction: column; /* ให้ปุ่มเรียงจากบนลงล่างบนมือถือ */
+            gap: 10px;
+            justify-content: center;
+        }
 
-.buttons {
-  margin-top: 30px;
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
+        .btn {
+            flex: 1;
+            padding: 12px; /* ลด padding */
+            border: none;
+            border-radius: 10px; /* ปรับ border-radius */
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px; /* ปรับขนาดตัวอักษร */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #fff;
+            background: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
 
-.btn {
-  flex: 1;
-  padding: 15px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #fff;
-  background: var(--primary-color);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
 
-.btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-}
+        .btn-secondary {
+            background: #B0B9C2;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px; /* ลด gap */
+            align-items: center;
+            margin-top: 5px; /* ลด margin */
+        }
 
-.btn-secondary {
-  background: #B0B9C2;
-}
+        .radio-group label {
+            margin-bottom: 0;
+            font-weight: 400;
+            font-size: 13px; /* ลดขนาดตัวอักษร */
+            color: var(--text-color-dark);
+            cursor: pointer;
+        }
+        
+        .radio-group input[type="radio"] {
+            margin-right: 3px;
+            width: auto;
+        }
+        
+        /* ไม่ต้องใช้ media query เดิมแล้ว เนื่องจากโครงสร้างใหม่รองรับ mobile-first */
+        @media(min-width: 480px) {
+            .buttons {
+                flex-direction: row; /* กลับไปเรียงแนวนอนบนจอใหญ่ */
+            }
+        }
 
-.btn-clear {
-  margin-top: 15px;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: var(--text-color-light);
-  background: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.btn-clear:hover {
-  background: #f0f0f0;
-  color: var(--text-color-dark);
-}
-
-.radio-group {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.radio-group label {
-  margin-bottom: 0;
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--text-color-dark);
-  cursor: pointer;
-}
-.radio-group input[type="radio"] {
-  margin-right: 5px;
-  width: auto;
-}
-
-@media(max-width: 650px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-}
-</style>
+    </style>
 </head>
 <body>
 <div class="container">
-  <h2>ฟอร์มลาออนไลน์ <i class="fas fa-file-contract"></i></h2>
+    <h2>ฟอร์มลาออนไลน์ <i class="fas fa-file-contract"></i></h2>
 
-  <section class="form-section">
-    <h3 class="form-section-title"><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</h3>
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="empName">ชื่อ-สกุล</label>
-        <input type="text" id="empName" readonly value="ชื่อจริง นามสกุล">
-      </div>
-      <div class="form-group">
-        <label for="empId">รหัสพนักงาน</label>
-        <input type="text" id="empId" readonly value="EMP001">
-      </div>
-      <div class="form-group">
-        <label for="position">ตำแหน่ง</label>
-        <input type="text" id="position" readonly value="พนักงานทั่วไป">
-      </div>
-      <div class="form-group">
-        <label for="department">ฝ่าย</label>
-        <input type="text" id="department" readonly value="BUS">
-      </div>
-    </div>
-  </section>
+    <section class="form-section">
+        <h3 class="form-section-title"><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="empName">ชื่อ-สกุล</label>
+                <input type="text" id="empName" readonly value="ชื่อจริง นามสกุล">
+            </div>
+            <div class="form-group">
+                <label for="empId">รหัสพนักงาน</label>
+                <input type="text" id="empId" readonly value="EMP001">
+            </div>
+            <div class="form-group">
+                <label for="position">ตำแหน่ง</label>
+                <input type="text" id="position" readonly value="พนักงานทั่วไป">
+            </div>
+            <div class="form-group">
+                <label for="department">ฝ่าย</label>
+                <input type="text" id="department" readonly value="BUS">
+            </div>
+        </div>
+    </section>
 
-  <section class="form-section">
-    <h3 class="form-section-title"><i class="fas fa-file-alt"></i> รายละเอียดการลา</h3>
-    <div class="form-group">
-      <label for="leaveType">ประเภทการลา</label>
-      <select id="leaveType">
-        <option value="AL">ลาพักร้อน</option>
-        <option value="SL">ลาป่วย</option>
-        <option value="BL">ลากิจ</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="reason">เหตุผลการลา</label>
-      <textarea id="reason" placeholder="กรุณากรอกเหตุผล"></textarea>
-    </div>
-    <div class="form-group">
-      <label>เอกสารประกอบ</label>
-      <div class="radio-group">
-        <label><input type="radio" name="hasDocument" value="มี"> มี</label>
-        <label><input type="radio" name="hasDocument" value="ไม่มี"> ไม่มี</label>
-      </div>
-    </div>
-  </section>
+    <section class="form-section">
+        <h3 class="form-section-title"><i class="fas fa-file-alt"></i> รายละเอียดการลา</h3>
+        <div class="form-group">
+            <label for="leaveType">ประเภทการลา</label>
+            <select id="leaveType">
+                <option value="AL">ลาพักร้อน</option>
+                <option value="SL">ลาป่วย</option>
+                <option value="BL">ลากิจ</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="reason">เหตุผลการลา</label>
+            <textarea id="reason" placeholder="กรุณากรอกเหตุผล"></textarea>
+        </div>
+        <div class="form-group">
+            <label>เอกสารประกอบ</label>
+            <div class="radio-group">
+                <label><input type="radio" name="hasDocument" value="มี"> มี</label>
+                <label><input type="radio" name="hasDocument" value="ไม่มี"> ไม่มี</label>
+            </div>
+        </div>
+    </section>
 
-  <section class="form-section">
-    <h3 class="form-section-title"><i class="fas fa-clock"></i> ระยะเวลาการลา</h3>
-    <div class="date-group">
-      <div class="form-group">
-        <label for="startDate">ตั้งแต่วันที่</label>
-        <input type="datetime-local" id="startDate">
-      </div>
-      <div class="form-group">
-        <label for="endDate">ถึงวันที่</label>
-        <input type="datetime-local" id="endDate">
-      </div>
-      <div id="leaveDaysDisplay"></div>
-    </div>
-  </section>
-  
-  <section class="form-section">
-    <h3 class="form-section-title"><i class="fas fa-signature"></i> ลายเซ็นอิเล็กทรอนิกส์</h3>
-    <div class="form-group">
-      <canvas id="signaturePad" class="signature-pad"></canvas>
-      <button type="button" onclick="clearSignature()" class="btn-clear"><i class="fas fa-eraser"></i> ล้างลายเซ็น</button>
-    </div>
-  </section>
+    <section class="form-section">
+        <h3 class="form-section-title"><i class="fas fa-clock"></i> ระยะเวลาการลา</h3>
+        <div class="date-group">
+            <div class="form-group">
+                <label for="startDate">ตั้งแต่วันที่</label>
+                <input type="datetime-local" id="startDate">
+            </div>
+            <div class="form-group">
+                <label for="endDate">ถึงวันที่</label>
+                <input type="datetime-local" id="endDate">
+            </div>
+            <div id="leaveDaysDisplay"></div>
+        </div>
+    </section>
+    
+    <section class="form-section">
+        <h3 class="form-section-title"><i class="fas fa-signature"></i> ลายเซ็นอิเล็กทรอนิกส์</h3>
+        <div class="form-group signature-pad-container">
+            <canvas id="signaturePad" class="signature-pad"></canvas>
+            <button type="button" onclick="clearSignature()" class="btn-clear"><i class="fas fa-eraser"></i> ล้าง</button>
+        </div>
+    </section>
 
-  <div class="buttons">
-    <button class="btn" id="submitBtn"><i class="fas fa-paper-plane"></i> ส่งคำขอ</button>
-    <button class="btn btn-secondary" onclick="window.location.href='Dashboard.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
-  </div>
+    <div class="buttons">
+        <button class="btn" id="submitBtn"><i class="fas fa-paper-plane"></i> ส่งคำขอ</button>
+        <button class="btn btn-secondary" onclick="window.location.href='Dashboard.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
