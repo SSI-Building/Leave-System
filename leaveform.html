@@ -7,84 +7,121 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Light Theme Default */
         :root {
-            --primary-color: #4A90E2;
-            --secondary-color: #50E3C2;
-            --text-color-dark: #2C3E50;
-            --text-color-light: #7F8C8D;
-            --background-color: #F8F9FA;
-            --card-background: #FFFFFF;
-            --shadow-color: rgba(0, 0, 0, 0.08);
-            --border-color: #E0E0E0;
+            --primary-color-start: #1994b6;
+            --primary-color-end: #36a761;
+            --text-color-dark: #333;
+            --text-color-light: #666;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
+            --border-color: #e0e0e0;
             --focus-ring-color: rgba(74, 144, 226, 0.2);
         }
 
+        /* Dark Theme */
+        body.theme-dark {
+            --primary-color-start: #141E30;
+            --primary-color-end: #243B55;
+            --text-color-dark: #fff;
+            --text-color-light: #bbb;
+            --background-color: #181818;
+            --card-background: #242424;
+            --border-color: #444;
+            --shadow-light: 0 4px 15px rgba(255,255,255,0.08);
+            --focus-ring-color: rgba(36, 59, 85, 0.2);
+        }
+        
+        /* General Theme Variants */
+        body.theme-orange-purple { --primary-color-start: #ff7e5f; --primary-color-end: #6a11cb; }
+        body.theme-blue-violet { --primary-color-start: #36d1dc; --primary-color-end: #5b86e5; }
+        body.theme-pink-purple { --primary-color-start: #ff758c; --primary-color-end: #8e44ad; }
+        body.theme-green-gold { --primary-color-start: #11998e; --primary-color-end: #fbc531; }
+        body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
+        body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
+        body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
+
+
+        /* ===== Base Styles ===== */
         body {
             font-family: 'Prompt', sans-serif;
             background: var(--background-color);
             margin: 0;
-            padding: 15px; /* ลด padding เพื่อให้มีพื้นที่มากขึ้น */
+            padding: 15px;
             color: var(--text-color-dark);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            box-sizing: border-box; /* สำคัญมากสำหรับ responsive design */
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
             max-width: 650px;
             width: 100%;
             background: var(--card-background);
-            padding: 25px; /* ลด padding */
+            padding: 25px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px var(--shadow-color);
+            box-shadow: var(--shadow-light);
             box-sizing: border-box;
+            opacity: 0; /* ซ่อนไว้ก่อน */
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .container.loaded {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         h2 {
             text-align: center;
             font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 30px; /* ลด margin */
-            font-size: 1.8em; /* ปรับขนาดให้เล็กลงเล็กน้อย */
+            margin-bottom: 30px;
+            font-size: 1.8em;
             position: relative;
+            background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        h2::after {
-            content: '';
-            width: 60px; /* ลดขนาด */
-            height: 4px; /* ลดขนาด */
-            background-color: var(--secondary-color);
-            position: absolute;
-            bottom: -10px; /* เลื่อนขึ้น */
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 2px;
+        h2 i {
+            -webkit-text-fill-color: var(--primary-color-end);
+        }
+        body.theme-dark h2 {
+            -webkit-text-fill-color: var(--text-color-dark);
+            background: none;
+        }
+        body.theme-dark h2 i {
+            color: var(--primary-color-end);
         }
 
         .form-section {
-            background: #fdfdfd;
-            padding: 20px; /* ลด padding */
+            background: var(--background-color);
+            padding: 20px;
             border-radius: 15px;
-            margin-bottom: 20px; /* ลด margin */
+            margin-bottom: 20px;
             border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .form-section-title {
             font-size: 1.1em;
             font-weight: 600;
             color: var(--text-color-dark);
-            margin-bottom: 15px; /* ลด margin */
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
+        .form-section-title i {
+            color: var(--primary-color-end);
+        }
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* ปรับ minmax ให้เล็กลง */
-            gap: 15px; /* ลด gap */
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
         }
 
         .form-group {
@@ -94,41 +131,41 @@
 
         label {
             display: block;
-            margin-bottom: 5px; /* ลด margin */
+            margin-bottom: 5px;
             font-weight: 500;
             color: var(--text-color-light);
-            font-size: 13px; /* ปรับขนาดให้เล็กลง */
+            font-size: 13px;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 10px; /* ลด padding */
+            padding: 10px;
             border: 1px solid var(--border-color);
-            border-radius: 8px; /* ปรับ border-radius */
-            font-size: 14px; /* ปรับขนาดให้เล็กลง */
+            border-radius: 8px;
+            font-size: 14px;
             box-sizing: border-box;
-            background: #fff;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: var(--card-background);
+            color: var(--text-color-dark);
+            transition: all 0.3s ease;
         }
 
         input:focus, select:focus, textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--focus-ring-color); /* ลดขนาด shadow */
+            border-color: var(--primary-color-end);
+            box-shadow: 0 0 0 3px var(--focus-ring-color);
             outline: none;
         }
 
         textarea {
-            min-height: 100px; /* ลดความสูง */
+            min-height: 100px;
             resize: vertical;
         }
         
-        /* ปรับปรุง Date Group เพื่อให้รวมเป็นหนึ่งเดียว */
         .date-group {
             position: relative;
-            padding-bottom: 25px; /* ลด padding */
+            padding-bottom: 25px;
         }
         .date-group .form-group {
-            margin-bottom: 15px; /* เพิ่ม margin ระหว่าง input */
+            margin-bottom: 15px;
         }
 
         #leaveDaysDisplay {
@@ -136,61 +173,62 @@
             bottom: 0;
             left: 0;
             font-weight: 500;
-            font-size: 12px; /* ลดขนาดตัวอักษร */
+            font-size: 12px;
             color: var(--text-color-light);
         }
 
         .signature-pad-container {
-            position: relative; /* สำหรับจัดวางปุ่มล้างลายเซ็น */
+            position: relative;
         }
         .signature-pad {
             border: 2px dashed var(--border-color);
             border-radius: 10px;
-            height: 150px; /* ลดความสูง */
+            height: 150px;
             touch-action: none;
-            background: #fafafa;
+            background: var(--background-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .btn-clear {
             position: absolute;
-            top: 10px; /* เลื่อนไปมุมบนขวา */
+            top: 10px;
             right: 10px;
             z-index: 10;
             margin-top: 0;
-            padding: 6px 10px; /* ลดขนาดปุ่ม */
-            font-size: 11px; /* ลดขนาดตัวอักษร */
-            background: rgba(255, 255, 255, 0.7);
+            padding: 6px 10px;
+            font-size: 11px;
+            background: var(--card-background);
+            color: var(--text-color-light);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         .btn-clear:hover {
-            background: #f0f0f0;
-            color: var(--text-color-dark);
+            background: var(--background-color);
         }
 
         .buttons {
-            margin-top: 20px; /* ลด margin */
+            margin-top: 20px;
             display: flex;
-            flex-direction: column; /* ให้ปุ่มเรียงจากบนลงล่างบนมือถือ */
+            flex-direction: column;
             gap: 10px;
             justify-content: center;
         }
 
         .btn {
             flex: 1;
-            padding: 12px; /* ลด padding */
+            padding: 12px;
             border: none;
-            border-radius: 10px; /* ปรับ border-radius */
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 14px; /* ปรับขนาดตัวอักษร */
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             color: #fff;
-            background: var(--primary-color);
+            background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
         }
@@ -202,19 +240,20 @@
 
         .btn-secondary {
             background: #B0B9C2;
+            box-shadow: none;
         }
         
         .radio-group {
             display: flex;
-            gap: 15px; /* ลด gap */
+            gap: 15px;
             align-items: center;
-            margin-top: 5px; /* ลด margin */
+            margin-top: 5px;
         }
 
         .radio-group label {
             margin-bottom: 0;
             font-weight: 400;
-            font-size: 13px; /* ลดขนาดตัวอักษร */
+            font-size: 13px;
             color: var(--text-color-dark);
             cursor: pointer;
         }
@@ -224,269 +263,329 @@
             width: auto;
         }
         
-        /* ไม่ต้องใช้ media query เดิมแล้ว เนื่องจากโครงสร้างใหม่รองรับ mobile-first */
         @media(min-width: 480px) {
             .buttons {
-                flex-direction: row; /* กลับไปเรียงแนวนอนบนจอใหญ่ */
+                flex-direction: row;
             }
         }
 
+        /* ===== Loading Screen Styles ===== */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            border: 5px solid var(--border-color);
+            border-top: 5px solid var(--primary-color-end);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            color: var(--text-color-light);
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>ฟอร์มลาออนไลน์ <i class="fas fa-file-contract"></i></h2>
-
-    <section class="form-section">
-        <h3 class="form-section-title"><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</h3>
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="empName">ชื่อ-สกุล</label>
-                <input type="text" id="empName" readonly value="ชื่อจริง นามสกุล">
-            </div>
-            <div class="form-group">
-                <label for="empId">รหัสพนักงาน</label>
-                <input type="text" id="empId" readonly value="EMP001">
-            </div>
-            <div class="form-group">
-                <label for="position">ตำแหน่ง</label>
-                <input type="text" id="position" readonly value="พนักงานทั่วไป">
-            </div>
-            <div class="form-group">
-                <label for="department">ฝ่าย</label>
-                <input type="text" id="department" readonly value="BUS">
-            </div>
-        </div>
-    </section>
-
-    <section class="form-section">
-        <h3 class="form-section-title"><i class="fas fa-file-alt"></i> รายละเอียดการลา</h3>
-        <div class="form-group">
-            <label for="leaveType">ประเภทการลา</label>
-            <select id="leaveType">
-                <option value="AL">ลาพักร้อน</option>
-                <option value="SL">ลาป่วย</option>
-                <option value="BL">ลากิจ</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="reason">เหตุผลการลา</label>
-            <textarea id="reason" placeholder="กรุณากรอกเหตุผล"></textarea>
-        </div>
-        <div class="form-group">
-            <label>เอกสารประกอบ</label>
-            <div class="radio-group">
-                <label><input type="radio" name="hasDocument" value="มี"> มี</label>
-                <label><input type="radio" name="hasDocument" value="ไม่มี"> ไม่มี</label>
-            </div>
-        </div>
-    </section>
-
-    <section class="form-section">
-        <h3 class="form-section-title"><i class="fas fa-clock"></i> ระยะเวลาการลา</h3>
-        <div class="date-group">
-            <div class="form-group">
-                <label for="startDate">ตั้งแต่วันที่</label>
-                <input type="datetime-local" id="startDate">
-            </div>
-            <div class="form-group">
-                <label for="endDate">ถึงวันที่</label>
-                <input type="datetime-local" id="endDate">
-            </div>
-            <div id="leaveDaysDisplay"></div>
-        </div>
-    </section>
-    
-    <section class="form-section">
-        <h3 class="form-section-title"><i class="fas fa-signature"></i> ลายเซ็นอิเล็กทรอนิกส์</h3>
-        <div class="form-group signature-pad-container">
-            <canvas id="signaturePad" class="signature-pad"></canvas>
-            <button type="button" onclick="clearSignature()" class="btn-clear"><i class="fas fa-eraser"></i> ล้าง</button>
-        </div>
-    </section>
-
-    <div class="buttons">
-        <button class="btn" id="submitBtn"><i class="fas fa-paper-plane"></i> ส่งคำขอ</button>
-        <button class="btn btn-secondary" onclick="window.location.href='Dashboard.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <div class="loading-text">กำลังโหลดข้อมูล...</div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-<script>
-// --- ส่วน JavaScript ไม่มีการเปลี่ยนแปลง ---
-// โค้ดส่วนนี้ยังคงเดิมทั้งหมด เพื่อให้แน่ใจว่าฟังก์ชันการทำงานยังคงเหมือนเดิม
-document.addEventListener("DOMContentLoaded", () => {
-    const set1 = JSON.parse(localStorage.getItem("leaveSet1"));
-    if (!set1) {
-        alert("ไม่พบข้อมูลพนักงาน กรุณากลับไปหน้า Dashboard");
-        return;
-    }
-    document.getElementById("empId").value = set1[0];
-    document.getElementById("empName").value = set1[1];
-    document.getElementById("position").value = set1[2];
-    document.getElementById("department").value = "BUS";
-    const leaveType = document.getElementById("leaveType");
-    const leaveBalanceInfo = document.createElement("div");
-    leaveBalanceInfo.style.fontSize = "13px";
-    leaveBalanceInfo.style.marginTop = "5px";
-    leaveBalanceInfo.style.color = "#7F8C8D";
-    leaveType.insertAdjacentElement("afterend", leaveBalanceInfo);
-    function updateLeaveBalance() {
-        let msg = "";
-        switch (leaveType.value) {
-            case "AL": msg = `วันลาพักร้อนคงเหลือ: ${set1[3]} วัน`; break;
-            case "SL": msg = `วันลาป่วยคงเหลือ: ${set1[4]} วัน`; break;
-            case "BL": msg = `วันลากิจคงเหลือ: ${set1[5]} วัน`; break;
+    <div class="container" id="mainContainer">
+        <h2>ฟอร์มลาออนไลน์ <i class="fas fa-file-contract"></i></h2>
+
+        <section class="form-section">
+            <h3 class="form-section-title"><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="empName">ชื่อ-สกุล</label>
+                    <input type="text" id="empName" readonly value="ชื่อจริง นามสกุล">
+                </div>
+                <div class="form-group">
+                    <label for="empId">รหัสพนักงาน</label>
+                    <input type="text" id="empId" readonly value="EMP001">
+                </div>
+                <div class="form-group">
+                    <label for="position">ตำแหน่ง</label>
+                    <input type="text" id="position" readonly value="พนักงานทั่วไป">
+                </div>
+                <div class="form-group">
+                    <label for="department">ฝ่าย</label>
+                    <input type="text" id="department" readonly value="BUS">
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3 class="form-section-title"><i class="fas fa-file-alt"></i> รายละเอียดการลา</h3>
+            <div class="form-group">
+                <label for="leaveType">ประเภทการลา</label>
+                <select id="leaveType">
+                    <option value="AL">ลาพักร้อน</option>
+                    <option value="SL">ลาป่วย</option>
+                    <option value="BL">ลากิจ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="reason">เหตุผลการลา</label>
+                <textarea id="reason" placeholder="กรุณากรอกเหตุผล"></textarea>
+            </div>
+            <div class="form-group">
+                <label>เอกสารประกอบ</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="hasDocument" value="มี"> มี</label>
+                    <label><input type="radio" name="hasDocument" value="ไม่มี"> ไม่มี</label>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3 class="form-section-title"><i class="fas fa-clock"></i> ระยะเวลาการลา</h3>
+            <div class="date-group">
+                <div class="form-group">
+                    <label for="startDate">ตั้งแต่วันที่</label>
+                    <input type="datetime-local" id="startDate">
+                </div>
+                <div class="form-group">
+                    <label for="endDate">ถึงวันที่</label>
+                    <input type="datetime-local" id="endDate">
+                </div>
+                <div id="leaveDaysDisplay"></div>
+            </div>
+        </section>
+        
+        <section class="form-section">
+            <h3 class="form-section-title"><i class="fas fa-signature"></i> ลายเซ็นอิเล็กทรอนิกส์</h3>
+            <div class="form-group signature-pad-container">
+                <canvas id="signaturePad" class="signature-pad"></canvas>
+                <button type="button" onclick="clearSignature()" class="btn-clear"><i class="fas fa-eraser"></i> ล้าง</button>
+            </div>
+        </section>
+
+        <div class="buttons">
+            <button class="btn" id="submitBtn"><i class="fas fa-paper-plane"></i> ส่งคำขอ</button>
+            <button class="btn btn-secondary" onclick="window.location.href='Dashboard.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script>
+        // --- การจัดการ Loading Screen และ Theme ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const mainContainer = document.getElementById('mainContainer');
+            
+            // โหลดธีมจาก localStorage
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme) {
+                document.body.className = savedTheme;
+            }
+
+            // หน่วงเวลา 3 วินาทีแล้วแสดงหน้าหลัก
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                mainContainer.classList.add('loaded');
+            }, 3000); // 3 วินาที
+
+            // --- ส่วน JavaScript ไม่มีการเปลี่ยนแปลงจากโค้ดเดิม ---
+            const set1 = JSON.parse(localStorage.getItem("leaveSet1"));
+            if (!set1) {
+                alert("ไม่พบข้อมูลพนักงาน กรุณากลับไปหน้า Dashboard");
+                return;
+            }
+            document.getElementById("empId").value = set1[0];
+            document.getElementById("empName").value = set1[1];
+            document.getElementById("position").value = set1[2];
+            document.getElementById("department").value = "BUS";
+            const leaveType = document.getElementById("leaveType");
+            const leaveBalanceInfo = document.createElement("div");
+            leaveBalanceInfo.style.fontSize = "13px";
+            leaveBalanceInfo.style.marginTop = "5px";
+            leaveBalanceInfo.style.color = "var(--text-color-light)"; // ใช้ตัวแปรสี
+            leaveType.insertAdjacentElement("afterend", leaveBalanceInfo);
+            function updateLeaveBalance() {
+                let msg = "";
+                switch (leaveType.value) {
+                    case "AL": msg = `วันลาพักร้อนคงเหลือ: ${set1[3]} วัน`; break;
+                    case "SL": msg = `วันลาป่วยคงเหลือ: ${set1[4]} วัน`; break;
+                    case "BL": msg = `วันลากิจคงเหลือ: ${set1[5]} วัน`; break;
+                }
+                leaveBalanceInfo.textContent = msg;
+            }
+            leaveType.addEventListener("change", updateLeaveBalance);
+            updateLeaveBalance();
+        });
+
+        function calculateLeaveDays(sDate, sTime, eDate, eTime) {
+            if (!sDate || !sTime || !eDate || !eTime) return 0;
+            const WORK_HOURS_PER_DAY = 8;
+            const start = new Date(`${sDate}T${sTime}`);
+            const end = new Date(`${eDate}T${eTime}`);
+            if (end <= start) return 0;
+            let totalHours = 0;
+            let current = new Date(start);
+            current.setHours(0, 0, 0, 0);
+            while (current <= end) {
+                const dayOfWeek = current.getDay();
+                if (dayOfWeek !== 0) {
+                    const morningStart = new Date(current);
+                    morningStart.setHours(8, 0, 0, 0);
+                    const morningEnd = new Date(current);
+                    morningEnd.setHours(12, 0, 0, 0);
+                    const afternoonStart = new Date(current);
+                    afternoonStart.setHours(13, 0, 0, 0);
+                    const afternoonEnd = new Date(current);
+                    afternoonEnd.setHours(17, 0, 0, 0);
+                    let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
+                    let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
+                    totalHours += overlapMorning + overlapAfternoon;
+                }
+                current.setDate(current.getDate() + 1);
+                current.setHours(0, 0, 0, 0);
+            }
+            return Math.round((totalHours / WORK_HOURS_PER_DAY) * 10) / 10;
         }
-        leaveBalanceInfo.textContent = msg;
-    }
-    leaveType.addEventListener("change", updateLeaveBalance);
-    updateLeaveBalance();
-});
+        document.addEventListener("DOMContentLoaded", () => {
+            const startDate = document.getElementById("startDate");
+            const endDate = document.getElementById("endDate");
+            const leaveDisplay = document.getElementById("leaveDaysDisplay");
+            function updateLeaveDays() {
+                const start = startDate.value.split("T");
+                const end = endDate.value.split("T");
+                if (start.length < 2 || end.length < 2) {
+                    leaveDisplay.innerText = "";
+                    return;
+                }
+                const leaveDays = calculateLeaveDays(start[0], start[1], end[0], end[1]);
+                leaveDisplay.innerText = `รวมวันลา: ${leaveDays} วัน`;
+            }
+            startDate.addEventListener("change", updateLeaveDays);
+            endDate.addEventListener("change", updateLeaveDays);
+        });
 
-function calculateLeaveDays(sDate, sTime, eDate, eTime) {
-    if (!sDate || !sTime || !eDate || !eTime) return 0;
-    const WORK_HOURS_PER_DAY = 8;
-    const start = new Date(`${sDate}T${sTime}`);
-    const end = new Date(`${eDate}T${eTime}`);
-    if (end <= start) return 0;
-    let totalHours = 0;
-    let current = new Date(start);
-    current.setHours(0, 0, 0, 0);
-    while (current <= end) {
-        const dayOfWeek = current.getDay();
-        if (dayOfWeek !== 0) {
-            const morningStart = new Date(current);
-            morningStart.setHours(8, 0, 0, 0);
-            const morningEnd = new Date(current);
-            morningEnd.setHours(12, 0, 0, 0);
-            const afternoonStart = new Date(current);
-            afternoonStart.setHours(13, 0, 0, 0);
-            const afternoonEnd = new Date(current);
-            afternoonEnd.setHours(17, 0, 0, 0);
-            let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
-            let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
-            totalHours += overlapMorning + overlapAfternoon;
+        const canvas = document.getElementById('signaturePad');
+        const signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgba(0,0,0,0)',
+            penColor: 'black',
+            minWidth: 0.5,
+            maxWidth: 2.5,
+            velocityFilterWeight: 0.7
+        });
+
+        function clearSignature() {
+            signaturePad.clear();
         }
-        current.setDate(current.getDate() + 1);
-        current.setHours(0, 0, 0, 0);
-    }
-    return Math.round((totalHours / WORK_HOURS_PER_DAY) * 10) / 10;
-}
-document.addEventListener("DOMContentLoaded", () => {
-    const startDate = document.getElementById("startDate");
-    const endDate = document.getElementById("endDate");
-    const leaveDisplay = document.getElementById("leaveDaysDisplay");
-    function updateLeaveDays() {
-        const start = startDate.value.split("T");
-        const end = endDate.value.split("T");
-        if (start.length < 2 || end.length < 2) {
-            leaveDisplay.innerText = "";
-            return;
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+            signaturePad.clear();
         }
-        const leaveDays = calculateLeaveDays(start[0], start[1], end[0], end[1]);
-        leaveDisplay.innerText = `รวมวันลา: ${leaveDays} วัน`;
-    }
-    startDate.addEventListener("change", updateLeaveDays);
-    endDate.addEventListener("change", updateLeaveDays);
-});
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
 
-const canvas = document.getElementById('signaturePad');
-const signaturePad = new SignaturePad(canvas, {
-    backgroundColor: 'rgba(0,0,0,0)',
-    penColor: 'black',
-    minWidth: 0.5,
-    maxWidth: 2.5,
-    velocityFilterWeight: 0.7
-});
+        document.getElementById("submitBtn").addEventListener("click", () => {
+            const fields = [
+                document.getElementById("empName"),
+                document.getElementById("empId"),
+                document.getElementById("position"),
+                document.getElementById("department"),
+                document.getElementById("leaveType"),
+                document.getElementById("reason"),
+                document.getElementById("startDate"),
+                document.getElementById("endDate")
+            ];
 
-function clearSignature() {
-    signaturePad.clear();
-}
-function resizeCanvas() {
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = canvas.offsetHeight * ratio;
-    canvas.getContext("2d").scale(ratio, ratio);
-    signaturePad.clear();
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+            let hasEmpty = false;
+            fields.forEach(f => f.style.borderColor = 'var(--border-color)');
+            fields.forEach(f => {
+                if (!f.value.trim()) {
+                    f.style.borderColor = 'red';
+                    hasEmpty = true;
+                }
+            });
 
-document.getElementById("submitBtn").addEventListener("click", () => {
-    const fields = [
-        document.getElementById("empName"),
-        document.getElementById("empId"),
-        document.getElementById("position"),
-        document.getElementById("department"),
-        document.getElementById("leaveType"),
-        document.getElementById("reason"),
-        document.getElementById("startDate"),
-        document.getElementById("endDate")
-    ];
+            const docRadios = document.getElementsByName("hasDocument");
+            if (!Array.from(docRadios).some(r => r.checked)) {
+                alert("กรุณาเลือกว่ามีเอกสารประกอบหรือไม่");
+                return;
+            }
+            if (hasEmpty) {
+                alert("กรุณากรอกข้อมูลให้ครบทุกช่อง (กรอบสีแดงคือช่องที่ว่าง)");
+                return;
+            }
+            if (signaturePad.isEmpty()) {
+                alert("กรุณาเซ็นชื่อก่อนส่ง");
+                return;
+            }
 
-    let hasEmpty = false;
-    fields.forEach(f => f.style.borderColor = '#E0E0E0');
-    fields.forEach(f => {
-        if (!f.value.trim()) {
-            f.style.borderColor = 'red';
-            hasEmpty = true;
-        }
-    });
+            // --- ตรวจสอบจำนวนวันลาไม่เกินสิทธิ ---
+            const leaveDisplay = document.getElementById("leaveDaysDisplay").innerText;
+            const leaveDaysMatch = leaveDisplay.match(/รวมวันลา: (\d+(\.\d+)?) วัน/);
+            const leaveDays = leaveDaysMatch ? parseFloat(leaveDaysMatch[1]) : 0;
+            const leaveSet1 = JSON.parse(localStorage.getItem("leaveSet1"));
+            const leaveType = document.getElementById("leaveType").value;
+            let maxDays = 0;
+            switch (leaveType) {
+                case "AL": maxDays = leaveSet1[3]; break;
+                case "SL": maxDays = leaveSet1[4]; break;
+                case "BL": maxDays = leaveSet1[5]; break;
+            }
+            if (leaveDays > maxDays) {
+                alert(`จำนวนวันลาที่ขอ (${leaveDays}) เกินวันลาคงเหลือ (${maxDays})`);
+                return;
+            }
 
-    const docRadios = document.getElementsByName("hasDocument");
-    if (!Array.from(docRadios).some(r => r.checked)) {
-        alert("กรุณาเลือกว่ามีเอกสารประกอบหรือไม่");
-        return;
-    }
-    if (hasEmpty) {
-        alert("กรุณากรอกข้อมูลให้ครบทุกช่อง (กรอบสีแดงคือช่องที่ว่าง)");
-        return;
-    }
-    if (signaturePad.isEmpty()) {
-        alert("กรุณาเซ็นชื่อก่อนส่ง");
-        return;
-    }
+            // --- เก็บข้อมูลลง localStorage ---
+            const leaveData = {
+                empId: document.getElementById("empId").value,
+                empName: document.getElementById("empName").value,
+                position: document.getElementById("position").value,
+                department: document.getElementById("department").value,
+                leaveType: leaveType,
+                reason: document.getElementById("reason").value,
+                hasDocument: Array.from(docRadios).find(r => r.checked).value,
+                startDate: document.getElementById("startDate").value.split("T")[0],
+                startTime: document.getElementById("startDate").value.split("T")[1],
+                endDate: document.getElementById("endDate").value.split("T")[0],
+                endTime: document.getElementById("endDate").value.split("T")[1],
+                leaveDays: leaveDays,
+                signatureData: signaturePad.toDataURL()
+            };
 
-    // --- ตรวจสอบจำนวนวันลาไม่เกินสิทธิ ---
-    const leaveDisplay = document.getElementById("leaveDaysDisplay").innerText;
-    const leaveDaysMatch = leaveDisplay.match(/รวมวันลา: (\d+(\.\d+)?) วัน/);
-    const leaveDays = leaveDaysMatch ? parseFloat(leaveDaysMatch[1]) : 0;
-    const leaveSet1 = JSON.parse(localStorage.getItem("leaveSet1"));
-    const leaveType = document.getElementById("leaveType").value;
-    let maxDays = 0;
-    switch (leaveType) {
-        case "AL": maxDays = leaveSet1[3]; break;
-        case "SL": maxDays = leaveSet1[4]; break;
-        case "BL": maxDays = leaveSet1[5]; break;
-    }
-    if (leaveDays > maxDays) {
-        alert(`จำนวนวันลาที่ขอ (${leaveDays}) เกินวันลาคงเหลือ (${maxDays})`);
-        return;
-    }
+            localStorage.setItem("leavePreviewData", JSON.stringify(leaveData));
 
-    // --- เก็บข้อมูลลง localStorage ---
-    const leaveData = {
-        empId: document.getElementById("empId").value,
-        empName: document.getElementById("empName").value,
-        position: document.getElementById("position").value,
-        department: document.getElementById("department").value,
-        leaveType: leaveType,
-        reason: document.getElementById("reason").value,
-        hasDocument: Array.from(docRadios).find(r => r.checked).value,
-        startDate: document.getElementById("startDate").value.split("T")[0],
-        startTime: document.getElementById("startDate").value.split("T")[1],
-        endDate: document.getElementById("endDate").value.split("T")[0],
-        endTime: document.getElementById("endDate").value.split("T")[1],
-        leaveDays: leaveDays,
-        signatureData: signaturePad.toDataURL()
-    };
-
-    localStorage.setItem("leavePreviewData", JSON.stringify(leaveData));
-
-    // --- ไปหน้า Preview ---
-    window.location.href = "preview.html";
-});
-</script>
+            // --- ไปหน้า Preview ---
+            window.location.href = "preview.html";
+        });
+    </script>
 </body>
 </html>
