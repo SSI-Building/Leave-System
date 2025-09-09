@@ -244,7 +244,7 @@ async function loadDashboard() {
   const userId = profile.userId;
   document.getElementById("profilePic").src = profile.pictureUrl;
 
-  const randomMessage = messages[Math.or(Math.random() * messages.length)];
+  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
   document.getElementById("motivation").textContent = randomMessage;
 
   fetch(`${GAS_URL}?action=getBalance&userId=${userId}`)
@@ -277,13 +277,17 @@ async function loadDashboard() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
-  const savedTheme = localStorage.getItem('selectedTheme');
-  if (savedTheme) {
-      document.body.className = savedTheme;
-  }
-  loadDashboard();
+window.onload = () => {
+    // โหลดธีมจาก localStorage ก่อนแสดง Loading Screen เพื่อให้ Loading Screen มีสีตามธีม
+    const savedTheme = localStorage.getItem('selectedTheme');
+    if (savedTheme) {
+        document.body.className = savedTheme;
+    }
+    // เริ่มโหลดข้อมูลหลังจาก DOM และรูปภาพทั้งหมดโหลดเสร็จ
+    loadDashboard();
+};
   
+document.addEventListener("DOMContentLoaded", ()=>{
   const settingsIcon = document.getElementById('settingsIcon');
   const logoutIcon = document.getElementById('logoutIcon');
   const themeSelector = document.getElementById('themeSelector');
@@ -292,6 +296,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
       themeSelector.classList.toggle('active');
   });
 
+  // แก้ไขให้กลับไปหน้า Login.html โดยไม่ลบข้อมูลใน localStorage
   logoutIcon.addEventListener('click', () => {
     window.location.href = 'Login.html';
   });
