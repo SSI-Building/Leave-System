@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>ทดสอบประวัติการลา</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; }
+    body { font-family: Arial; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #f0f0f0; }
   </style>
@@ -24,27 +24,25 @@
       const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec";
 
       try {
-        const response = await fetch(`${webAppUrl}?lineUserId=${lineUserId}`);
-        const data = await response.json();
+        const res = await fetch(`${webAppUrl}?lineUserId=${lineUserId}`);
+        const data = await res.json();
 
         if (!data || data.length === 0) {
           document.getElementById("result").innerHTML = "<p>❌ ไม่พบข้อมูล</p>";
           return;
         }
 
-        let html = "<table>";
+        let html = `<p>พบ ${data.length} แถว</p>`;
+        html += "<table>";
         html += "<tr>";
-        // สร้าง header จาก keys ของ object ตัวแรก
-        Object.keys(data[0]).forEach(key => {
-          html += `<th>${key}</th>`;
-        });
+        // สร้าง header จาก Column A–O
+        for (let i = 0; i < 15; i++) html += `<th>Column ${String.fromCharCode(65 + i)}</th>`;
         html += "</tr>";
 
-        // สร้าง row ของข้อมูล
         data.forEach(item => {
           html += "<tr>";
-          Object.keys(item).forEach(key => {
-            html += `<td>${item[key] !== null ? item[key] : ""}</td>`;
+          item.rawRow.forEach(cell => {
+            html += `<td>${cell !== null ? cell : ""}</td>`;
           });
           html += "</tr>";
         });
@@ -52,7 +50,7 @@
         html += "</table>";
         document.getElementById("result").innerHTML = html;
 
-      } catch(err) {
+      } catch (err) {
         console.error(err);
         document.getElementById("result").innerHTML = "<p>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
       }
