@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ===== Theme Variables & Base Styles (as before) ===== */
+        /* ===== Theme Variables & Base Styles (ตามที่คุณให้มา) ===== */
         :root {
             --primary-color-start: #1994b6;
             --primary-color-end: #36a761;
@@ -230,18 +230,18 @@
     
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
+        // Use the original fetch function that works
         async function fetchHistory() {
             try {
-                // Initialize LIFF
+                // เริ่ม LIFF
                 await liff.init({ liffId: "2007956727-6V7DrnMD" });
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                    return;
-                }
+                if (!liff.isLoggedIn()) { liff.login(); return; }
 
+                // ดึง lineUserId จาก LIFF profile
                 const profile = await liff.getProfile();
                 const lineUserId = profile.userId;
 
+                // URL Web App พร้อมส่ง lineUserId
                 const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
                 const resp = await fetch(webAppUrl);
                 const data = await resp.json();
@@ -254,23 +254,23 @@
                     return;
                 }
 
-                // Create cards for each data row
+                // ปรับปรุงส่วนนี้เพื่อสร้างการ์ดแทนตาราง
                 data.forEach(row => {
                     const card = document.createElement("div");
                     card.className = "history-card";
                     
-                    // Map data from the spreadsheet row to the new card layout
-                    const leaveType = row[3] || 'ไม่ระบุ';       // Column 4 (index 3)
-                    const status = row[9] || 'รออนุมัติ';        // Column 10 (index 9)
-                    const startDate = row[4] || 'ไม่ระบุ';       // Column 5 (index 4)
-                    const startTime = row[5] || '';              // Column 6 (index 5)
-                    const endDate = row[6] || 'ไม่ระบุ';         // Column 7 (index 6)
-                    const endTime = row[7] || '';                // Column 8 (index 7)
-                    const duration = row[8] || 'ไม่ระบุ';        // Column 9 (index 8)
-                    const requestDateTime = row[10] || 'ไม่ระบุ'; // Column 11 (index 10)
-                    const fileId = row[13] || '#';               // Column 14 (index 13)
+                    // แมปข้อมูลจาก Array (ซึ่งตรงกับคอลัมน์ในตารางดั้งเดิมของคุณ)
+                    const leaveType = row[3] || 'ไม่ระบุ';         // Column 4
+                    const status = row[9] || 'รออนุมัติ';          // Column 10
+                    const startDate = row[4] || 'ไม่ระบุ';         // Column 5
+                    const startTime = row[5] || '';                // Column 6
+                    const endDate = row[6] || 'ไม่ระบุ';           // Column 7
+                    const endTime = row[7] || '';                  // Column 8
+                    const duration = row[8] || 'ไม่ระบุ';          // Column 9
+                    const requestDateTime = row[10] || 'ไม่ระบุ';   // Column 11
+                    const fileId = row[13] || '#';                 // Column 14
 
-                    // Get status class
+                    // Get status class for styling
                     let statusText = 'รออนุมัติ';
                     let statusClass = 'status-pending';
                     if (status.includes('อนุมัติ')) {
@@ -306,16 +306,7 @@
             }
         }
         
-        // Call the function to fetch and display history
         fetchHistory();
-
-        // Theme switching logic (optional)
-        document.addEventListener("DOMContentLoaded", () => {
-            const savedTheme = localStorage.getItem('selectedTheme');
-            if (savedTheme) {
-                document.body.className = savedTheme;
-            }
-        });
     </script>
 </body>
 </html>
