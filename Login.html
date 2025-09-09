@@ -28,10 +28,10 @@
 
   /* ===== Dark Theme Colors Override ===== */
   body.theme-dark {
-    --primary-color-start: #9B59B6; /* เปลี่ยนเป็นสีม่วง */
-    --primary-color-end: #1ABC9C; /* เปลี่ยนเป็นสีเทอร์ควอยซ์ */
-    --text-color-dark: #fff;
-    --text-color-light: #fff;
+    --primary-color-start: #141E30; /* กลับเป็นสีน้ำเงินเข้ม */
+    --primary-color-end: #243B55; /* กลับเป็นสีน้ำเงินอ่อน */
+    --text-color-dark: #fff; /* สีขาวสว่างสำหรับข้อความหลัก/ที่เลือก */
+    --text-color-light: #bbb; /* สีเทา-ขาวสำหรับข้อความรอง/ไม่ได้เลือก */
     --background-color: #181818;
     --card-background: #242424;
     --shadow-color: rgba(255, 255, 255, 0.1);
@@ -116,12 +116,13 @@
 
   /* แก้ไขสีข้อความและไอคอนใน Dark Mode */
   body.theme-dark h1 {
-    -webkit-text-fill-color: #fff;
-    background: none;
+    background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end)); /* กลับมาใช้ gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: var(--text-color-dark); /* ใช้สีขาวสว่าง */
   }
 
   body.theme-dark h1 i {
-    color: #fff;
+    color: var(--text-color-dark); /* ใช้สีขาวสว่าง */
   }
 
   .tabs {
@@ -137,7 +138,7 @@
     padding: 12px 0;
     cursor: pointer;
     font-weight: 500;
-    color: var(--text-color-light);
+    color: var(--text-color-light); /* สีเทา-ขาวสำหรับไม่ได้เลือก */
     transition: all 0.3s ease;
   }
 
@@ -145,6 +146,15 @@
     color: var(--primary-color-start);
     font-weight: 600;
   }
+
+  /* ปรับสีของแท็บใน Dark Mode */
+  body.theme-dark .tab {
+    color: var(--text-color-light); /* สีเทา-ขาวสำหรับไม่ได้เลือก */
+  }
+  body.theme-dark .tab.active {
+    color: var(--text-color-dark); /* สีขาวสว่างสำหรับที่เลือก */
+  }
+
 
   .tab-indicator {
     position: absolute;
@@ -195,7 +205,7 @@
   
   /* เปลี่ยนสีเงาของ input focus ในโหมด Dark Mode */
   body.theme-dark input:focus {
-    box-shadow: 0 0 0 4px rgba(155, 89, 182, 0.2); /* ใช้สีม่วงแทน */
+    box-shadow: 0 0 0 4px rgba(36, 59, 85, 0.2); /* ใช้สีน้ำเงินอ่อนแทน */
   }
 
   .login-button, .line-button {
@@ -223,7 +233,7 @@
 
   /* เปลี่ยนสีเงาของปุ่ม Login ในโหมด Dark Mode */
   body.theme-dark .login-button {
-    box-shadow: 0 4px 10px rgba(155, 89, 182, 0.2);
+    box-shadow: 0 4px 10px rgba(36, 59, 85, 0.2);
   }
 
   .login-button:hover:not(:disabled) {
@@ -233,7 +243,7 @@
   
   /* เปลี่ยนสีเงา hover ของปุ่ม Login ในโหมด Dark Mode */
   body.theme-dark .login-button:hover:not(:disabled) {
-    box-shadow: 0 6px 15px rgba(155, 89, 182, 0.25);
+    box-shadow: 0 6px 15px rgba(36, 59, 85, 0.25);
   }
 
   .login-button:disabled {
@@ -381,7 +391,7 @@
             <span class="theme-preview" style="--color-start: #555; --color-end: #999;"></span>Monochrome
         </div>
         <div class="theme-item" data-theme="theme-dark">
-            <span class="theme-preview" style="--color-start: #9B59B6; --color-end: #1ABC9C;"></span>Dark Mode
+            <span class="theme-preview" style="--color-start: #141E30; --color-end: #243B55;"></span>Dark Mode
         </div>
     </div>
 </div>
