@@ -188,9 +188,28 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("hasDocumentDisplay").textContent = leaveData.hasDocument || "";
     document.getElementById("leaveDaysDisplay").textContent = `${leaveData.leaveDays || 0} วัน`;
 
-    // แสดง start / end
+    // แปลง startDate / startTime / endDate / endTime เป็น format yyyy-MM-dd / HH:mm
     const startDateTime = new Date(`${leaveData.startDate}T${leaveData.startTime}`);
-    const endDateTime = new Date(`${leaveData.endDate}T${leaveData.endTime}`);
+    const endDateTime   = new Date(`${leaveData.endDate}T${leaveData.endTime}`);
+
+    const startDateStr = startDateTime.getFullYear() + '-' +
+        String(startDateTime.getMonth()+1).padStart(2,'0') + '-' +
+        String(startDateTime.getDate()).padStart(2,'0');
+    const startTimeStr = String(startDateTime.getHours()).padStart(2,'0') + ':' +
+        String(startDateTime.getMinutes()).padStart(2,'0');
+    const endDateStr = endDateTime.getFullYear() + '-' +
+        String(endDateTime.getMonth()+1).padStart(2,'0') + '-' +
+        String(endDateTime.getDate()).padStart(2,'0');
+    const endTimeStr = String(endDateTime.getHours()).padStart(2,'0') + ':' +
+        String(endDateTime.getMinutes()).padStart(2,'0');
+
+    // เก็บลง leaveData เพื่อส่งไป Sheet
+    leaveData.startDateFormatted = startDateStr;
+    leaveData.startTimeFormatted = startTimeStr;
+    leaveData.endDateFormatted   = endDateStr;
+    leaveData.endTimeFormatted   = endTimeStr;
+
+    // แสดง start / end ใน preview
     const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
     const optionsTime = { hour: '2-digit', minute: '2-digit' };
     document.getElementById("startDisplay").textContent =
@@ -224,10 +243,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // ส่งข้อมูลไป Google Apps Script
         const leaveDataToSend = {
             ...leaveData,
-            startDate: leaveData.startDate,
-            startTime: leaveData.startTime,
-            endDate: leaveData.endDate,
-            endTime: leaveData.endTime
+            startDate: leaveData.startDateFormatted,
+            startTime: leaveData.startTimeFormatted,
+            endDate: leaveData.endDateFormatted,
+            endTime: leaveData.endTimeFormatted
         };
         const url = "https://script.google.com/macros/s/AKfycbwviyKkV7geROoSiWGxPy0HtqFvjOtXF4SXR2SdXTPoGRDyrfwSIe0bxfelBmtYlfl4/exec";
 
@@ -249,5 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
 </body>
 </html>
