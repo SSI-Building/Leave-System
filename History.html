@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ===== Theme Variables & Base Styles (นำ CSS ที่คุณให้มาทั้งหมดมาใส่ที่นี่) ===== */
+        /* ===== Theme Variables & Base Styles (as before) ===== */
         :root {
             --primary-color-start: #1994b6;
             --primary-color-end: #36a761;
@@ -259,22 +259,25 @@
                     const card = document.createElement("div");
                     card.className = "history-card";
                     
-                    // Example mapping from your spreadsheet columns to card fields
-                    // You need to adjust the column indices (e.g., row[0], row[1], etc.)
-                    // based on the actual order of data from your Google Sheet.
-                    const leaveType = row[0] || 'ไม่ระบุ';       // Column A
-                    const requestDate = row[1] || 'ไม่ระบุ';     // Column B
-                    const startDate = row[2] || 'ไม่ระบุ';       // Column C
-                    const endDate = row[3] || 'ไม่ระบุ';         // Column D
-                    const duration = row[4] || 'ไม่ระบุ';        // Column E
-                    const status = row[5] || 'รออนุมัติ';        // Column F
-                    const fileId = row[6] || '#';                 // Column N (File ID)
+                    // Map data from the spreadsheet row to the new card layout
+                    const leaveType = row[3] || 'ไม่ระบุ';       // Column 4 (index 3)
+                    const status = row[9] || 'รออนุมัติ';        // Column 10 (index 9)
+                    const startDate = row[4] || 'ไม่ระบุ';       // Column 5 (index 4)
+                    const startTime = row[5] || '';              // Column 6 (index 5)
+                    const endDate = row[6] || 'ไม่ระบุ';         // Column 7 (index 6)
+                    const endTime = row[7] || '';                // Column 8 (index 7)
+                    const duration = row[8] || 'ไม่ระบุ';        // Column 9 (index 8)
+                    const requestDateTime = row[10] || 'ไม่ระบุ'; // Column 11 (index 10)
+                    const fileId = row[13] || '#';               // Column 14 (index 13)
 
                     // Get status class
+                    let statusText = 'รออนุมัติ';
                     let statusClass = 'status-pending';
-                    if (status === 'อนุมัติ') {
+                    if (status.includes('อนุมัติ')) {
+                        statusText = 'อนุมัติแล้ว';
                         statusClass = 'status-approved';
-                    } else if (status === 'ไม่อนุมัติ') {
+                    } else if (status.includes('ไม่อนุมัติ')) {
+                        statusText = 'ไม่อนุมัติ';
                         statusClass = 'status-rejected';
                     }
 
@@ -282,12 +285,12 @@
                     card.innerHTML = `
                         <div class="card-header">
                             <span class="card-title">${leaveType}</span>
-                            <span class="card-status ${statusClass}">${status}</span>
+                            <span class="card-status ${statusClass}">${statusText}</span>
                         </div>
                         <div class="card-info">
-                            <p><strong>ยื่นวันที่:</strong> ${requestDate}</p>
-                            <p><strong>ตั้งแต่วันที่:</strong> ${startDate} - ${endDate}</p>
-                            <p><strong>รวม:</strong> ${duration} วัน</p>
+                            <p><strong>ลาตั้งแต่วันที่:</strong> ${startDate} เวลา ${startTime} ถึงวันที่ ${endDate} เวลา ${endTime}</p>
+                            <p><strong>รวมวันลา:</strong> ${duration}</p>
+                            <p><strong>ยื่นลาวันที่:</strong> ${requestDateTime}</p>
                         </div>
                         <div class="card-actions">
                             <a href="${fileId !== '#' ? 'https://docs.google.com/open?id=' + fileId : '#'}" class="detail-link" target="_blank">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>
@@ -306,7 +309,7 @@
         // Call the function to fetch and display history
         fetchHistory();
 
-        // Theme switching logic (optional, but good to keep)
+        // Theme switching logic (optional)
         document.addEventListener("DOMContentLoaded", () => {
             const savedTheme = localStorage.getItem('selectedTheme');
             if (savedTheme) {
