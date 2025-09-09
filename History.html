@@ -2,92 +2,60 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>ประวัติการลา</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>ทดสอบประวัติการลา</title>
   <style>
-    body { font-family: "Prompt", sans-serif; padding: 20px; background: #f5f5f5; }
-    .history-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .card-header { display: flex; justify-content: space-between; align-items: center; }
-    .card-title { font-size: 1.1em; font-weight: 600; }
-    .card-status { padding: 4px 10px; border-radius: 12px; font-size: 0.9em; }
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-approved { background: #d4edda; color: #155724; }
-    .status-rejected { background: #f8d7da; color: #721c24; }
-    .card-info p { margin: 4px 0; font-size: 0.9em; }
-    .signature { margin-top: 8px; }
-    .signature img { max-width: 150px; border: 1px solid #ddd; border-radius: 8px; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f0f0f0; }
   </style>
 </head>
 <body>
-  <h2>📋 ประวัติการลา</h2>
-  <div id="historyList">กำลังโหลด...</div>
+  <h2>ทดสอบประวัติการลา</h2>
+  <div id="result">กำลังโหลด...</div>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
     async function main() {
-      await liff.init({ liffId: "2007956727-6V7DrnMD" });
+      await liff.init({ liffId: "YOUR_LIFF_ID" });
       const profile = await liff.getProfile();
       const lineUserId = profile.userId;
 
-      // 🔗 เรียก Web App URL ของคุณ
       const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec";
+
       try {
         const response = await fetch(`${webAppUrl}?lineUserId=${lineUserId}`);
         const data = await response.json();
-        renderHistory(data);
+
+        if (!data || data.length === 0) {
+          document.getElementById("result").innerHTML = "<p>❌ ไม่พบข้อมูล</p>";
+          return;
+        }
+
+        let html = "<table>";
+        html += "<tr>";
+        // สร้าง header จาก keys ของ object ตัวแรก
+        Object.keys(data[0]).forEach(key => {
+          html += `<th>${key}</th>`;
+        });
+        html += "</tr>";
+
+        // สร้าง row ของข้อมูล
+        data.forEach(item => {
+          html += "<tr>";
+          Object.keys(item).forEach(key => {
+            html += `<td>${item[key] !== null ? item[key] : ""}</td>`;
+          });
+          html += "</tr>";
+        });
+
+        html += "</table>";
+        document.getElementById("result").innerHTML = html;
+
       } catch(err) {
         console.error(err);
-        document.getElementById("historyList").innerHTML = "<p>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
+        document.getElementById("result").innerHTML = "<p>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
       }
-    }
-
-    function formatThaiDate(dateStr) {
-      if (!dateStr) return "-";
-      const d = new Date(dateStr);
-      if (isNaN(d)) return dateStr;
-      const months = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
-    }
-
-    function renderHistory(data) {
-      const list = document.getElementById("historyList");
-      if (!data || data.length === 0) {
-        list.innerHTML = "<p>❌ ไม่พบประวัติการลา</p>";
-        return;
-      }
-
-      list.innerHTML = data.map(item => {
-        let statusClass = "status-pending";
-        if (item.status === "Approved") statusClass = "status-approved";
-        if (item.status === "Rejected") statusClass = "status-rejected";
-
-        return `
-          <div class="history-card">
-            <div class="card-header">
-              <span class="card-title">${item.leaveType} (${item.empName})</span>
-              <span class="card-status ${statusClass}">${item.status}</span>
-            </div>
-            <div class="card-info">
-              <p><strong>ยื่นวันที่:</strong> ${formatThaiDate(item.createdAt)}</p>
-              <p><strong>ช่วงเวลา:</strong> ${formatThaiDate(item.startDate)} ${item.startTime || ""} - ${formatThaiDate(item.endDate)} ${item.endTime || ""}</p>
-              <p><strong>จำนวนวัน:</strong> ${item.leaveDays}</p>
-              <p><strong>เหตุผล:</strong> ${item.reason || "-"}</p>
-              ${item.hasDocument ? `<p>📎 มีเอกสารแนบ</p>` : ""}
-            </div>
-            ${item.signatureUrl ? `
-              <div class="signature">
-                <p><strong>ลายเซ็น:</strong></p>
-                <img src="${item.signatureUrl}">
-              </div>` : ""}
-          </div>
-        `;
-      }).join("");
     }
 
     main();
