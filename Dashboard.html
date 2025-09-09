@@ -65,14 +65,14 @@ body {
   padding:20px;
   color:var(--text-color);
   transition: all 0.3s ease;
-  min-height: 100vh; /* ทำให้ body สูงเต็มหน้าจอ */
+  min-height: 100vh;
   box-sizing: border-box;
 }
-.container { 
-  max-width: 600px; 
-  margin:auto; 
-  position:relative; 
-  opacity: 0; /* ซ่อนไว้ก่อน */
+.container {
+  max-width: 600px;
+  margin:auto;
+  position:relative;
+  opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
@@ -97,17 +97,17 @@ body {
 
 /* Settings and Logout Icons */
 .header-icons {
-    position:absolute; 
-    top:25px; 
-    right:25px; 
-    display:flex; 
-    flex-direction:column; 
-    gap:10px; /* ระยะห่างระหว่างไอคอน */
+    position:absolute;
+    top:25px;
+    right:25px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
 }
-.settings-icon, .logout-icon { 
-    font-size:24px; 
-    color:#fff; 
-    cursor:pointer; 
+.settings-icon, .logout-icon {
+    font-size:24px;
+    color:#fff;
+    cursor:pointer;
     transition: transform 0.2s ease;
 }
 .settings-icon:hover, .logout-icon:hover {
@@ -185,24 +185,24 @@ tr:last-child td { border-bottom:none; }
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--background-color); /* ใช้ theme color */
+  background-color: var(--background-color);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
   transition: opacity 0.5s ease;
-  flex-direction: column; /* จัดเรียง spinner และข้อความแนวตั้ง */
-  gap: 20px; /* ระยะห่างระหว่าง spinner และข้อความ */
+  flex-direction: column;
+  gap: 20px;
 }
 
 .loading-screen.hidden {
   opacity: 0;
-  pointer-events: none; /* ป้องกันการคลิกเมื่อซ่อน */
+  pointer-events: none;
 }
 
 .spinner {
-  border: 5px solid var(--border-color); /* ใช้ theme color */
-  border-top: 5px solid var(--primary-color-end); /* ใช้ theme color */
+  border: 5px solid var(--border-color);
+  border-top: 5px solid var(--primary-color-end);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -210,7 +210,7 @@ tr:last-child td { border-bottom:none; }
 }
 
 .loading-text {
-  color: var(--text-color); /* ใช้ theme color */
+  color: var(--text-color);
   font-size: 1.2em;
   font-weight: 500;
 }
@@ -272,35 +272,30 @@ async function loadDashboard() {
       alert("เกิดข้อผิดพลาดในการโหลดข้อมูล: " + err.message);
     })
     .finally(() => {
-      // ซ่อน Loading Screen และแสดงเนื้อหาหลัก
       document.getElementById("loadingScreen").classList.add('hidden');
       document.getElementById("mainContainer").classList.add('loaded');
     });
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
-  // โหลดธีมจาก localStorage ก่อนแสดง Loading Screen เพื่อให้ Loading Screen มีสีตามธีม
   const savedTheme = localStorage.getItem('selectedTheme');
   if (savedTheme) {
       document.body.className = savedTheme;
   }
-
-  // เริ่มโหลดข้อมูลหลังจาก DOM โหลดเสร็จ
   loadDashboard();
   
   const settingsIcon = document.getElementById('settingsIcon');
-  const logoutIcon = document.getElementById('logoutIcon'); // เพิ่ม logoutIcon
+  const logoutIcon = document.getElementById('logoutIcon');
   const themeSelector = document.getElementById('themeSelector');
 
   settingsIcon.addEventListener('click', () => {
       themeSelector.classList.toggle('active');
   });
 
-  // Event Listener สำหรับ Logout
   logoutIcon.addEventListener('click', () => {
     if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
-      localStorage.clear(); // เคลียร์ข้อมูลทั้งหมดใน localStorage
-      window.location.href = 'Login.html'; // กลับไปหน้า Login
+      // ไม่ต้องลบ localStorage.clear() เพื่อคงค่าธีมไว้
+      window.location.href = 'Login.html';
     }
   });
 
@@ -309,8 +304,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
       option.addEventListener('click', function() {
           const theme = this.getAttribute('data-theme');
           document.body.className = theme;
-          localStorage.setItem('selectedTheme', theme); // บันทึกอัตโนมัติ
-          themeSelector.classList.remove('active'); // ปิด dropdown หลังเลือก
+          localStorage.setItem('selectedTheme', theme);
+          themeSelector.classList.remove('active');
       });
   });
 });
@@ -338,7 +333,8 @@ function openTab(evt, tabId){
     </div>
     <div class="header-icons">
         <i class="fas fa-cog settings-icon" id="settingsIcon"></i>
-        <i class="fas fa-sign-out-alt logout-icon" id="logoutIcon"></i> </div>
+        <i class="fas fa-sign-out-alt logout-icon" id="logoutIcon"></i>
+    </div>
   </div>
 
   <div class="theme-selector" id="themeSelector">
