@@ -1,296 +1,358 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ตรวจสอบประวัติการลา (LIFF)</title>
-<style>
-  /* นำเข้าฟอนต์ Prompt จาก Google Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap');
-
-  /* การตั้งค่าพื้นฐานสำหรับ body */
-  body {
-    font-family: 'Prompt', sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
-    padding: 16px;
-    margin: 0;
-  }
-
-  /* จัดรูปแบบสำหรับ heading */
-  h2 {
-    color: #1a237e;
-    text-align: center;
-    margin-bottom: 24px;
-    font-weight: 600;
-    font-size: 1.5rem;
-  }
-  
-  /*
-  ==========================================
-  รูปแบบ UI แบบใหม่: Card Layout
-  ==========================================
-  */
-  
-  /* ตัวห่อหุ้มรายการทั้งหมด */
-  .card-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px; /* ระยะห่างระหว่างการ์ดแต่ละอัน */
-  }
-
-  /* การ์ดแต่ละอัน (Item) */
-  .card {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: transform 0.2s ease-in-out;
-  }
-
-  .card:hover {
-    transform: translateY(-4px); /* เพิ่ม effect ยกขึ้นเล็กน้อยเมื่อชี้ */
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    font-weight: 600;
-  }
-
-  .leave-type {
-    font-size: 1.2rem;
-    color: #1a237e;
-  }
-
-  .status {
-    font-size: 1.1rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-  }
-
-  .status.pending { background-color: #fff9c4; color: #fbc02d; }
-  .status.approved { background-color: #e8f5e9; color: #2e7d32; }
-  .status.rejected { background-color: #ffebee; color: #c62828; }
-
-  /* แถวข้อมูลแต่ละอันในการ์ด */
-  .card-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    line-height: 1.5;
-    color: #666;
-  }
-
-  .card-item:last-child {
-    margin-bottom: 0;
-  }
-
-  .card-item-label {
-    font-weight: 600;
-    color: #4a4a4a;
-    margin-right: 8px;
-    flex-shrink: 0;
-  }
-  
-  .card-item-value {
-    word-wrap: break-word;
-  }
-
-  /*
-  ==========================================
-  ส่วนที่เพิ่มใหม่: สำหรับปุ่มดูรายละเอียด
-  ==========================================
-  */
-  .card-footer {
-    display: flex;
-    justify-content: flex-end; /* จัดปุ่มชิดขวา */
-    margin-top: 16px;
-  }
-  
-  .detail-button {
-    background-color: #4CAF50; /* สีเขียว */
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-family: 'Prompt', sans-serif;
-    font-weight: 600;
-    text-align: center;
-    transition: background-color 0.3s, transform 0.2s;
-  }
-
-  .detail-button:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
-  }
-
-  .detail-button:active {
-    transform: translateY(0);
-  }
-
-  /* จัดรูปแบบข้อความแสดงสถานะ */
-  .status-message {
-    text-align: center;
-    padding: 24px;
-    font-size: 1.1rem;
-    color: #757575;
-    background-color: #fff;
-    border-radius: 12px;
-    margin-top: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-
-  .status-message.error {
-    color: #d32f2f;
-  }
-</style>
-</head>
-<body>
-
-  <h2>ตรวจสอบประวัติการลา</h2>
-
-  <div id="dataContainer" class="card-container">
-    <div class="status-message">⏳ กำลังโหลด...</div>
-  </div>
-  
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script>
-    function formatDate(datetimeStr) {
-      if (!datetimeStr) return '-';
-      const dateObj = new Date(datetimeStr);
-      if (isNaN(dateObj.getTime())) {
-          return '-';
-      }
-      const day = String(dateObj.getDate()).padStart(2, '0');
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const year = dateObj.getFullYear();
-      return `${day}/${month}/${year}`;
-    }
-
-    function formatTime(datetimeStr) {
-      if (!datetimeStr) return '-';
-      const dateObj = new Date(datetimeStr);
-      if (isNaN(dateObj.getTime())) {
-          return '-';
-      }
-      const hours = String(dateObj.getHours()).padStart(2, '0');
-      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`;
-    }
-    
-    function formatDateTime(datetimeStr) {
-      if (!datetimeStr) return '-';
-      const dateObj = new Date(datetimeStr);
-      if (isNaN(dateObj.getTime())) {
-          return '-';
-      }
-      const day = String(dateObj.getDate()).padStart(2, '0');
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const year = dateObj.getFullYear();
-      const hours = String(dateObj.getHours()).padStart(2, '0');
-      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-      return `${day}/${month}/${year}, ${hours}:${minutes}`;
-    }
-
-    async function fetchHistory() {
-      try {
-        await liff.init({ liffId: "2007956727-6V7DrnMD" });
-        if (!liff.isLoggedIn()) { liff.login(); return; }
-
-        const profile = await liff.getProfile();
-        const lineUserId = profile.userId;
-
-        const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
-        const resp = await fetch(webAppUrl);
-        const data = await resp.json();
-
-        const container = document.getElementById("dataContainer");
-        container.innerHTML = "";
-
-        if (!data || data.length === 0) {
-          container.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
-          return;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการลา</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== Theme Variables ===== */
+        :root {
+            --primary-color-start: #1994b6;
+            --primary-color-end: #36a761;
+            --text-color-dark: #333;
+            --text-color-light: #666;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
+            --border-color: #e0e0e0;
         }
 
-        // ==========================================
-        // ส่วนที่เพิ่มใหม่: จัดเรียงข้อมูล
-        // ==========================================
-        data.sort((a, b) => {
-            const dateA = new Date(a[11]); // Column L
-            const dateB = new Date(b[11]); // Column L
-            return dateB - dateA; // เรียงจากล่าสุดไปเก่าสุด
-        });
+        body.theme-dark {
+            --primary-color-start: #141E30;
+            --primary-color-end: #243B55;
+            --text-color-dark: #fff;
+            --text-color-light: #bbb;
+            --background-color: #181818;
+            --card-background: #242424;
+            --border-color: #444;
+            --shadow-light: 0 4px 15px rgba(255,255,255,0.08);
+        }
 
-        // ==========================================
-        // การแสดงผลยังคงเหมือนเดิม
-        // ==========================================
-        data.forEach(row => {
-          const card = document.createElement("div");
-          card.className = "card";
-          
-          let leaveType = row[4];
-          if (leaveType === 'AL') { leaveType = 'ลาพักร้อน'; }
-          else if (leaveType === 'SL') { leaveType = 'ลาป่วย'; }
-          else if (leaveType === 'BL') { leaveType = 'ลากิจ'; }
-          
-          let statusText = row[10];
-          let statusClass = 'pending';
-          if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'pending'; }
-          else if (statusText === 'Approved') { statusText = 'อนุมัติ'; statusClass = 'approved'; }
-          else if (statusText === 'Reject') { statusText = 'ไม่อนุมัติ'; statusClass = 'rejected'; }
+        /* General Theme Variants */
+        body.theme-orange-purple { --primary-color-start: #ff7e5f; --primary-color-end: #6a11cb; }
+        body.theme-blue-violet { --primary-color-start: #36d1dc; --primary-color-end: #5b86e5; }
+        body.theme-pink-purple { --primary-color-start: #ff758c; --primary-color-end: #8e44ad; }
+        body.theme-green-gold { --primary-color-start: #11998e; --primary-color-end: #fbc531; }
+        body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
+        body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
+        body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
+        
+        /* ===== Base Styles ===== */
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: var(--background-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-          const header = document.createElement('div');
-          header.className = 'card-header';
-          header.innerHTML = `<span class="leave-type">${leaveType}</span><span class="status ${statusClass}">${statusText}</span>`;
-          card.appendChild(header);
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        h2 i {
+            -webkit-text-fill-color: var(--primary-color-end);
+        }
+        body.theme-dark h2 {
+            -webkit-text-fill-color: var(--text-color-dark);
+            background: none;
+        }
+        body.theme-dark h2 i {
+            color: var(--primary-color-end);
+        }
+        
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-          const startDateItem = document.createElement('div');
-          startDateItem.className = 'card-item';
-          const startDate = formatDate(row[5]);
-          const startTime = formatTime(row[6]);
-          startDateItem.innerHTML = `<span class="card-item-label">ลาตั้งแต่วันที่:</span><span class="card-item-value">${startDate} เวลา ${startTime}</span>`;
-          card.appendChild(startDateItem);
+        .history-card {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .history-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
 
-          const endDateItem = document.createElement('div');
-          endDateItem.className = 'card-item';
-          const endDate = formatDate(row[7]);
-          const endTime = formatTime(row[8]);
-          endDateItem.innerHTML = `<span class="card-item-label">ถึงวันที่:</span><span class="card-item-value">${endDate} เวลา ${endTime}</span>`;
-          card.appendChild(endDateItem);
-          
-          const totalDaysItem = document.createElement('div');
-          totalDaysItem.className = 'card-item';
-          totalDaysItem.innerHTML = `<span class="card-item-label">รวม:</span><span class="card-item-value">${row[9] || '-'} วัน</span>`;
-          card.appendChild(totalDaysItem);
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-          const createdDateItem = document.createElement('div');
-          createdDateItem.className = 'card-item';
-          const createdDateTime = formatDateTime(row[11]);
-          createdDateItem.innerHTML = `<span class="card-item-label">วันที่ทำรายการ:</span><span class="card-item-value">${createdDateTime}</span>`;
-          card.appendChild(createdDateItem);
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--text-color-dark);
+            flex-grow: 1;
+        }
 
-          const cardFooter = document.createElement('div');
-          cardFooter.className = 'card-footer';
-          cardFooter.innerHTML = `<button class="detail-button">ดูรายละเอียด</button>`;
-          card.appendChild(cardFooter);
+        .card-status {
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.8em;
+            color: #fff;
+        }
+        .status-pending { background-color: #ffc107; }
+        .status-approved { background-color: #4caf50; }
+        .status-rejected { background-color: #f44336; }
 
-          container.appendChild(card);
-        });
+        .card-info {
+            font-size: 0.9em;
+            color: var(--text-color-light);
+            line-height: 1.6;
+        }
+        .card-info strong {
+            color: var(--text-color-dark);
+        }
 
-      } catch (err) {
-        console.error(err);
-        document.getElementById("dataContainer").innerHTML =
-          `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
-      }
-    }
+        .card-actions {
+            margin-top: 15px;
+            text-align: right;
+        }
+        .detail-link {
+            text-decoration: none;
+            color: var(--primary-color-end);
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+        .detail-link:hover {
+            color: var(--primary-color-start);
+        }
 
-    fetchHistory();
-  </script>
+        /* ===== Buttons Styles ===== */
+        .buttons-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #fff;
+            background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+        
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-color-light);
+            box-shadow: none;
+        }
+        body.theme-dark .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-color-dark);
+        }
+        .btn-secondary:hover {
+            background: #d5d5d5;
+            color: #333;
+        }
+        body.theme-dark .btn-secondary:hover {
+            background: #555;
+            color: #fff;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 24px;
+            font-size: 1.1rem;
+            color: var(--text-color-light);
+            background-color: var(--card-background);
+            border-radius: 12px;
+            margin-top: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .status-message.error {
+            color: #d32f2f;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="buttons-container">
+        <button class="btn btn-secondary" onclick="window.location.href='Dashboard.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+    </div>
+
+    <div class="container">
+        <h2><i class="fas fa-history"></i> ประวัติการลา</h2>
+        
+        <div class="history-list" id="dataContainer">
+            <div class="status-message">⏳ กำลังโหลด...</div>
+        </div>
+    </div>
+    
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        // --- ส่วน JavaScript การทำงานเดิม ---
+        function formatDate(datetimeStr) {
+            if (!datetimeStr) return '-';
+            const dateObj = new Date(datetimeStr);
+            if (isNaN(dateObj.getTime())) {
+                return '-';
+            }
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function formatTime(datetimeStr) {
+            if (!datetimeStr) return '-';
+            const dateObj = new Date(datetimeStr);
+            if (isNaN(dateObj.getTime())) {
+                return '-';
+            }
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+        
+        function formatDateTime(datetimeStr) {
+            if (!datetimeStr) return '-';
+            const dateObj = new Date(datetimeStr);
+            if (isNaN(dateObj.getTime())) {
+                return '-';
+            }
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year}, ${hours}:${minutes}`;
+        }
+
+        async function fetchHistory() {
+            try {
+                await liff.init({ liffId: "2007956727-6V7DrnMD" });
+                if (!liff.isLoggedIn()) { liff.login(); return; }
+
+                const profile = await liff.getProfile();
+                const lineUserId = profile.userId;
+
+                const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
+                const resp = await fetch(webAppUrl);
+                const data = await resp.json();
+
+                const container = document.getElementById("dataContainer");
+                container.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
+                    return;
+                }
+                
+                // --- จัดเรียงข้อมูลจากล่าสุดไปเก่าสุด ---
+                data.sort((a, b) => {
+                    const dateA = new Date(a[11]);
+                    const dateB = new Date(b[11]);
+                    return dateB - dateA;
+                });
+
+                data.forEach(row => {
+                    const card = document.createElement("div");
+                    card.className = "history-card";
+                    
+                    let leaveType = row[4];
+                    if (leaveType === 'AL') { leaveType = 'ลาพักร้อน'; }
+                    else if (leaveType === 'SL') { leaveType = 'ลาป่วย'; }
+                    else if (leaveType === 'BL') { leaveType = 'ลากิจ'; }
+                    
+                    let statusText = row[10];
+                    let statusClass = 'pending';
+                    if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'status-pending'; }
+                    else if (statusText === 'Approved') { statusText = 'อนุมัติแล้ว'; statusClass = 'status-approved'; }
+                    else if (statusText === 'Reject') { statusText = 'ไม่อนุมัติ'; statusClass = 'status-rejected'; }
+                    
+                    const header = document.createElement('div');
+                    header.className = 'card-header';
+                    header.innerHTML = `<span class="card-title">${leaveType}</span><span class="card-status ${statusClass}">${statusText}</span>`;
+                    card.appendChild(header);
+
+                    const dateInfo = document.createElement('div');
+                    dateInfo.className = 'card-info';
+                    dateInfo.innerHTML = `
+                        <p><strong>ยื่นวันที่:</strong> ${formatDateTime(row[11])}</p>
+                        <p><strong>ระยะเวลา:</strong> ${formatDate(row[5])} - ${formatDate(row[7])}</p>
+                        <p><strong>รวม:</strong> ${row[9] || '-'} วัน</p>
+                    `;
+                    card.appendChild(dateInfo);
+                    
+                    const cardFooter = document.createElement('div');
+                    cardFooter.className = 'card-actions';
+                    cardFooter.innerHTML = `<a href="#" class="detail-link" onclick="alert('ฟังก์ชันดูรายละเอียดจะแสดงข้อมูลเต็มรูปแบบ เช่น เหตุผลและลายเซ็น'); return false;">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>`;
+                    card.appendChild(cardFooter);
+
+                    container.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById("dataContainer").innerHTML = `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
+            }
+            // เพิ่มการโหลดธีมหลังจากโหลดข้อมูลเสร็จ
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme) {
+                document.body.className = savedTheme;
+            }
+        }
+
+        fetchHistory();
+    </script>
 </body>
 </html>
