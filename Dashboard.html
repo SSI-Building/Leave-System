@@ -253,6 +253,8 @@ async function loadDashboard() {
       if(data.error){ alert(data.error); return; }
       
       localStorage.setItem("leaveSet1", JSON.stringify(data.set1));
+      localStorage.setItem("leaveSet2", JSON.stringify(data.set2));
+
       
       document.getElementById("empName").textContent = data.set1[1];
       document.getElementById("remainTable").innerHTML = `
