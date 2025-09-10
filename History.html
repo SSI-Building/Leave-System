@@ -267,7 +267,7 @@
     </style>
 </head>
 <body>
-    <div id="loading-screen">
+    <div id="loading-screen" class="hidden">
         <div class="loading-spinner"></div>
         <div class="loading-text">กำลังโหลดข้อมูล...</div>
     </div>
@@ -322,79 +322,81 @@
             
             // --- Show loading screen ---
             loadingScreen.classList.remove('hidden');
+            
+            // Set a timeout to ensure the loading screen is visible even with fast connections
+            setTimeout(async () => {
+                try {
+                    await liff.init({ liffId: "2007956727-6V7DrnMD" });
+                    if (!liff.isLoggedIn()) { 
+                        liff.login(); 
+                        return; 
+                    }
 
-            try {
-                await liff.init({ liffId: "2007956727-6V7DrnMD" });
-                if (!liff.isLoggedIn()) { 
-                    liff.login(); 
-                    return; 
+                    const profile = await liff.getProfile();
+                    const lineUserId = profile.userId;
+
+                    const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
+                    const resp = await fetch(webAppUrl);
+                    const data = await resp.json();
+
+                    dataContainer.innerHTML = "";
+
+                    if (!data || data.length === 0) {
+                        dataContainer.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
+                        return;
+                    }
+                    
+                    data.sort((a, b) => {
+                        const dateA = new Date(a[11]);
+                        const dateB = new Date(b[11]);
+                        return dateB - dateA;
+                    });
+
+                    data.forEach(row => {
+                        const card = document.createElement("div");
+                        card.className = "history-card";
+                        
+                        let leaveType = row[4];
+                        if (leaveType === 'AL') leaveType = 'ลาพักร้อน';
+                        else if (leaveType === 'SL') leaveType = 'ลาป่วย';
+                        else if (leaveType === 'BL') leaveType = 'ลากิจ';
+                        
+                        let statusText = row[10];
+                        let statusClass = 'pending';
+                        if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'status-pending'; }
+                        else if (statusText === 'Approved') { statusText = 'อนุมัติแล้ว'; statusClass = 'status-approved'; }
+                        else if (statusText === 'Reject') { statusText = 'ไม่อนุมัติ'; statusClass = 'status-rejected'; }
+                        
+                        const header = document.createElement('div');
+                        header.className = 'card-header';
+                        header.innerHTML = `<span class="card-title">${leaveType}</span><span class="card-status ${statusClass}">${statusText}</span>`;
+                        card.appendChild(header);
+
+                        const dateInfo = document.createElement('div');
+                        dateInfo.className = 'card-info';
+                        dateInfo.innerHTML = `
+                            <p><strong>ยื่นวันที่:</strong> ${formatDateTime(row[11])}</p>
+                            <p><strong>ระยะเวลา:</strong> ${formatDate(row[5])} - ${formatDate(row[7])}</p>
+                            <p><strong>รวม:</strong> ${row[9] || '-'} วัน</p>
+                        `;
+                        card.appendChild(dateInfo);
+                        
+                        const cardFooter = document.createElement('div');
+                        cardFooter.className = 'card-actions';
+                        cardFooter.innerHTML = `<a href="#" class="detail-link" onclick="alert('ฟังก์ชันดูรายละเอียดจะแสดงข้อมูลเต็มรูปแบบ เช่น เหตุผลและลายเซ็น'); return false;">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>`;
+                        card.appendChild(cardFooter);
+
+                        dataContainer.appendChild(card);
+                    });
+
+                } catch (err) {
+                    console.error(err);
+                    dataContainer.innerHTML = `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
+                } finally {
+                    loadingScreen.classList.add('hidden');
                 }
-
-                const profile = await liff.getProfile();
-                const lineUserId = profile.userId;
-
-                const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
-                const resp = await fetch(webAppUrl);
-                const data = await resp.json();
-
-                dataContainer.innerHTML = "";
-
-                if (!data || data.length === 0) {
-                    dataContainer.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
-                    return;
-                }
-                
-                data.sort((a, b) => {
-                    const dateA = new Date(a[11]);
-                    const dateB = new Date(b[11]);
-                    return dateB - dateA;
-                });
-
-                data.forEach(row => {
-                    const card = document.createElement("div");
-                    card.className = "history-card";
-                    
-                    let leaveType = row[4];
-                    if (leaveType === 'AL') leaveType = 'ลาพักร้อน';
-                    else if (leaveType === 'SL') leaveType = 'ลาป่วย';
-                    else if (leaveType === 'BL') leaveType = 'ลากิจ';
-                    
-                    let statusText = row[10];
-                    let statusClass = 'pending';
-                    if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'status-pending'; }
-                    else if (statusText === 'Approved') { statusText = 'อนุมัติแล้ว'; statusClass = 'status-approved'; }
-                    else if (statusText === 'Reject') { statusText = 'ไม่อนุมัติ'; statusClass = 'status-rejected'; }
-                    
-                    const header = document.createElement('div');
-                    header.className = 'card-header';
-                    header.innerHTML = `<span class="card-title">${leaveType}</span><span class="card-status ${statusClass}">${statusText}</span>`;
-                    card.appendChild(header);
-
-                    const dateInfo = document.createElement('div');
-                    dateInfo.className = 'card-info';
-                    dateInfo.innerHTML = `
-                        <p><strong>ยื่นวันที่:</strong> ${formatDateTime(row[11])}</p>
-                        <p><strong>ระยะเวลา:</strong> ${formatDate(row[5])} - ${formatDate(row[7])}</p>
-                        <p><strong>รวม:</strong> ${row[9] || '-'} วัน</p>
-                    `;
-                    card.appendChild(dateInfo);
-                    
-                    const cardFooter = document.createElement('div');
-                    cardFooter.className = 'card-actions';
-                    cardFooter.innerHTML = `<a href="#" class="detail-link" onclick="alert('ฟังก์ชันดูรายละเอียดจะแสดงข้อมูลเต็มรูปแบบ เช่น เหตุผลและลายเซ็น'); return false;">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>`;
-                    card.appendChild(cardFooter);
-
-                    dataContainer.appendChild(card);
-                });
-
-            } catch (err) {
-                console.error(err);
-                dataContainer.innerHTML = `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
-            } finally {
-                // --- Hide loading screen after all tasks are done ---
-                loadingScreen.classList.add('hidden');
-            }
-            // Load theme
+            }, 500); // Wait for 500ms to show the loading screen
+            
             const savedTheme = localStorage.getItem('selectedTheme');
             if (savedTheme) {
                 document.body.className = savedTheme;
