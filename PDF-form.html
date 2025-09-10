@@ -2,155 +2,187 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>ฟอร์มใบลา</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ฟอร์มลาออนไลน์</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+body {
+    font-family: 'Prompt', sans-serif;
+    margin: 20px;
+}
+form {
+    max-width: 700px;
+    margin: auto;
+}
+label {
+    display: block;
+    margin-top: 10px;
+}
+input, select, textarea {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+</style>
 </head>
 <body>
-<h2>ฟอร์มกรอกใบลา</h2>
+
+<h2 style="text-align:center;">ฟอร์มลาออนไลน์</h2>
 
 <form id="leaveForm">
-  <label>ชื่อ - สกุล:</label><br>
-  <input type="text" id="fullName" placeholder="ชื่อ - สกุล" ><br>
-  <label>รหัสพนักงาน:</label><br>
-  <input type="text" id="empId" placeholder="รหัสพนักงาน" ><br>
-  <label>ตำแหน่ง:</label><br>
-  <input type="text" id="position" placeholder="ตำแหน่ง" ><br>
-  <label>ฝ่าย:</label><br>
-  <input type="text" id="department" placeholder="ฝ่าย" ><br>
-  <label>ประเภทการลา (vacation / sick / personal):</label><br>
-  <input type="text" id="leaveType" placeholder="เช่น vacation" ><br><br>
-  <label>เหตุผล:</label><br>
-  <input type="text" id="reason" placeholder="เหตุผล" ><br>
-  <label>ลาตั้งแต่วันที่:</label><br>
-  <input type="text" id="startDate" placeholder="วันเริ่มต้น" ><br>
-  <label>เวลาเริ่ม:</label><br>
-  <input type="text" id="startTime" placeholder="เวลาเริ่ม" ><br>
-  <label>ถึงวันที่:</label><br>
-  <input type="text" id="endDate" placeholder="ถึงวันที่" ><br>
-  <label>เวลาสิ้นสุด:</label><br>
-  <input type="text" id="endTime" placeholder="เวลาสิ้นสุด" ><br>
-  <label>จำนวนวันลา:</label><br>
-  <input type="text" id="sumDate" placeholder="จำนวนวันลา" ><br>
-  <label>มีเอกสารประกอบ:</label><br>
-  <input type="text" id="paper" placeholder="Yes/No" ><br>
-  
-  <label>SL:</label><br>
-  <input type="text" id="SL" placeholder="SL" ><br>
-  <label>AL:</label><br>
-  <input type="text" id="AL" placeholder="AL" ><br>
-  <label>BL:</label><br>
-  <input type="text" id="BL" placeholder="BL" ><br>
-  <label>total:</label><br>
-  <input type="text" id="total" placeholder="total" ><br>
-  <label for="myImage">เลือกรูปภาพ:</label><br>
-  <input type="file" id="myImage" accept="image/*"><br>
-  
-  <label>วันทำรายการ:</label><br>
-  <input type="text" id="createDate" placeholder="createDate" ><br>
-  
-  <label>company1:</label><br>
-  <input type="text" id="company1" placeholder="company1" ><br>
-  <label>company2:</label><br>
-  <input type="text" id="company2" placeholder="company2" ><br>
-  
-  <label>address1:</label><br>
-  <input type="text" id="address1" placeholder="address1" ><br>
-  <label>address2:</label><br>
-  <input type="text" id="address2" placeholder="address2" ><br>
-  
-  <button type="submit">สร้าง PDF</button>
+    <label>ชื่อ - สกุล
+        <input type="text" id="fullName" required>
+    </label>
+    <label>รหัสพนักงาน
+        <input type="text" id="empId" required>
+    </label>
+    <label>ตำแหน่ง
+        <input type="text" id="position" required>
+    </label>
+    <label>ฝ่าย
+        <input type="text" id="department" required>
+    </label>
+    <label>สังกัดบริษัท (M, P, I, T)
+        <input type="text" id="company1" maxlength="1" required>
+    </label>
+    <label>ประเภทการลา
+        <select id="leaveType" required>
+            <option value="">-- เลือกประเภทการลา --</option>
+            <option value="sick">ลาป่วย (SL)</option>
+            <option value="personal">ลากิจ (BL)</option>
+            <option value="vacation">ลาพักร้อน (AL)</option>
+        </select>
+    </label>
+    <label>เหตุผล
+        <textarea id="reason"></textarea>
+    </label>
+    <label>ลาตั้งแต่วันที่
+        <input type="date" id="startDate">
+        เวลา <input type="time" id="startTime">
+    </label>
+    <label>ถึงวันที่
+        <input type="date" id="endDate">
+        เวลา <input type="time" id="endTime">
+    </label>
+    <label>จำนวนวันลา
+        <input type="number" id="sumDate" min="0">
+    </label>
+    <label>เอกสารประกอบ
+        <select id="paper">
+            <option value="Yes">มี</option>
+            <option value="No">ไม่มี</option>
+        </select>
+    </label>
+    <label>ยอดสะสม SL
+        <input type="number" id="SL" value="0">
+    </label>
+    <label>ยอดสะสม AL
+        <input type="number" id="AL" value="0">
+    </label>
+    <label>ยอดสะสม BL
+        <input type="number" id="BL" value="0">
+    </label>
+    <label>รวมทั้งหมด
+        <input type="number" id="total" value="0">
+    </label>
+    <label>วันที่สร้างใบลา
+        <input type="date" id="createDate" value="<?= new Date().toISOString().split('T')[0] ?>">
+    </label>
+    <label>อัปโหลดลายเซ็น
+        <input type="file" id="myImage" accept="image/*">
+    </label>
+    <button type="submit">สร้าง PDF</button>
 </form>
 
 <script>
 const { jsPDF } = window.jspdf;
 
-// ====== ✅ รับค่า row จาก query string ======
-function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-}
+// ใส่ Base64 ของฟอนต์ TTF ภาษาไทยที่แปลงแล้ว
+const FONT_BASE64 = "ใส่ Base64 ของฟอนต์ Sarabun ที่นี่";
 
-let rowData = null;
-if (getQueryParam("row")) {
-    rowData = JSON.parse(decodeURIComponent(getQueryParam("row")));
+document.getElementById("leaveForm").addEventListener("submit", async (e)=> {
+  e.preventDefault();
 
-    // Mapping ข้อมูลจาก row[] ไปใส่ input form
-    document.getElementById("empId").value       = rowData[0]; // Col A
-    document.getElementById("fullName").value    = rowData[1]; // Col B
-    document.getElementById("position").value    = rowData[2]; // Col C
-    document.getElementById("department").value  = rowData[3]; // Col D
+  const fullName = document.getElementById("fullName").value;
+  const empId = document.getElementById("empId").value;
+  const position = document.getElementById("position").value;
+  const department = document.getElementById("department").value;
+  const leaveType = document.getElementById("leaveType").value.trim().toLowerCase();
+  const Shift = "-";
+  const reason = document.getElementById("reason").value;
+  const startDate = document.getElementById("startDate").value;
+  const startTime = document.getElementById("startTime").value;
+  const endDate = document.getElementById("endDate").value;
+  const endTime = document.getElementById("endTime").value;
+  const sumDate = document.getElementById("sumDate").value;
+  const paper = document.getElementById("paper").value;
+  const SL = document.getElementById("SL").value;
+  const AL = document.getElementById("AL").value;
+  const BL = document.getElementById("BL").value;
+  const total = document.getElementById("total").value;
+  const createDate = document.getElementById("createDate").value;
 
-    // LeaveType
-    if (rowData[4] === "AL") document.getElementById("leaveType").value = "vacation";
-    else if (rowData[4] === "SL") document.getElementById("leaveType").value = "sick";
-    else if (rowData[4] === "BL") document.getElementById("leaveType").value = "personal";
-    else document.getElementById("leaveType").value = rowData[4];
+  let company1 = document.getElementById("company1").value.trim().toUpperCase();
+  const companyMap = {
+    "M": "ห้างหุ้นส่วนจำกัด แม่รำพึง ดี แอนด์ ที บีสชิเนส",
+    "P": "ห้างหุ้นส่วนจำกัด พชรพล บางสะพาน",
+    "I": "บริษัท ทัศนพงศ์ ธุรกิจ จำกัด",
+    "T": "ห้างหุ่นส่วนจำกัด ทองหลาง กรุ๊ป"
+  };
+  const addressMap = {
+    "M": "89 หมู่ 5 ต.แม่รำพึง อ.บางสะพาน จ.ประจวบคีรีขันธ์ 77140 โทร. 0-3289-2264, 0-3254-8267",
+    "P": "35/6 หมู่ 6 ต.แม่รำพึง อ.บางสะพาน จ.ประจวบคีรีขันธ์ 77140 โทร. 087-9063162, 032-692447",
+    "I": "121 หมู่ 5 ต.กำเนิดนพคุณ อ.บางสะพาน จ.ประจวบคีรีขันธ์ 77140 โทร. 032-693326",
+    "T": "115/15 หมู่ 6 ต.แม่รำพึง อ.บางสะพาน จ.ประจวบคีรีขันธ์ 77140 โทร. 086-1711018"
+  };
+  if (companyMap[company1]) company1 = companyMap[company1];
+  let address1 = addressMap[company1[0]] || "";
 
-    // วันที่ + เวลา
-    document.getElementById("startDate").value   = formatDate(rowData[5]);
-    document.getElementById("startTime").value   = formatTime(rowData[6]);
-    document.getElementById("endDate").value     = formatDate(rowData[7]);
-    document.getElementById("endTime").value     = formatTime(rowData[8]);
-    document.getElementById("sumDate").value     = rowData[9];  // Col J
-    document.getElementById("createDate").value  = rowData[11]; // Col L
-    document.getElementById("reason").value      = rowData[12]; // Col M
+  const doc = new jsPDF();
 
-    // Paper Yes/No
-    document.getElementById("paper").value       = rowData[14] ? "Yes" : "No"; // Col O
+  doc.addFileToVFS("Sarabun-Regular.ttf", FONT_BASE64);
+  doc.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
+  doc.setFont("Sarabun");
+  doc.setFontSize(16);
 
-    // ยอดลา
-    document.getElementById("SL").value          = rowData[15];
-    document.getElementById("AL").value          = rowData[16];
-    document.getElementById("BL").value          = rowData[17];
-    document.getElementById("total").value       = rowData[18];
+  const pageWidth = doc.internal.pageSize.getWidth();
+  doc.text(company1, pageWidth/2, 15, { align: "center" });
+  doc.text(address1, pageWidth/2, 22, { align: "center" });
+  doc.text("ใบลาหยุดงาน (LEAVE APPLICATION)", pageWidth/2, 35, { align: "center" });
 
-    // Company & Address (ตัวอย่างชั่วคราว)
-    document.getElementById("company1").value    = rowData[0];
-    document.getElementById("company2").value    = rowData[0];
-    document.getElementById("address1").value    = rowData[0];
-    document.getElementById("address2").value    = rowData[0];
+  doc.setFontSize(14);
+  doc.text(`ชื่อ-สกุล: ${fullName}`, 20, 52);
+  doc.text(`รหัสพนักงาน: ${empId}`, 150, 52);
+  doc.text(`ตำแหน่ง: ${position}`, 20, 64);
+  doc.text(`ฝ่าย: ${department}`, 150, 64);
+  doc.text(`เหตุผล: ${reason}`, 20, 76);
+  doc.text(`ลาตั้งแต่: ${startDate} เวลา ${startTime}`, 20, 88);
+  doc.text(`ถึงวันที่: ${endDate} เวลา ${endTime}`, 20, 100);
+  doc.text(`จำนวนวันลา: ${sumDate}`, 20, 112);
 
-    // โหลดรูปจาก Google Drive ถ้ามี
-    if (rowData[13]) {
-        const imgUrl = `https://drive.google.com/uc?export=view&id=${rowData[13]}`;
-        loadImageToFileInput(imgUrl, document.getElementById("myImage"));
-    }
-}
+  // แทรกลายเซ็น
+  const fileInput = document.getElementById("myImage");
+  const file = fileInput.files[0];
 
-// ---- Helper: format date dd/mm/yyyy ----
-function formatDate(excelDate) {
-    if (!excelDate) return "";
-    const d = new Date(excelDate);
-    if (isNaN(d)) return excelDate;
-    const day = String(d.getDate()).padStart(2,"0");
-    const month = String(d.getMonth()+1).padStart(2,"0");
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-}
-
-// ---- Helper: format time hh:mm ----
-function formatTime(excelTime) {
-    if (!excelTime) return "";
-    const d = new Date(excelTime);
-    if (isNaN(d)) return excelTime;
-    const hh = String(d.getHours()).padStart(2,"0");
-    const mm = String(d.getMinutes()).padStart(2,"0");
-    return `${hh}:${mm}`;
-}
-
-// ---- Helper: โหลดรูปจาก URL ใส่ input type="file" ----
-async function loadImageToFileInput(url, inputElement) {
-    try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const file = new File([blob], "signature.png", { type: blob.type });
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        inputElement.files = dataTransfer.files;
-    } catch (err) {
-        console.error("โหลดรูปไม่สำเร็จ", err);
-    }
-}
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const imgData = e.target.result;
+      doc.addImage(imgData, "PNG", 150, 160, 35, 10);
+      doc.save(`ใบลา_${fullName}.pdf`);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    doc.save(`ใบลา_${fullName}.pdf`);
+  }
+});
 </script>
 
 </body>
