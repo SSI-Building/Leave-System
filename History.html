@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ตรวจสอบประวัติการลา (LIFF)</title>
 <style>
+  /* นำเข้าฟอนต์ Prompt จาก Google Fonts */
   @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap');
 
+  /* การตั้งค่าพื้นฐานสำหรับ body */
   body {
     font-family: 'Prompt', sans-serif;
     background-color: #f0f2f5;
@@ -15,94 +17,83 @@
     margin: 0;
   }
 
+  /* จัดรูปแบบสำหรับ heading */
   h2 {
     color: #1a237e;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     font-weight: 600;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+  }
+  
+  /*
+  ==========================================
+  รูปแบบ UI แบบใหม่: Card Layout
+  ==========================================
+  */
+  
+  /* ตัวห่อหุ้มรายการทั้งหมด */
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* ระยะห่างระหว่างการ์ดแต่ละอัน */
   }
 
-  /* ตารางหลัก */
-  .table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 8px;
+  /* การ์ดแต่ละอัน (Item) */
+  .card {
     background-color: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s ease-in-out;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 800px;
+  .card:hover {
+    transform: translateY(-4px); /* เพิ่ม effect ยกขึ้นเล็กน้อยเมื่อชี้ */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   }
 
-  th, td {
-    padding: 10px 14px;
-    text-align: left;
-    border: 1px solid #e0e0e0;
-    font-size: 0.9rem;
+  /* แถวข้อมูลแต่ละอันในการ์ด */
+  .card-item {
+    display: flex; /* จัดเรียงหัวข้อและข้อมูลในแนวนอน */
+    align-items: flex-start;
+    margin-bottom: 8px;
+    line-height: 1.5;
   }
 
-  thead {
-    background-color: #e8f5e9;
-    color: #388e3c;
+  .card-item:last-child {
+    margin-bottom: 0;
+  }
+
+  /* หัวข้อของข้อมูล */
+  .card-item-label {
     font-weight: 600;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    color: #4a4a4a;
+    width: 120px; /* กำหนดความกว้างของหัวข้อเพื่อให้ข้อมูลจัดเรียงสวยงาม */
+    flex-shrink: 0; /* ป้องกันหัวข้อไม่ให้ถูกบีบ */
   }
 
-  tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+  /* ข้อมูลจริง */
+  .card-item-value {
+    color: #666;
+    flex-grow: 1; /* ข้อมูลจะขยายเต็มพื้นที่ที่เหลือ */
+    word-wrap: break-word; /* ทำให้ข้อความยาวๆ ขึ้นบรรทัดใหม่ได้ */
   }
-
-  tbody tr:hover {
-    background-color: #e3f2fd;
-    cursor: pointer;
-  }
-
+  
+  /* จัดรูปแบบข้อความแสดงสถานะ */
   .status-message {
     text-align: center;
-    padding: 16px;
-    font-size: 1rem;
+    padding: 24px;
+    font-size: 1.1rem;
     color: #757575;
     background-color: #fff;
-    border-radius: 8px;
-    margin-top: 16px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    margin-top: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
   .status-message.error {
     color: #d32f2f;
-  }
-
-  /* ✅ Responsive: แสดงแบบ Card บนมือถือ */
-  @media (max-width: 768px) {
-    .table-container {
-      display: none; /* ซ่อนตาราง */
-    }
-    .card-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 12px 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      font-size: 0.9rem;
-    }
-    .card p {
-      margin: 4px 0;
-      line-height: 1.4;
-    }
-    .card p span {
-      font-weight: 600;
-      color: #1a237e;
-    }
   }
 </style>
 </head>
@@ -110,28 +101,10 @@
 
   <h2>ตรวจสอบประวัติการลา</h2>
 
-  <!-- ตาราง -->
-  <div class="table-container">
-    <table id="historyTable">
-      <thead>
-        <tr>
-          <th>Column A</th><th>Column B</th><th>Column C</th><th>Column D</th>
-          <th>Column E</th><th>Column F</th><th>Column G</th><th>Column H</th>
-          <th>Column I</th><th>Column J</th><th>Column K</th><th>Column L</th>
-          <th>Column M</th><th>Column N (File ID)</th><th>Column O</th>
-        </tr>
-      </thead>
-      <tbody id="historyBody">
-        <tr><td colspan="15" class="status-message">⏳ กำลังโหลด...</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Card view สำหรับมือถือ -->
-  <div class="card-list" id="cardList" style="display:none;">
+  <div id="dataContainer" class="card-container">
     <div class="status-message">⏳ กำลังโหลด...</div>
   </div>
-
+  
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
     async function fetchHistory() {
@@ -146,46 +119,49 @@
         const resp = await fetch(webAppUrl);
         const data = await resp.json();
 
-        const tbody = document.getElementById("historyBody");
-        const cardList = document.getElementById("cardList");
-        tbody.innerHTML = "";
-        cardList.innerHTML = "";
+        const container = document.getElementById("dataContainer");
+        container.innerHTML = ""; // เคลียร์สถานะ loading
 
         if (!data || data.length === 0) {
-          tbody.innerHTML = "<tr><td colspan='15' class='status-message'>❌ ไม่พบข้อมูล</td></tr>";
-          cardList.innerHTML = "<div class='status-message'>❌ ไม่พบข้อมูล</div>";
+          container.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
           return;
         }
 
-        // ✅ แสดงในตาราง
-        data.forEach(row => {
-          const tr = document.createElement("tr");
-          row.forEach(cell => {
-            const td = document.createElement("td");
-            td.textContent = cell || "";
-            tr.appendChild(td);
-          });
-          tbody.appendChild(tr);
-        });
+        // กำหนดหัวข้อสำหรับแต่ละ Column
+        // คุณสามารถแก้ไขหัวข้อเหล่านี้ให้ตรงกับความหมายของข้อมูลจริงได้เลย
+        const headers = [
+          "Column A", "Column B", "Column C", "Column D", "Column E",
+          "Column F", "Column G", "Column H", "Column I", "Column J",
+          "Column K", "Column L", "Column M", "Column N (File ID)", "Column O"
+        ];
 
-        // ✅ แสดงใน Card view (มือถือ)
         data.forEach(row => {
           const card = document.createElement("div");
           card.className = "card";
+          
           row.forEach((cell, idx) => {
-            card.innerHTML += `<p><span>Column ${String.fromCharCode(65 + idx)}:</span> ${cell || "-"}</p>`;
-          });
-          cardList.appendChild(card);
-        });
+            const cardItem = document.createElement("div");
+            cardItem.className = "card-item";
 
-        cardList.style.display = "flex";
+            const label = document.createElement("span");
+            label.className = "card-item-label";
+            label.textContent = headers[idx] + ":";
+
+            const value = document.createElement("span");
+            value.className = "card-item-value";
+            value.textContent = cell || "-";
+
+            cardItem.appendChild(label);
+            cardItem.appendChild(value);
+            card.appendChild(cardItem);
+          });
+          container.appendChild(card);
+        });
 
       } catch (err) {
         console.error(err);
-        document.getElementById("historyBody").innerHTML =
-          "<tr><td colspan='15' class='status-message error'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
-        document.getElementById("cardList").innerHTML =
-          "<div class='status-message error'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>";
+        document.getElementById("dataContainer").innerHTML =
+          `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
       }
     }
 
