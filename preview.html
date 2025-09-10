@@ -20,7 +20,6 @@
             --focus-ring-color: rgba(74, 144, 226, 0.2);
             --transition-speed: 0.4s;
         }
-
         body.theme-dark {
             --primary-color-start: #141E30;
             --primary-color-end: #243B55;
@@ -32,7 +31,6 @@
             --shadow-light: 0 4px 15px rgba(255,255,255,0.08);
             --focus-ring-color: rgba(36, 59, 85, 0.2);
         }
-
         body.theme-orange-purple { --primary-color-start: #ff7e5f; --primary-color-end: #6a11cb; }
         body.theme-blue-violet { --primary-color-start: #36d1dc; --primary-color-end: #5b86e5; }
         body.theme-pink-purple { --primary-color-start: #ff758c; --primary-color-end: #8e44ad; }
@@ -40,8 +38,6 @@
         body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
         body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
         body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
-
-        /* ===== Base Styles ===== */
         body {
             font-family: 'Prompt', sans-serif;
             background: var(--background-color);
@@ -55,7 +51,6 @@
             box-sizing: border-box;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-
         .container {
             max-width: 600px;
             width: 100%;
@@ -68,12 +63,10 @@
             overflow: hidden;
             box-sizing: border-box;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         h2 {
             text-align: center;
             font-weight: 700;
@@ -84,189 +77,32 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        h2 i {
-            -webkit-text-fill-color: var(--primary-color-end);
-        }
-        body.theme-dark h2 {
-            -webkit-text-fill-color: var(--text-color-dark);
-            background: none;
-        }
-        body.theme-dark h2 i {
-            color: var(--primary-color-end);
-        }
-
-        .section {
-            margin-bottom: 20px;
-            padding: 20px;
-            background: var(--background-color);
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            transition: all var(--transition-speed) ease;
-        }
-        
-        .section-title {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: var(--text-color-dark);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 8px;
-        }
-        .section-title i {
-            color: var(--primary-color-end);
-        }
-
-        .data-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .label {
-            font-weight: 500;
-            color: var(--text-color-light);
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .value {
-            font-size: 0.95rem;
-            color: var(--text-color-dark);
-            font-weight: 500;
-            word-break: break-word;
-            line-height: 1.4;
-            text-align: right;
-        }
-        
-        .canvas-container {
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            height: 150px;
-            overflow: hidden;
-            background-color: var(--card-background);
-            transition: all 0.3s ease;
-        }
-        
-        canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            color: #fff;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary { 
-            background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        body.theme-dark .btn-primary {
-             background: linear-gradient(45deg, var(--primary-color-end), var(--primary-color-start));
-        }
-
-        .btn-secondary { 
-            background: #B0B9C2; 
-            box-shadow: none;
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        #loadingOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            color: var(--text-color-dark);
-            font-weight: 600;
-            border-radius: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0s 0.4s;
-            z-index: 1000;
-        }
-        body.theme-dark #loadingOverlay {
-             background: rgba(24, 24, 24, 0.95);
-        }
-
-        #loadingOverlay.visible {
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.4s ease, visibility 0s;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid var(--border-color);
-            border-top-color: var(--primary-color-end);
-            border-radius: 50%;
-            animation: spin 1s cubic-bezier(0.5, 0.25, 0.75, 1) infinite;
-            margin-bottom: 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-message {
-            animation: pulse 1.5s infinite ease-in-out;
-            font-size: 1em;
-            color: var(--text-color-light);
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-
-        @media(min-width: 480px) {
-            .buttons {
-                flex-direction: row;
-            }
-        }
+        h2 i { -webkit-text-fill-color: var(--primary-color-end); }
+        body.theme-dark h2 { -webkit-text-fill-color: var(--text-color-dark); background: none; }
+        body.theme-dark h2 i { color: var(--primary-color-end); }
+        .section { margin-bottom: 20px; padding: 20px; background: var(--background-color); border-radius: 15px; border: 1px solid var(--border-color); transition: all var(--transition-speed) ease; }
+        .section-title { font-size: 1.1em; font-weight: 600; color: var(--text-color-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; }
+        .section-title i { color: var(--primary-color-end); }
+        .data-item { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+        .label { font-weight: 500; color: var(--text-color-light); font-size: 0.9rem; flex-shrink: 0; }
+        .value { font-size: 0.95rem; color: var(--text-color-dark); font-weight: 500; word-break: break-word; line-height: 1.4; text-align: right; }
+        .canvas-container { border: 2px dashed var(--border-color); border-radius: 12px; height: 150px; overflow: hidden; background-color: var(--card-background); transition: all 0.3s ease; }
+        canvas { width: 100%; height: 100%; display: block; }
+        .buttons { display: flex; flex-direction: column; gap: 10px; justify-content: center; margin-top: 30px; }
+        .btn { flex: 1; padding: 15px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1rem; color: #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.15); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end)); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        body.theme-dark .btn-primary { background: linear-gradient(45deg, var(--primary-color-end), var(--primary-color-start)); }
+        .btn-secondary { background: #B0B9C2; box-shadow: none; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .btn:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #loadingOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text-color-dark); font-weight: 600; border-radius: 20px; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0s 0.4s; z-index: 1000; }
+        body.theme-dark #loadingOverlay { background: rgba(24, 24, 24, 0.95); }
+        #loadingOverlay.visible { opacity: 1; visibility: visible; transition: opacity 0.4s ease, visibility 0s; }
+        .spinner { width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--primary-color-end); border-radius: 50%; animation: spin 1s cubic-bezier(0.5, 0.25, 0.75, 1) infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-message { animation: pulse 1.5s infinite ease-in-out; font-size: 1em; color: var(--text-color-light); }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
+        @media(min-width: 480px) { .buttons { flex-direction: row; } }
     </style>
 </head>
 <body>
@@ -275,57 +111,25 @@
 
     <div class="section">
         <div class="section-title"><i class="fas fa-user-circle"></i> ข้อมูลพนักงาน</div>
-        <div class="data-item">
-            <span class="label">ชื่อ-สกุล:</span>
-            <span class="value" id="empName"></span>
-        </div>
-        <div class="data-item">
-            <span class="label">รหัสพนักงาน:</span>
-            <span class="value" id="empId"></span>
-        </div>
-        <div class="data-item">
-            <span class="label">ตำแหน่ง:</span>
-            <span class="value" id="position"></span>
-        </div>
-        <div class="data-item">
-            <span class="label">ฝ่าย:</span>
-            <span class="value" id="department"></span>
-        </div>
+        <div class="data-item"><span class="label">ชื่อ-สกุล:</span><span class="value" id="empName"></span></div>
+        <div class="data-item"><span class="label">รหัสพนักงาน:</span><span class="value" id="empId"></span></div>
+        <div class="data-item"><span class="label">ตำแหน่ง:</span><span class="value" id="position"></span></div>
+        <div class="data-item"><span class="label">ฝ่าย:</span><span class="value" id="department"></span></div>
     </div>
 
     <div class="section">
         <div class="section-title"><i class="fas fa-file-alt"></i> รายละเอียดการลา</div>
-        <div class="data-item">
-            <span class="label">ประเภทการลา:</span>
-            <span class="value" id="leaveTypeDisplay"></span>
-        </div>
-        <div class="data-item">
-            <span class="label">จำนวนวันลา:</span>
-            <span class="value" id="leaveDaysDisplay"></span>
-        </div>
-        <div class="data-item">
-            <span class="label">เหตุผล:</span>
-            <span class="value" id="reasonDisplay"></span>
-        </div>
-        <div class="data-item">
-            <span class="label">เอกสารประกอบ:</span>
-            <span class="value" id="hasDocumentDisplay"></span>
-        </div>
-        <div class="data-item">
-            <span class="label">ตั้งแต่:</span>
-            <span class="value" id="startDisplay"></span>
-        </div>
-        <div class="data-item">
-            <span class="label">ถึง:</span>
-            <span class="value" id="endDisplay"></span>
-        </div>
+        <div class="data-item"><span class="label">ประเภทการลา:</span><span class="value" id="leaveTypeDisplay"></span></div>
+        <div class="data-item"><span class="label">จำนวนวันลา:</span><span class="value" id="leaveDaysDisplay"></span></div>
+        <div class="data-item"><span class="label">เหตุผล:</span><span class="value" id="reasonDisplay"></span></div>
+        <div class="data-item"><span class="label">เอกสารประกอบ:</span><span class="value" id="hasDocumentDisplay"></span></div>
+        <div class="data-item"><span class="label">ตั้งแต่:</span><span class="value" id="startDisplay"></span></div>
+        <div class="data-item"><span class="label">ถึง:</span><span class="value" id="endDisplay"></span></div>
     </div>
 
     <div class="section">
         <div class="section-title"><i class="fas fa-signature"></i> ลายเซ็น</div>
-        <div class="canvas-container">
-            <canvas id="signaturePreview"></canvas>
-        </div>
+        <div class="canvas-container"><canvas id="signaturePreview"></canvas></div>
     </div>
 
     <div class="buttons">
@@ -341,11 +145,8 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // โหลดธีมจาก localStorage ทันทีที่ DOM โหลดเสร็จ
     const savedTheme = localStorage.getItem('selectedTheme');
-    if (savedTheme) {
-        document.body.className = savedTheme;
-    }
+    if (savedTheme) document.body.className = savedTheme;
 
     let leaveData = localStorage.getItem("leavePreviewData");
     if (!leaveData) {
@@ -355,40 +156,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     leaveData = JSON.parse(leaveData);
 
-    // ข้อมูลพนักงาน
+    // แสดงข้อมูล
     document.getElementById("empName").textContent = leaveData.empName || "";
     document.getElementById("empId").textContent = leaveData.empId || "";
     document.getElementById("position").textContent = leaveData.position || "";
     document.getElementById("department").textContent = leaveData.department || "";
-
-    // รายละเอียดการลา
     const leaveTypeMap = { AL: "ลาพักร้อน", SL: "ลาป่วย", BL: "ลากิจ", Vacation: "ลาพักร้อน" };
     document.getElementById("leaveTypeDisplay").textContent = leaveTypeMap[leaveData.leaveType] || leaveData.leaveType;
     document.getElementById("reasonDisplay").textContent = leaveData.reason || "";
     document.getElementById("hasDocumentDisplay").textContent = leaveData.hasDocument || "";
     document.getElementById("leaveDaysDisplay").textContent = `${leaveData.leaveDays || 0} วัน`;
 
-    // แปลง startDate / startTime / endDate / endTime เป็น format yyyy-MM-dd / HH:mm
     const startDateTime = new Date(`${leaveData.startDate}T${leaveData.startTime}`);
     const endDateTime = new Date(`${leaveData.endDate}T${leaveData.endTime}`);
-
-    const startDateStr = startDateTime.getFullYear() + '-' +
-        String(startDateTime.getMonth()+1).padStart(2,'0') + '-' +
-        String(startDateTime.getDate()).padStart(2,'0');
-    const startTimeStr = String(startDateTime.getHours()).padStart(2,'0') + ':' +
-        String(startDateTime.getMinutes()).padStart(2,'0');
-    const endDateStr = endDateTime.getFullYear() + '-' +
-        String(endDateTime.getMonth()+1).padStart(2,'0') + '-' +
-        String(endDateTime.getDate()).padStart(2,'0');
-    const endTimeStr = String(endDateTime.getHours()).padStart(2,'0') + ':' +
-        String(endDateTime.getMinutes()).padStart(2,'0');
-
+    const startDateStr = startDateTime.getFullYear() + '-' + String(startDateTime.getMonth()+1).padStart(2,'0') + '-' + String(startDateTime.getDate()).padStart(2,'0');
+    const startTimeStr = String(startDateTime.getHours()).padStart(2,'0') + ':' + String(startDateTime.getMinutes()).padStart(2,'0');
+    const endDateStr = endDateTime.getFullYear() + '-' + String(endDateTime.getMonth()+1).padStart(2,'0') + '-' + String(endDateTime.getDate()).padStart(2,'0');
+    const endTimeStr = String(endDateTime.getHours()).padStart(2,'0') + ':' + String(endDateTime.getMinutes()).padStart(2,'0');
     leaveData.startDateFormatted = startDateStr;
     leaveData.startTimeFormatted = startTimeStr;
     leaveData.endDateFormatted = endDateStr;
     leaveData.endTimeFormatted = endTimeStr;
 
-    // แสดง start / end ใน preview
     const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
     const optionsTime = { hour: '2-digit', minute: '2-digit' };
     document.getElementById("startDisplay").textContent =
@@ -396,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("endDisplay").textContent =
         `${endDateTime.toLocaleDateString('th-TH', optionsDate)} เวลา ${endDateTime.toLocaleTimeString('th-TH', optionsTime)}`;
 
-    // ลายเซ็น
     const canvas = document.getElementById("signaturePreview");
     const ctx = canvas.getContext("2d");
     if (leaveData.signatureData) {
@@ -411,12 +199,10 @@ document.addEventListener("DOMContentLoaded", () => {
         img.src = leaveData.signatureData;
     }
 
-    // ปุ่มแก้ไข
     document.getElementById("btnEdit").addEventListener("click", () => {
         window.location.href = "leaveform.html";
     });
 
-    // ปุ่มยืนยันและส่ง
     const btnSubmit = document.getElementById("btnSubmit");
     const loadingOverlay = document.getElementById("loadingOverlay");
     let isSubmitting = false;
@@ -424,18 +210,25 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSubmit.addEventListener("click", () => {
         if (isSubmitting) return;
         isSubmitting = true;
-
         btnSubmit.disabled = true;
         loadingOverlay.classList.add("visible");
 
         leaveData.signature = canvas.toDataURL();
+
+        // ✅ เพิ่มการดึง set1/set2 จาก localStorage
+        const set1 = JSON.parse(localStorage.getItem("leaveSet1")) || [];
+        const set2 = JSON.parse(localStorage.getItem("leaveSet2")) || [];
+
         const leaveDataToSend = {
             ...leaveData,
             startDate: leaveData.startDateFormatted,
             startTime: leaveData.startTimeFormatted,
             endDate: leaveData.endDateFormatted,
-            endTime: leaveData.endTimeFormatted
+            endTime: leaveData.endTimeFormatted,
+            set1,
+            set2
         };
+
         const url = "https://script.google.com/macros/s/AKfycbwviyKkV7geROoSiWGxPy0HtqFvjOtXF4SXR2SdXTPoGRDyrfwSIe0bxfelBmtYlfl4/exec";
 
         fetch(url, {
