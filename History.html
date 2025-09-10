@@ -100,12 +100,6 @@
   .card-item-value {
     word-wrap: break-word;
   }
-
-  .card-item-row-multi {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
   
   /* จัดรูปแบบข้อความแสดงสถานะ */
   .status-message {
@@ -135,23 +129,41 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
     function formatDate(datetimeStr) {
-      if (!datetimeStr) return '';
-      const parts = datetimeStr.split(' ');
-      if (parts.length < 1) return '';
-      const dateParts = parts[0].split('/');
-      if (dateParts.length !== 3) return '';
-      // Format: dd/mm/yyyy
-      return `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
+      if (!datetimeStr) return '-';
+      // Handle the ISO 8601 format and invalid dates
+      const dateObj = new Date(datetimeStr);
+      if (isNaN(dateObj.getTime())) {
+          return '-';
+      }
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+      const year = dateObj.getFullYear();
+      return `${day}/${month}/${year}`;
     }
 
     function formatTime(datetimeStr) {
-      if (!datetimeStr) return '';
-      const parts = datetimeStr.split(' ');
-      if (parts.length < 2) return '';
-      // Format: hh/mm
-      const timeParts = parts[1].split(':');
-      if (timeParts.length < 2) return '';
-      return `${timeParts[0]}:${timeParts[1]}`;
+      if (!datetimeStr) return '-';
+      const dateObj = new Date(datetimeStr);
+      if (isNaN(dateObj.getTime())) {
+          return '-';
+      }
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+    
+    function formatDateTime(datetimeStr) {
+      if (!datetimeStr) return '-';
+      const dateObj = new Date(datetimeStr);
+      if (isNaN(dateObj.getTime())) {
+          return '-';
+      }
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const year = dateObj.getFullYear();
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+      return `${day}/${month}/${year}, ${hours}:${minutes}`;
     }
 
     async function fetchHistory() {
@@ -216,13 +228,13 @@
           // รวม
           const totalDaysItem = document.createElement('div');
           totalDaysItem.className = 'card-item';
-          totalDaysItem.innerHTML = `<span class="card-item-label">รวม:</span><span class="card-item-value">${row[9]} วัน</span>`; // Column J
+          totalDaysItem.innerHTML = `<span class="card-item-label">รวม:</span><span class="card-item-value">${row[9] || '-'} วัน</span>`; // Column J
           card.appendChild(totalDaysItem);
 
           // วันที่ทำรายการ
           const createdDateItem = document.createElement('div');
           createdDateItem.className = 'card-item';
-          const createdDateTime = formatDate(row[11]) + ', ' + formatTime(row[11]); // Column L
+          const createdDateTime = formatDateTime(row[11]); // Column L
           createdDateItem.innerHTML = `<span class="card-item-label">วันที่ทำรายการ:</span><span class="card-item-value">${createdDateTime}</span>`;
           card.appendChild(createdDateItem);
 
