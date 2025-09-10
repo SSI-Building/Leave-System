@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ตรวจสอบประวัติการลา (LIFF)</title>
 <style>
-  /* นำเข้าฟอนต์ Prompt จาก Google Fonts */
   @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap');
 
-  /* การตั้งค่าพื้นฐานสำหรับ body */
   body {
     font-family: 'Prompt', sans-serif;
     background-color: #f0f2f5;
@@ -17,36 +15,36 @@
     margin: 0;
   }
 
-  /* จัดรูปแบบสำหรับ heading */
   h2 {
     color: #1a237e;
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     font-weight: 600;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
-  /* จัดรูปแบบตาราง */
+  /* ตารางหลัก */
   .table-container {
-    overflow-x: auto; /* ทำให้ตารางเลื่อนไปด้านข้างได้เมื่อเนื้อหาเยอะ */
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
-  
+
   table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px; /* กำหนดความกว้างขั้นต่ำของตารางเพื่อให้แสดงผลได้ดี */
+    min-width: 800px;
   }
-  
+
   th, td {
-    padding: 12px 16px;
+    padding: 10px 14px;
     text-align: left;
     border: 1px solid #e0e0e0;
+    font-size: 0.9rem;
   }
-  
+
   thead {
     background-color: #e8f5e9;
     color: #388e3c;
@@ -54,10 +52,6 @@
     position: sticky;
     top: 0;
     z-index: 10;
-  }
-
-  th {
-    white-space: nowrap; /* ป้องกันข้อความในหัวตารางขึ้นบรรทัดใหม่ */
   }
 
   tbody tr:nth-child(even) {
@@ -68,25 +62,47 @@
     background-color: #e3f2fd;
     cursor: pointer;
   }
-  
-  td {
-    word-wrap: break-word; /* ทำให้ข้อความยาวๆ ขึ้นบรรทัดใหม่ได้ */
-  }
 
-  /* จัดรูปแบบข้อความแสดงสถานะ */
   .status-message {
     text-align: center;
-    padding: 24px;
-    font-size: 1.1rem;
+    padding: 16px;
+    font-size: 1rem;
     color: #757575;
     background-color: #fff;
     border-radius: 8px;
-    margin-top: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-top: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   }
 
   .status-message.error {
     color: #d32f2f;
+  }
+
+  /* ✅ Responsive: แสดงแบบ Card บนมือถือ */
+  @media (max-width: 768px) {
+    .table-container {
+      display: none; /* ซ่อนตาราง */
+    }
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-size: 0.9rem;
+    }
+    .card p {
+      margin: 4px 0;
+      line-height: 1.4;
+    }
+    .card p span {
+      font-weight: 600;
+      color: #1a237e;
+    }
   }
 </style>
 </head>
@@ -94,6 +110,7 @@
 
   <h2>ตรวจสอบประวัติการลา</h2>
 
+  <!-- ตาราง -->
   <div class="table-container">
     <table id="historyTable">
       <thead>
@@ -109,7 +126,12 @@
       </tbody>
     </table>
   </div>
-  
+
+  <!-- Card view สำหรับมือถือ -->
+  <div class="card-list" id="cardList" style="display:none;">
+    <div class="status-message">⏳ กำลังโหลด...</div>
+  </div>
+
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
     async function fetchHistory() {
@@ -125,16 +147,20 @@
         const data = await resp.json();
 
         const tbody = document.getElementById("historyBody");
+        const cardList = document.getElementById("cardList");
         tbody.innerHTML = "";
+        cardList.innerHTML = "";
 
         if (!data || data.length === 0) {
           tbody.innerHTML = "<tr><td colspan='15' class='status-message'>❌ ไม่พบข้อมูล</td></tr>";
+          cardList.innerHTML = "<div class='status-message'>❌ ไม่พบข้อมูล</div>";
           return;
         }
 
+        // ✅ แสดงในตาราง
         data.forEach(row => {
           const tr = document.createElement("tr");
-          row.forEach((cell, idx) => {
+          row.forEach(cell => {
             const td = document.createElement("td");
             td.textContent = cell || "";
             tr.appendChild(td);
@@ -142,10 +168,24 @@
           tbody.appendChild(tr);
         });
 
+        // ✅ แสดงใน Card view (มือถือ)
+        data.forEach(row => {
+          const card = document.createElement("div");
+          card.className = "card";
+          row.forEach((cell, idx) => {
+            card.innerHTML += `<p><span>Column ${String.fromCharCode(65 + idx)}:</span> ${cell || "-"}</p>`;
+          });
+          cardList.appendChild(card);
+        });
+
+        cardList.style.display = "flex";
+
       } catch (err) {
         console.error(err);
         document.getElementById("historyBody").innerHTML =
           "<tr><td colspan='15' class='status-message error'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
+        document.getElementById("cardList").innerHTML =
+          "<div class='status-message error'>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>";
       }
     }
 
