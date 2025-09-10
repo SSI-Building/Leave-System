@@ -247,7 +247,7 @@
             font-weight: 500;
             color: var(--text-color-light);
         }
-
+        
         /* ===== Status Message Styles ===== */
         .status-message {
             text-align: center;
@@ -269,7 +269,7 @@
 <body>
     <div id="loading-screen">
         <div class="loading-spinner"></div>
-        <div class="loading-text">กำลังโหลด...</div>
+        <div class="loading-text">กำลังโหลดข้อมูล...</div>
     </div>
     
     <div class="buttons-container">
@@ -284,6 +284,7 @@
     
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
+        // --- ส่วน JavaScript ของการทำงานเดิม ---
         function formatDate(datetimeStr) {
             if (!datetimeStr) return '-';
             const dateObj = new Date(datetimeStr);
