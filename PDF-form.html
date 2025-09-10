@@ -65,95 +65,93 @@
 const { jsPDF } = window.jspdf;
 
 // ====== ✅ รับค่า row จาก query string ======
-const params = new URLSearchParams(window.location.search);
-if (params.has("row")) {
-  const row = JSON.parse(params.get("row"));
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 
-  // --- Mapping ข้อมูลจาก row[] ---
-  document.getElementById("empId").value       = row[0]; // Col A
-  document.getElementById("fullName").value    = row[1]; // Col B
-  document.getElementById("position").value    = row[2]; // Col C
-  document.getElementById("department").value  = row[3]; // Col D
+let rowData = null;
+if (getQueryParam("row")) {
+    rowData = JSON.parse(decodeURIComponent(getQueryParam("row")));
 
-  // LeaveType
-  if (row[4] === "AL") document.getElementById("leaveType").value = "vacation";
-  else if (row[4] === "SL") document.getElementById("leaveType").value = "sick";
-  else if (row[4] === "BL") document.getElementById("leaveType").value = "personal";
-  else document.getElementById("leaveType").value = row[4];
+    // Mapping ข้อมูลจาก row[] ไปใส่ input form
+    document.getElementById("empId").value       = rowData[0]; // Col A
+    document.getElementById("fullName").value    = rowData[1]; // Col B
+    document.getElementById("position").value    = rowData[2]; // Col C
+    document.getElementById("department").value  = rowData[3]; // Col D
 
-  // วันที่ + เวลา
-  document.getElementById("startDate").value   = formatDate(row[5]);
-  document.getElementById("startTime").value   = formatTime(row[6]);
-  document.getElementById("endDate").value     = formatDate(row[7]);
-  document.getElementById("endTime").value     = formatTime(row[8]);
-  document.getElementById("sumDate").value     = row[9];  // Col J
-  document.getElementById("createDate").value  = row[11]; // Col L
-  document.getElementById("reason").value      = row[12]; // Col M
+    // LeaveType
+    if (rowData[4] === "AL") document.getElementById("leaveType").value = "vacation";
+    else if (rowData[4] === "SL") document.getElementById("leaveType").value = "sick";
+    else if (rowData[4] === "BL") document.getElementById("leaveType").value = "personal";
+    else document.getElementById("leaveType").value = rowData[4];
 
-  // Paper Yes/No
-  document.getElementById("paper").value       = row[14] ? "Yes" : "No"; // Col O
+    // วันที่ + เวลา
+    document.getElementById("startDate").value   = formatDate(rowData[5]);
+    document.getElementById("startTime").value   = formatTime(rowData[6]);
+    document.getElementById("endDate").value     = formatDate(rowData[7]);
+    document.getElementById("endTime").value     = formatTime(rowData[8]);
+    document.getElementById("sumDate").value     = rowData[9];  // Col J
+    document.getElementById("createDate").value  = rowData[11]; // Col L
+    document.getElementById("reason").value      = rowData[12]; // Col M
 
-  // ยอดลา
-  document.getElementById("SL").value          = row[15];
-  document.getElementById("AL").value          = row[16];
-  document.getElementById("BL").value          = row[17];
-  document.getElementById("total").value       = row[18];
+    // Paper Yes/No
+    document.getElementById("paper").value       = rowData[14] ? "Yes" : "No"; // Col O
 
-  // Company & Address (เก็บ empId ชั่วคราว)
-  document.getElementById("company1").value    = row[0];
-  document.getElementById("company2").value    = row[0];
-  document.getElementById("address1").value    = row[0];
-  document.getElementById("address2").value    = row[0];
+    // ยอดลา
+    document.getElementById("SL").value          = rowData[15];
+    document.getElementById("AL").value          = rowData[16];
+    document.getElementById("BL").value          = rowData[17];
+    document.getElementById("total").value       = rowData[18];
 
-  // ✅ โหลดรูปจาก Google Drive
-  if (row[13]) {
-    const imgUrl = `https://drive.google.com/uc?export=view&id=${row[13]}`;
-    loadImageToFileInput(imgUrl, document.getElementById("myImage"));
-  }
+    // Company & Address (ตัวอย่างชั่วคราว)
+    document.getElementById("company1").value    = rowData[0];
+    document.getElementById("company2").value    = rowData[0];
+    document.getElementById("address1").value    = rowData[0];
+    document.getElementById("address2").value    = rowData[0];
+
+    // โหลดรูปจาก Google Drive ถ้ามี
+    if (rowData[13]) {
+        const imgUrl = `https://drive.google.com/uc?export=view&id=${rowData[13]}`;
+        loadImageToFileInput(imgUrl, document.getElementById("myImage"));
+    }
 }
 
 // ---- Helper: format date dd/mm/yyyy ----
 function formatDate(excelDate) {
-  if (!excelDate) return "";
-  const d = new Date(excelDate);
-  if (isNaN(d)) return excelDate;
-  const day = String(d.getDate()).padStart(2,"0");
-  const month = String(d.getMonth()+1).padStart(2,"0");
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
+    if (!excelDate) return "";
+    const d = new Date(excelDate);
+    if (isNaN(d)) return excelDate;
+    const day = String(d.getDate()).padStart(2,"0");
+    const month = String(d.getMonth()+1).padStart(2,"0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
 }
 
 // ---- Helper: format time hh:mm ----
 function formatTime(excelTime) {
-  if (!excelTime) return "";
-  const d = new Date(excelTime);
-  if (isNaN(d)) return excelTime;
-  const hh = String(d.getHours()).padStart(2,"0");
-  const mm = String(d.getMinutes()).padStart(2,"0");
-  return `${hh}:${mm}`;
+    if (!excelTime) return "";
+    const d = new Date(excelTime);
+    if (isNaN(d)) return excelTime;
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    return `${hh}:${mm}`;
 }
 
 // ---- Helper: โหลดรูปจาก URL ใส่ input type="file" ----
 async function loadImageToFileInput(url, inputElement) {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const file = new File([blob], "signature.png", { type: blob.type });
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-    inputElement.files = dataTransfer.files;
-  } catch (err) {
-    console.error("โหลดรูปไม่สำเร็จ", err);
-  }
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const file = new File([blob], "signature.png", { type: blob.type });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        inputElement.files = dataTransfer.files;
+    } catch (err) {
+        console.error("โหลดรูปไม่สำเร็จ", err);
+    }
 }
-
-// ====== ✅ ส่วนสร้าง PDF (ของคุณ) ======
-document.getElementById("leaveForm").addEventListener("submit", async (e)=> {
-  e.preventDefault();
-
-  // ... <--- โค้ดสร้าง PDF ทั้งหมดที่คุณเขียนอยู่แล้ว (เหมือนเดิมเลย) 
-  // ผมไม่ได้ตัดออกนะครับ แค่ย่อไว้
-});
 </script>
+
 </body>
 </html>
