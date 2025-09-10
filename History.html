@@ -206,6 +206,49 @@
             color: #fff;
         }
 
+        /* ===== Loading Screen Styles ===== */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--background-color);
+            z-index: 1000;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-spinner {
+            border: 6px solid var(--border-color);
+            border-top: 6px solid var(--primary-color-end);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: 500;
+            color: var(--text-color-light);
+        }
+
+        /* ===== Status Message Styles ===== */
         .status-message {
             text-align: center;
             padding: 24px;
@@ -221,31 +264,30 @@
         .status-message.error {
             color: #d32f2f;
         }
-
     </style>
 </head>
 <body>
+    <div id="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">กำลังโหลด...</div>
+    </div>
+    
     <div class="buttons-container">
         <button class="btn btn-secondary" onclick="window.location.href='Dashboard.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
     </div>
 
     <div class="container">
         <h2><i class="fas fa-history"></i> ประวัติการลา</h2>
-        
         <div class="history-list" id="dataContainer">
-            <div class="status-message">⏳ กำลังโหลด...</div>
-        </div>
+            </div>
     </div>
     
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        // --- ส่วน JavaScript การทำงานเดิม ---
         function formatDate(datetimeStr) {
             if (!datetimeStr) return '-';
             const dateObj = new Date(datetimeStr);
-            if (isNaN(dateObj.getTime())) {
-                return '-';
-            }
+            if (isNaN(dateObj.getTime())) return '-';
             const day = String(dateObj.getDate()).padStart(2, '0');
             const month = String(dateObj.getMonth() + 1).padStart(2, '0');
             const year = dateObj.getFullYear();
@@ -255,9 +297,7 @@
         function formatTime(datetimeStr) {
             if (!datetimeStr) return '-';
             const dateObj = new Date(datetimeStr);
-            if (isNaN(dateObj.getTime())) {
-                return '-';
-            }
+            if (isNaN(dateObj.getTime())) return '-';
             const hours = String(dateObj.getHours()).padStart(2, '0');
             const minutes = String(dateObj.getMinutes()).padStart(2, '0');
             return `${hours}:${minutes}`;
@@ -266,9 +306,7 @@
         function formatDateTime(datetimeStr) {
             if (!datetimeStr) return '-';
             const dateObj = new Date(datetimeStr);
-            if (isNaN(dateObj.getTime())) {
-                return '-';
-            }
+            if (isNaN(dateObj.getTime())) return '-';
             const day = String(dateObj.getDate()).padStart(2, '0');
             const month = String(dateObj.getMonth() + 1).padStart(2, '0');
             const year = dateObj.getFullYear();
@@ -278,9 +316,18 @@
         }
 
         async function fetchHistory() {
+            const loadingScreen = document.getElementById('loading-screen');
+            const dataContainer = document.getElementById('dataContainer');
+            
+            // --- Show loading screen ---
+            loadingScreen.classList.remove('hidden');
+
             try {
                 await liff.init({ liffId: "2007956727-6V7DrnMD" });
-                if (!liff.isLoggedIn()) { liff.login(); return; }
+                if (!liff.isLoggedIn()) { 
+                    liff.login(); 
+                    return; 
+                }
 
                 const profile = await liff.getProfile();
                 const lineUserId = profile.userId;
@@ -289,15 +336,13 @@
                 const resp = await fetch(webAppUrl);
                 const data = await resp.json();
 
-                const container = document.getElementById("dataContainer");
-                container.innerHTML = "";
+                dataContainer.innerHTML = "";
 
                 if (!data || data.length === 0) {
-                    container.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
+                    dataContainer.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
                     return;
                 }
                 
-                // --- จัดเรียงข้อมูลจากล่าสุดไปเก่าสุด ---
                 data.sort((a, b) => {
                     const dateA = new Date(a[11]);
                     const dateB = new Date(b[11]);
@@ -309,9 +354,9 @@
                     card.className = "history-card";
                     
                     let leaveType = row[4];
-                    if (leaveType === 'AL') { leaveType = 'ลาพักร้อน'; }
-                    else if (leaveType === 'SL') { leaveType = 'ลาป่วย'; }
-                    else if (leaveType === 'BL') { leaveType = 'ลากิจ'; }
+                    if (leaveType === 'AL') leaveType = 'ลาพักร้อน';
+                    else if (leaveType === 'SL') leaveType = 'ลาป่วย';
+                    else if (leaveType === 'BL') leaveType = 'ลากิจ';
                     
                     let statusText = row[10];
                     let statusClass = 'pending';
@@ -338,14 +383,17 @@
                     cardFooter.innerHTML = `<a href="#" class="detail-link" onclick="alert('ฟังก์ชันดูรายละเอียดจะแสดงข้อมูลเต็มรูปแบบ เช่น เหตุผลและลายเซ็น'); return false;">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>`;
                     card.appendChild(cardFooter);
 
-                    container.appendChild(card);
+                    dataContainer.appendChild(card);
                 });
 
             } catch (err) {
                 console.error(err);
-                document.getElementById("dataContainer").innerHTML = `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
+                dataContainer.innerHTML = `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
+            } finally {
+                // --- Hide loading screen after all tasks are done ---
+                loadingScreen.classList.add('hidden');
             }
-            // เพิ่มการโหลดธีมหลังจากโหลดข้อมูลเสร็จ
+            // Load theme
             const savedTheme = localStorage.getItem('selectedTheme');
             if (savedTheme) {
                 document.body.className = savedTheme;
