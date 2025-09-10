@@ -219,6 +219,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const set1 = JSON.parse(localStorage.getItem("leaveSet1")) || [];
         const set2 = JSON.parse(localStorage.getItem("leaveSet2")) || [];
 
+        // ✅ เพิ่ม default index 3-5 ของ set2 เพื่อให้ usedAL/SL/BL ถูกต้อง
+        set2[3] = set2[3] || 0; // usedAL
+        set2[4] = set2[4] || 0; // usedSL
+        set2[5] = set2[5] || 0; // usedBL
+        const usedTotal = set2[3] + set2[4] + set2[5];
+
+        leaveData.set1 = set1;
+        leaveData.set2 = set2;
+        leaveData.usedAL = set2[3];
+        leaveData.usedSL = set2[4];
+        leaveData.usedBL = set2[5];
+        leaveData.usedTotal = usedTotal;
+
         const leaveDataToSend = {
             ...leaveData,
             startDate: leaveData.startDateFormatted,
