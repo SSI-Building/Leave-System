@@ -218,59 +218,63 @@
           return;
         }
 
+        // ==========================================
+        // ส่วนที่เพิ่มใหม่: จัดเรียงข้อมูล
+        // ==========================================
+        data.sort((a, b) => {
+            const dateA = new Date(a[11]); // Column L
+            const dateB = new Date(b[11]); // Column L
+            return dateB - dateA; // เรียงจากล่าสุดไปเก่าสุด
+        });
+
+        // ==========================================
+        // การแสดงผลยังคงเหมือนเดิม
+        // ==========================================
         data.forEach(row => {
           const card = document.createElement("div");
           card.className = "card";
           
-          // กำหนดเงื่อนไข Column E (ประเภทการลา)
           let leaveType = row[4];
           if (leaveType === 'AL') { leaveType = 'ลาพักร้อน'; }
           else if (leaveType === 'SL') { leaveType = 'ลาป่วย'; }
           else if (leaveType === 'BL') { leaveType = 'ลากิจ'; }
           
-          // กำหนดเงื่อนไข Column K (สถานะ)
           let statusText = row[10];
           let statusClass = 'pending';
           if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'pending'; }
           else if (statusText === 'Approved') { statusText = 'อนุมัติ'; statusClass = 'approved'; }
           else if (statusText === 'Reject') { statusText = 'ไม่อนุมัติ'; statusClass = 'rejected'; }
 
-          // Header
           const header = document.createElement('div');
           header.className = 'card-header';
           header.innerHTML = `<span class="leave-type">${leaveType}</span><span class="status ${statusClass}">${statusText}</span>`;
           card.appendChild(header);
 
-          // ลาตั้งแต่วันที่
           const startDateItem = document.createElement('div');
           startDateItem.className = 'card-item';
-          const startDate = formatDate(row[5]); // Column F
-          const startTime = formatTime(row[6]); // Column G
+          const startDate = formatDate(row[5]);
+          const startTime = formatTime(row[6]);
           startDateItem.innerHTML = `<span class="card-item-label">ลาตั้งแต่วันที่:</span><span class="card-item-value">${startDate} เวลา ${startTime}</span>`;
           card.appendChild(startDateItem);
 
-          // ถึงวันที่
           const endDateItem = document.createElement('div');
           endDateItem.className = 'card-item';
-          const endDate = formatDate(row[7]); // Column H
-          const endTime = formatTime(row[8]); // Column I
+          const endDate = formatDate(row[7]);
+          const endTime = formatTime(row[8]);
           endDateItem.innerHTML = `<span class="card-item-label">ถึงวันที่:</span><span class="card-item-value">${endDate} เวลา ${endTime}</span>`;
           card.appendChild(endDateItem);
           
-          // รวม
           const totalDaysItem = document.createElement('div');
           totalDaysItem.className = 'card-item';
-          totalDaysItem.innerHTML = `<span class="card-item-label">รวม:</span><span class="card-item-value">${row[9] || '-'} วัน</span>`; // Column J
+          totalDaysItem.innerHTML = `<span class="card-item-label">รวม:</span><span class="card-item-value">${row[9] || '-'} วัน</span>`;
           card.appendChild(totalDaysItem);
 
-          // วันที่ทำรายการ (และปุ่ม)
           const createdDateItem = document.createElement('div');
           createdDateItem.className = 'card-item';
-          const createdDateTime = formatDateTime(row[11]); // Column L
+          const createdDateTime = formatDateTime(row[11]);
           createdDateItem.innerHTML = `<span class="card-item-label">วันที่ทำรายการ:</span><span class="card-item-value">${createdDateTime}</span>`;
           card.appendChild(createdDateItem);
 
-          // เพิ่มส่วน footer สำหรับปุ่ม
           const cardFooter = document.createElement('div');
           cardFooter.className = 'card-footer';
           cardFooter.innerHTML = `<button class="detail-button">ดูรายละเอียด</button>`;
