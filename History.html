@@ -52,32 +52,59 @@
     transform: translateY(-4px); /* เพิ่ม effect ยกขึ้นเล็กน้อยเมื่อชี้ */
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .leave-type {
+    font-size: 1.2rem;
+    color: #1a237e;
+  }
+
+  .status {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .status.pending { background-color: #fff9c4; color: #fbc02d; }
+  .status.approved { background-color: #e8f5e9; color: #2e7d32; }
+  .status.rejected { background-color: #ffebee; color: #c62828; }
 
   /* แถวข้อมูลแต่ละอันในการ์ด */
   .card-item {
-    display: flex; /* จัดเรียงหัวข้อและข้อมูลในแนวนอน */
-    align-items: flex-start;
+    display: flex;
+    align-items: center;
     margin-bottom: 8px;
     line-height: 1.5;
+    color: #666;
   }
 
   .card-item:last-child {
     margin-bottom: 0;
   }
 
-  /* หัวข้อของข้อมูล */
   .card-item-label {
     font-weight: 600;
     color: #4a4a4a;
-    width: 120px; /* กำหนดความกว้างของหัวข้อเพื่อให้ข้อมูลจัดเรียงสวยงาม */
-    flex-shrink: 0; /* ป้องกันหัวข้อไม่ให้ถูกบีบ */
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  
+  .card-item-value {
+    word-wrap: break-word;
   }
 
-  /* ข้อมูลจริง */
-  .card-item-value {
-    color: #666;
-    flex-grow: 1; /* ข้อมูลจะขยายเต็มพื้นที่ที่เหลือ */
-    word-wrap: break-word; /* ทำให้ข้อความยาวๆ ขึ้นบรรทัดใหม่ได้ */
+  .card-item-row-multi {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   /* จัดรูปแบบข้อความแสดงสถานะ */
@@ -107,6 +134,26 @@
   
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
+    function formatDate(datetimeStr) {
+      if (!datetimeStr) return '';
+      const parts = datetimeStr.split(' ');
+      if (parts.length < 1) return '';
+      const dateParts = parts[0].split('/');
+      if (dateParts.length !== 3) return '';
+      // Format: dd/mm/yyyy
+      return `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
+    }
+
+    function formatTime(datetimeStr) {
+      if (!datetimeStr) return '';
+      const parts = datetimeStr.split(' ');
+      if (parts.length < 2) return '';
+      // Format: hh/mm
+      const timeParts = parts[1].split(':');
+      if (timeParts.length < 2) return '';
+      return `${timeParts[0]}:${timeParts[1]}`;
+    }
+
     async function fetchHistory() {
       try {
         await liff.init({ liffId: "2007956727-6V7DrnMD" });
@@ -120,41 +167,65 @@
         const data = await resp.json();
 
         const container = document.getElementById("dataContainer");
-        container.innerHTML = ""; // เคลียร์สถานะ loading
+        container.innerHTML = "";
 
         if (!data || data.length === 0) {
           container.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
           return;
         }
 
-        // กำหนดหัวข้อสำหรับแต่ละ Column
-        // คุณสามารถแก้ไขหัวข้อเหล่านี้ให้ตรงกับความหมายของข้อมูลจริงได้เลย
-        const headers = [
-          "Column A", "Column B", "Column C", "Column D", "Column E",
-          "Column F", "Column G", "Column H", "Column I", "Column J",
-          "Column K", "Column L", "Column M", "Column N (File ID)", "Column O"
-        ];
-
         data.forEach(row => {
           const card = document.createElement("div");
           card.className = "card";
           
-          row.forEach((cell, idx) => {
-            const cardItem = document.createElement("div");
-            cardItem.className = "card-item";
+          // กำหนดเงื่อนไข Column E (ประเภทการลา)
+          let leaveType = row[4];
+          if (leaveType === 'AL') { leaveType = 'ลาพักร้อน'; }
+          else if (leaveType === 'SL') { leaveType = 'ลาป่วย'; }
+          else if (leaveType === 'BL') { leaveType = 'ลากิจ'; }
+          
+          // กำหนดเงื่อนไข Column K (สถานะ)
+          let statusText = row[10];
+          let statusClass = 'pending';
+          if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'pending'; }
+          else if (statusText === 'Approved') { statusText = 'อนุมัติ'; statusClass = 'approved'; }
+          else if (statusText === 'Reject') { statusText = 'ไม่อนุมัติ'; statusClass = 'rejected'; }
 
-            const label = document.createElement("span");
-            label.className = "card-item-label";
-            label.textContent = headers[idx] + ":";
+          // Header
+          const header = document.createElement('div');
+          header.className = 'card-header';
+          header.innerHTML = `<span class="leave-type">${leaveType}</span><span class="status ${statusClass}">${statusText}</span>`;
+          card.appendChild(header);
 
-            const value = document.createElement("span");
-            value.className = "card-item-value";
-            value.textContent = cell || "-";
+          // ลาตั้งแต่วันที่
+          const startDateItem = document.createElement('div');
+          startDateItem.className = 'card-item';
+          const startDate = formatDate(row[5]); // Column F
+          const startTime = formatTime(row[6]); // Column G
+          startDateItem.innerHTML = `<span class="card-item-label">ลาตั้งแต่วันที่:</span><span class="card-item-value">${startDate} เวลา ${startTime}</span>`;
+          card.appendChild(startDateItem);
 
-            cardItem.appendChild(label);
-            cardItem.appendChild(value);
-            card.appendChild(cardItem);
-          });
+          // ถึงวันที่
+          const endDateItem = document.createElement('div');
+          endDateItem.className = 'card-item';
+          const endDate = formatDate(row[7]); // Column H
+          const endTime = formatTime(row[8]); // Column I
+          endDateItem.innerHTML = `<span class="card-item-label">ถึงวันที่:</span><span class="card-item-value">${endDate} เวลา ${endTime}</span>`;
+          card.appendChild(endDateItem);
+          
+          // รวม
+          const totalDaysItem = document.createElement('div');
+          totalDaysItem.className = 'card-item';
+          totalDaysItem.innerHTML = `<span class="card-item-label">รวม:</span><span class="card-item-value">${row[9]} วัน</span>`; // Column J
+          card.appendChild(totalDaysItem);
+
+          // วันที่ทำรายการ
+          const createdDateItem = document.createElement('div');
+          createdDateItem.className = 'card-item';
+          const createdDateTime = formatDate(row[11]) + ', ' + formatTime(row[11]); // Column L
+          createdDateItem.innerHTML = `<span class="card-item-label">วันที่ทำรายการ:</span><span class="card-item-value">${createdDateTime}</span>`;
+          card.appendChild(createdDateItem);
+
           container.appendChild(card);
         });
 
