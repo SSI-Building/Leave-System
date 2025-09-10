@@ -100,7 +100,40 @@
   .card-item-value {
     word-wrap: break-word;
   }
+
+  /*
+  ==========================================
+  ส่วนที่เพิ่มใหม่: สำหรับปุ่มดูรายละเอียด
+  ==========================================
+  */
+  .card-footer {
+    display: flex;
+    justify-content: flex-end; /* จัดปุ่มชิดขวา */
+    margin-top: 16px;
+  }
   
+  .detail-button {
+    background-color: #4CAF50; /* สีเขียว */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Prompt', sans-serif;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .detail-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+  }
+
+  .detail-button:active {
+    transform: translateY(0);
+  }
+
   /* จัดรูปแบบข้อความแสดงสถานะ */
   .status-message {
     text-align: center;
@@ -130,13 +163,12 @@
   <script>
     function formatDate(datetimeStr) {
       if (!datetimeStr) return '-';
-      // Handle the ISO 8601 format and invalid dates
       const dateObj = new Date(datetimeStr);
       if (isNaN(dateObj.getTime())) {
           return '-';
       }
       const day = String(dateObj.getDate()).padStart(2, '0');
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
       const year = dateObj.getFullYear();
       return `${day}/${month}/${year}`;
     }
@@ -231,12 +263,18 @@
           totalDaysItem.innerHTML = `<span class="card-item-label">รวม:</span><span class="card-item-value">${row[9] || '-'} วัน</span>`; // Column J
           card.appendChild(totalDaysItem);
 
-          // วันที่ทำรายการ
+          // วันที่ทำรายการ (และปุ่ม)
           const createdDateItem = document.createElement('div');
           createdDateItem.className = 'card-item';
           const createdDateTime = formatDateTime(row[11]); // Column L
           createdDateItem.innerHTML = `<span class="card-item-label">วันที่ทำรายการ:</span><span class="card-item-value">${createdDateTime}</span>`;
           card.appendChild(createdDateItem);
+
+          // เพิ่มส่วน footer สำหรับปุ่ม
+          const cardFooter = document.createElement('div');
+          cardFooter.className = 'card-footer';
+          cardFooter.innerHTML = `<button class="detail-button">ดูรายละเอียด</button>`;
+          card.appendChild(cardFooter);
 
           container.appendChild(card);
         });
