@@ -1,124 +1,119 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Admin Dashboard - History</title>
-<style>
-  body { font-family: sans-serif; margin: 20px; background: #f8f9fa; }
-  h1 { text-align: center; margin-bottom: 20px; }
-  table { width: 100%; border-collapse: collapse; background: #fff; }
-  th, td { border: 1px solid #ddd; padding: 6px; font-size: 13px; text-align: center; }
-  th { background: #007bff; color: white; }
-  tr:nth-child(even) { background: #f2f2f2; }
-  img { max-width: 50px; max-height: 50px; }
-  .filters { margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
-  .filters input, .filters select { padding: 4px 6px; font-size: 13px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheet Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        #table-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+        }
+        .loading {
+            text-align: center;
+            font-style: italic;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
 
-<h1>📊 Admin Dashboard - History</h1>
+    <div id="table-container">
+        <h1>ข้อมูลจาก Google Sheet</h1>
+        <p class="loading">กำลังโหลดข้อมูล...</p>
+        <table id="data-table">
+            <thead>
+                <tr id="table-header-row"></tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
-<div class="filters">
-  <label>วันที่เริ่ม: <input type="date" id="startDate"></label>
-  <label>วันที่สิ้นสุด: <input type="date" id="endDate"></label>
-  <label>Column A: <input type="text" id="filterA" placeholder="กรอง A"></label>
-  <label>Column B: <input type="text" id="filterB" placeholder="กรอง B"></label>
-  <button onclick="applyFilters()">กรอง</button>
-  <button onclick="resetFilters()">รีเซ็ต</button>
-</div>
+    <script>
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec'; // เปลี่ยนตรงนี้
 
-<table id="dataTable">
-  <thead></thead>
-  <tbody></tbody>
-</table>
+        async function fetchAndDisplayData() {
+            try {
+                const response = await fetch(webAppUrl);
+                const data = await response.json();
 
-<script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // เปลี่ยนเป็น Web App URL
-let allData = [];
+                const table = document.getElementById('data-table');
+                const headerRow = document.getElementById('table-header-row');
+                const tableBody = table.querySelector('tbody');
+                const loadingMessage = document.querySelector('.loading');
 
-window.onload = async function() {
-  const res = await fetch(`${WEBAPP_URL}?action=getAllHistory`);
-  allData = await res.json();
-  setDefaultDates();
-  renderTable(allData);
-}
+                // Clear existing data
+                headerRow.innerHTML = '';
+                tableBody.innerHTML = '';
 
-function setDefaultDates() {
-  const today = new Date();
-  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-  document.getElementById('startDate').value = firstDay.toISOString().slice(0,10);
-  document.getElementById('endDate').value = today.toISOString().slice(0,10);
-}
+                if (data.data.length === 0) {
+                    loadingMessage.textContent = 'ไม่พบข้อมูลที่ตรงตามเงื่อนไข';
+                    return;
+                }
 
-function applyFilters() {
-  const start = document.getElementById('startDate').value;
-  const end = document.getElementById('endDate').value;
-  const filterA = document.getElementById('filterA').value.toLowerCase();
-  const filterB = document.getElementById('filterB').value.toLowerCase();
+                // Create header
+                data.header.forEach(headerText => {
+                    const th = document.createElement('th');
+                    th.textContent = headerText;
+                    headerRow.appendChild(th);
+                });
 
-  const filtered = allData.filter(row => {
-    const dateL = row[11]; // Column L
-    const valA = row[0].toString().toLowerCase();
-    const valB = row[1].toString().toLowerCase();
+                // Create table rows
+                data.data.forEach(rowData => {
+                    const tr = document.createElement('tr');
+                    rowData.forEach((cellData, index) => {
+                        const td = document.createElement('td');
+                        if (index === data.header.indexOf('Column N') && cellData.startsWith('https://')) {
+                            // Check if it's an image URL
+                            const img = document.createElement('img');
+                            img.src = cellData;
+                            img.alt = 'Image from Google Drive';
+                            td.appendChild(img);
+                        } else {
+                            td.textContent = cellData;
+                        }
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+                
+                loadingMessage.style.display = 'none';
 
-    let ok = true;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                const loadingMessage = document.querySelector('.loading');
+                loadingMessage.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
+            }
+        }
 
-    if (start) ok = ok && dateL >= start;
-    if (end) ok = ok && dateL <= end;
-    if (filterA) ok = ok && valA.includes(filterA);
-    if (filterB) ok = ok && valB.includes(filterB);
-
-    return ok;
-  });
-
-  renderTable(filtered);
-}
-
-function resetFilters() {
-  setDefaultDates();
-  document.getElementById('filterA').value = "";
-  document.getElementById('filterB').value = "";
-  renderTable(allData);
-}
-
-function renderTable(data) {
-  const tableHead = document.querySelector("#dataTable thead");
-  const tableBody = document.querySelector("#dataTable tbody");
-  tableHead.innerHTML = "";
-  tableBody.innerHTML = "";
-
-  if (!data || data.length === 0) {
-    tableBody.innerHTML = "<tr><td colspan='19'>ไม่พบข้อมูล</td></tr>";
-    return;
-  }
-
-  const headers = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S"];
-  const headerRow = document.createElement("tr");
-  headers.forEach(h => {
-    const th = document.createElement("th");
-    th.textContent = h;
-    headerRow.appendChild(th);
-  });
-  tableHead.appendChild(headerRow);
-
-  data.forEach(row => {
-    const tr = document.createElement("tr");
-    row.forEach((cell, idx) => {
-      const td = document.createElement("td");
-      if (idx === 13 && cell) {
-        const img = document.createElement("img");
-        img.src = `https://drive.google.com/uc?export=view&id=${cell}`;
-        td.appendChild(img);
-      } else {
-        td.textContent = cell;
-      }
-      tr.appendChild(td);
-    });
-    tableBody.appendChild(tr);
-  });
-}
-</script>
+        document.addEventListener('DOMContentLoaded', fetchAndDisplayData);
+    </script>
 
 </body>
 </html>
