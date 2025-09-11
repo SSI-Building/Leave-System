@@ -128,6 +128,16 @@
             display: flex;
             flex-direction: column;
         }
+        
+        .date-time-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end; /* จัดให้ label และ input อยู่ในแนวเดียวกัน */
+        }
+        
+        .date-time-group .form-group {
+            flex: 1;
+        }
 
         label {
             display: block;
@@ -371,11 +381,25 @@
             <div class="date-group">
                 <div class="form-group">
                     <label for="startDate">ตั้งแต่วันที่</label>
-                    <input type="datetime-local" id="startDate">
+                    <div class="date-time-group">
+                        <div class="form-group">
+                            <input type="date" id="startDate">
+                        </div>
+                        <div class="form-group">
+                            <input type="time" id="startTime">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="endDate">ถึงวันที่</label>
-                    <input type="datetime-local" id="endDate">
+                    <div class="date-time-group">
+                        <div class="form-group">
+                            <input type="date" id="endDate">
+                        </div>
+                        <div class="form-group">
+                            <input type="time" id="endTime">
+                        </div>
+                    </div>
                 </div>
                 <div id="leaveDaysDisplay"></div>
             </div>
@@ -443,6 +467,7 @@
             updateLeaveBalance();
         });
 
+        // ฟังก์ชันคำนวณวันลา
         function calculateLeaveDays(sDate, sTime, eDate, eTime) {
             if (!sDate || !sTime || !eDate || !eTime) return 0;
             const WORK_HOURS_PER_DAY = 8;
@@ -472,22 +497,31 @@
             }
             return Math.round((totalHours / WORK_HOURS_PER_DAY) * 10) / 10;
         }
+
+        // --- เพิ่มการจับเหตุการณ์เมื่อมีการเปลี่ยนแปลง Date และ Time ---
         document.addEventListener("DOMContentLoaded", () => {
             const startDate = document.getElementById("startDate");
+            const startTime = document.getElementById("startTime");
             const endDate = document.getElementById("endDate");
+            const endTime = document.getElementById("endTime");
             const leaveDisplay = document.getElementById("leaveDaysDisplay");
+
             function updateLeaveDays() {
-                const start = startDate.value.split("T");
-                const end = endDate.value.split("T");
-                if (start.length < 2 || end.length < 2) {
-                    leaveDisplay.innerText = "";
-                    return;
-                }
-                const leaveDays = calculateLeaveDays(start[0], start[1], end[0], end[1]);
+                const leaveDays = calculateLeaveDays(
+                    startDate.value,
+                    startTime.value,
+                    endDate.value,
+                    endTime.value
+                );
                 leaveDisplay.innerText = `รวมวันลา: ${leaveDays} วัน`;
             }
+            
+            // จับเหตุการณ์ change สำหรับ input ทั้ง 4 ตัว
             startDate.addEventListener("change", updateLeaveDays);
+            startTime.addEventListener("change", updateLeaveDays);
             endDate.addEventListener("change", updateLeaveDays);
+            endTime.addEventListener("change", updateLeaveDays);
+            updateLeaveDays(); // เรียกครั้งแรกตอนโหลดหน้า
         });
 
         const canvas = document.getElementById('signaturePad');
@@ -521,7 +555,9 @@
                 document.getElementById("leaveType"),
                 document.getElementById("reason"),
                 document.getElementById("startDate"),
-                document.getElementById("endDate")
+                document.getElementById("startTime"),
+                document.getElementById("endDate"),
+                document.getElementById("endTime")
             ];
 
             let hasEmpty = false;
@@ -573,10 +609,10 @@
                 leaveType: leaveType,
                 reason: document.getElementById("reason").value,
                 hasDocument: Array.from(docRadios).find(r => r.checked).value,
-                startDate: document.getElementById("startDate").value.split("T")[0],
-                startTime: document.getElementById("startDate").value.split("T")[1],
-                endDate: document.getElementById("endDate").value.split("T")[0],
-                endTime: document.getElementById("endDate").value.split("T")[1],
+                startDate: document.getElementById("startDate").value, // เปลี่ยนการเก็บข้อมูล
+                startTime: document.getElementById("startTime").value, // เพิ่มการเก็บข้อมูล
+                endDate: document.getElementById("endDate").value, // เปลี่ยนการเก็บข้อมูล
+                endTime: document.getElementById("endTime").value, // เพิ่มการเก็บข้อมูล
                 leaveDays: leaveDays,
                 signatureData: signaturePad.toDataURL()
             };
