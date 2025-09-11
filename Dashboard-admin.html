@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>History Table</title>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 <style>
   body { font-family: 'Prompt', sans-serif; background: #f5f5f5; padding: 20px; }
-  h2 { text-align: center; color: #333; }
+  h2 { text-align: center; color: #333; margin-bottom: 20px; }
   .controls { margin-bottom: 20px; text-align: center; }
   .controls input { padding: 6px; margin: 0 5px; border-radius: 4px; border: 1px solid #ccc; }
   .controls button { padding: 6px 12px; border-radius: 4px; border: none; background: #007bff; color: #fff; cursor: pointer; }
   .controls button:hover { background: #0056b3; }
-  table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-  th, td { border: 1px solid #ddd; padding: 8px; text-align: center; vertical-align: middle; }
-  th { background-color: #007bff; color: white; }
-  tbody tr:hover { background-color: #f1f1f1; }
-  td img { max-width: 80px; height: auto; border-radius: 4px; }
+  table.dataTable thead th { background-color: #007bff; color: white; }
+  td img { max-width: 60px; height: auto; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -29,7 +30,7 @@
   <button onclick="filterData()">กรอง</button>
 </div>
 
-<table id="historyTable">
+<table id="historyTable" class="display">
   <thead>
     <tr>
       <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
@@ -41,9 +42,14 @@
   <tbody></tbody>
 </table>
 
+<!-- jQuery + DataTables -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 <script>
 const webAppURL = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec';
-let allData = []; // เก็บข้อมูลทั้งหมด
+let allData = []; 
+let dataTable;
 
 // โหลดข้อมูลทั้งหมดจาก Web App
 function loadData() {
@@ -73,22 +79,26 @@ function filterData() {
   const filtered = allData.filter(row => {
     const colL = row[11]; // Column L
     if (!colL) return false;
-    const rowDate = new Date(colL); // รองรับ ISO format
+    const rowDate = new Date(colL); 
     return rowDate >= startDate && rowDate <= endDate;
   });
 
   renderTable(filtered);
 }
 
-// แสดงตารางและ Column N เป็นรูปภาพ
+// แสดงตารางด้วย DataTables
 function renderTable(data) {
+  if (dataTable) {
+    dataTable.destroy();
+    document.querySelector("#historyTable tbody").innerHTML = "";
+  }
+
   const tbody = document.querySelector("#historyTable tbody");
-  tbody.innerHTML = "";
   data.forEach(row => {
     const tr = document.createElement("tr");
     row.forEach((cell, index) => {
       const td = document.createElement("td");
-      if(index === 13 && cell) { // Column N
+      if(index === 13 && cell) { 
         const img = document.createElement("img");
         img.src = `https://drive.google.com/uc?export=view&id=${cell}`;
         td.appendChild(img);
@@ -98,6 +108,20 @@ function renderTable(data) {
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
+  });
+
+  // Init DataTable
+  dataTable = $('#historyTable').DataTable({
+    pageLength: 10,
+    lengthMenu: [5, 10, 25, 50, 100],
+    order: [[11, "desc"]], // sort by column L (วันที่)
+    language: {
+      search: "ค้นหา:",
+      lengthMenu: "แสดง _MENU_ แถว",
+      info: "แสดง _START_ ถึง _END_ จาก _TOTAL_ แถว",
+      paginate: { next: "ถัดไป", previous: "ก่อนหน้า" },
+      zeroRecords: "ไม่พบข้อมูลที่ค้นหา"
+    }
   });
 }
 
