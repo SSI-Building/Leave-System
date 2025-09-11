@@ -231,290 +231,308 @@
         </div>
     </div>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const startDateInput = document.getElementById('startDate');
-            const endDateInput = document.getElementById('endDate');
-            const loadDataButton = document.getElementById('loadDataButton');
-            const resetButton = document.getElementById('resetButton');
-            const dataTable = document.getElementById('dataTable');
-            
-            const searchNameInput = document.getElementById('searchName');
-            const filterTypeSelect = document.getElementById('filterType');
-            const filterStatusSelect = document.getElementById('filterStatus');
-            const sortButton = document.getElementById('sortButton');
-            
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec';
-            
-            let allData = [];
-            let sortOrder = 'desc'; 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const loadDataButton = document.getElementById('loadDataButton');
+        const resetButton = document.getElementById('resetButton');
+        const dataTable = document.getElementById('dataTable');
+        
+        const searchNameInput = document.getElementById('searchName');
+        const filterTypeSelect = document.getElementById('filterType');
+        const filterStatusSelect = document.getElementById('filterStatus');
+        const sortButton = document.getElementById('sortButton');
+        
+        // ใช้ URL นี้สำหรับทั้งการดึงและอัปเดตข้อมูล
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbzQo-oIYvbioq2HbKwfGLmDLfeCO1-0yFnbzhuLXfNbtdk4eAcbFTCm-ZqraakPtnki/exec';
+        
+        let allData = [];
+        let sortOrder = 'desc'; 
 
-            function setInitialDates() {
-                const today = new Date();
-                const fortyDaysBefore = new Date();
-                fortyDaysBefore.setDate(today.getDate() - 40);
+        function setInitialDates() {
+            const today = new Date();
+            const fortyDaysBefore = new Date();
+            fortyDaysBefore.setDate(today.getDate() - 40);
+            
+            // ตั้งค่าวันที่เริ่มต้นเป็น 40 วันก่อนหน้า และวันที่สิ้นสุดเป็นวันนี้
+            startDateInput.value = formatDateForInput(fortyDaysBefore);
+            endDateInput.value = formatDateForInput(today);
+        }
+
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateForDisplay(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+        
+        async function updateStatus(uuid, newStatus) {
+            try {
+                const url = `${webAppUrl}?action=update&uuid=${uuid}&status=${newStatus}`;
                 
-                startDateInput.value = formatDateForInput(today);
-                endDateInput.value = formatDateForInput(fortyDaysBefore);
-            }
-
-            function formatDateForInput(date) {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-
-            function formatDateForDisplay(dateString) {
-                if (!dateString) return '';
-                const date = new Date(dateString);
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}/${month}/${year}`;
-            }
-            
-            async function updateStatus(uuid, newStatus) {
-                try {
-                    const url = `${webAppUrl}?action=update&uuid=${uuid}&status=${newStatus}`;
-                    await fetch(url, {
-                        method: 'GET',
-                        mode: 'no-cors'
-                    });
-                    
+                const response = await fetch(url);
+                const result = await response.json();
+                
+                if (result.status === 'success') {
                     alert(`อัปเดตสถานะ UUID: ${uuid} เป็น ${newStatus} เรียบร้อยแล้ว`);
                     fetchData(startDateInput.value, endDateInput.value);
-                    
-                } catch (error) {
-                    console.error('Error updating status:', error);
-                    alert('เกิดข้อผิดพลาดในการอัปเดตสถานะ');
+                } else {
+                    alert(`เกิดข้อผิดพลาดในการอัปเดต: ${result.message}`);
                 }
+                
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('เกิดข้อผิดพลาดในการอัปเดตสถานะ');
+            }
+        }
+
+        function printRow(rowData) {
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>ข้อมูลการลา</title>');
+            printWindow.document.write('<style>');
+            printWindow.document.write(`
+                body { font-family: 'Kanit', sans-serif; padding: 20px; }
+                h2 { text-align: center; color: #007BFF; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+            `);
+            printWindow.document.write('</style></head><body>');
+            printWindow.document.write('<h2>รายละเอียดการลา</h2>');
+            printWindow.document.write('<table>');
+            
+            printWindow.document.write(`
+                <tr><th>รหัสพนักงาน</th><td>${rowData[0] || ''}</td></tr>
+                <tr><th>ชื่อ-สกุล</th><td>${rowData[1] || ''}</td></tr>
+                <tr><th>ประเภทการลา</th><td>${getLeaveTypeDisplay(rowData[4])}</td></tr>
+                <tr><th>ลาตั้งแค่วันที่</th><td>${formatDateForDisplay(rowData[5]) || ''}</td></tr>
+                <tr><th>เวลา(เริ่ม)</th><td>${rowData[6] || ''}</td></tr>
+                <tr><th>ถึงวันที่</th><td>${formatDateForDisplay(rowData[7]) || ''}</td></tr>
+                <tr><th>เวลา(สิ้นสุด)</th><td>${rowData[8] || ''}</td></tr>
+                <tr><th>จำนวนวันลา</th><td>${rowData[9] || ''}</td></tr>
+                <tr><th>สถานะ</th><td>${rowData[10] || ''}</td></tr>
+                <tr><th>วันที่ยื่นคำร้อง</th><td>${formatDateForDisplay(rowData[11]) || ''}</td></tr>
+            `);
+            
+            printWindow.document.write('</table>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function getLeaveTypeDisplay(leaveType) {
+            if (leaveType === 'AL') return 'ลาพักร้อน (AL)';
+            if (leaveType === 'SL') return 'ลาป่วย (SL)';
+            if (leaveType === 'BL') return 'ลากิจ (BL)';
+            return leaveType;
+        }
+
+        function filterAndSortData() {
+            let filteredData = allData;
+            
+            const searchText = searchNameInput.value.toLowerCase();
+            if (searchText) {
+                filteredData = filteredData.filter(row => 
+                    (row[1] || '').toLowerCase().includes(searchText)
+                );
             }
 
-            // ฟังก์ชันใหม่สำหรับพิมพ์ข้อมูล
-            function printRow(rowData) {
-                const printWindow = window.open('', '', 'height=600,width=800');
-                printWindow.document.write('<html><head><title>ข้อมูลการลา</title>');
-                printWindow.document.write('<style>');
-                printWindow.document.write(`
-                    body { font-family: 'Kanit', sans-serif; padding: 20px; }
-                    h2 { text-align: center; color: #007BFF; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    th { background-color: #f2f2f2; }
-                `);
-                printWindow.document.write('</style></head><body>');
-                printWindow.document.write('<h2>รายละเอียดการลา</h2>');
-                printWindow.document.write('<table>');
-                
-                // ตารางแสดงรายละเอียด
-                printWindow.document.write(`
-                    <tr><th>รหัสพนักงาน</th><td>${rowData[0] || ''}</td></tr>
-                    <tr><th>ชื่อ-สกุล</th><td>${rowData[1] || ''}</td></tr>
-                    <tr><th>ประเภทการลา</th><td>${getLeaveTypeDisplay(rowData[4])}</td></tr>
-                    <tr><th>ลาตั้งแค่วันที่</th><td>${formatDateForDisplay(rowData[5]) || ''}</td></tr>
-                    <tr><th>เวลา(เริ่ม)</th><td>${rowData[6] || ''}</td></tr>
-                    <tr><th>ถึงวันที่</th><td>${formatDateForDisplay(rowData[7]) || ''}</td></tr>
-                    <tr><th>เวลา(สิ้นสุด)</th><td>${rowData[8] || ''}</td></tr>
-                    <tr><th>จำนวนวันลา</th><td>${rowData[9] || ''}</td></tr>
-                    <tr><th>สถานะ</th><td>${rowData[10] || ''}</td></tr>
-                    <tr><th>วันที่ยื่นคำร้อง</th><td>${formatDateForDisplay(rowData[11]) || ''}</td></tr>
-                `);
-                
-                printWindow.document.write('</table>');
-                printWindow.document.write('</body></html>');
-                printWindow.document.close();
-                printWindow.print();
+            const filterType = filterTypeSelect.value;
+            if (filterType) {
+                filteredData = filteredData.filter(row => (row[4] || '') === filterType);
             }
 
-            function getLeaveTypeDisplay(leaveType) {
-                if (leaveType === 'AL') return 'ลาพักร้อน (AL)';
-                if (leaveType === 'SL') return 'ลาป่วย (SL)';
-                if (leaveType === 'BL') return 'ลากิจ (BL)';
-                return leaveType;
+            const filterStatus = filterStatusSelect.value;
+            if (filterStatus) {
+                filteredData = filteredData.filter(row => (row[10] || '') === filterStatus);
             }
 
-            function filterAndSortData() {
-                let filteredData = allData;
+            filteredData.sort((a, b) => {
+                const dateA = new Date(a[11]);
+                const dateB = new Date(b[11]);
+                return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+            });
+            
+            displayTableData(filteredData);
+        }
+
+        async function fetchData(startDate, endDate) {
+            try {
+                // ตรวจสอบว่าวันที่เริ่มต้นไม่เกินวันที่สิ้นสุด
+                const oldestDate = new Date(startDate);
+                const newestDate = new Date(endDate);
+                if (oldestDate > newestDate) {
+                    alert('วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด โปรดตรวจสอบอีกครั้ง');
+                    return;
+                }
                 
-                const searchText = searchNameInput.value.toLowerCase();
-                if (searchText) {
-                    filteredData = filteredData.filter(row => 
-                        (row[1] || '').toLowerCase().includes(searchText)
-                    );
+                const url = `${webAppUrl}?action=read&startDate=${startDate}&endDate=${endDate}`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-
-                const filterType = filterTypeSelect.value;
-                if (filterType) {
-                    filteredData = filteredData.filter(row => (row[4] || '') === filterType);
-                }
-
-                const filterStatus = filterStatusSelect.value;
-                if (filterStatus) {
-                    filteredData = filteredData.filter(row => (row[10] || '') === filterStatus);
-                }
-
-                filteredData.sort((a, b) => {
-                    const dateA = new Date(a[11]);
-                    const dateB = new Date(b[11]);
-                    return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
-                });
+                const data = await response.json();
                 
-                displayTableData(filteredData);
-            }
-
-            async function fetchData(startDate, endDate) {
-                try {
-                    const oldestDate = startDate > endDate ? endDate : startDate;
-                    const newestDate = startDate > endDate ? startDate : endDate;
-
-                    const url = `${webAppUrl}?startDate=${oldestDate}&endDate=${newestDate}`;
-                    const response = await fetch(url);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const data = await response.json();
-                    
+                if (data.status === 'success' && data.data) {
                     allData = data.data;
                     filterAndSortData();
-                } catch (error) {
-                    console.error('Error fetching data:', error);
+                } else {
+                    console.error('Error fetching data:', data.message);
                     alert('ไม่สามารถดึงข้อมูลได้ โปรดตรวจสอบ URL หรือการเชื่อมต่อ');
+                    allData = []; // เคลียร์ข้อมูลเก่า
+                    displayTableData([]);
                 }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('ไม่สามารถดึงข้อมูลได้ โปรดตรวจสอบ URL หรือการเชื่อมต่อ');
+                allData = [];
+                displayTableData([]);
+            }
+        }
+
+        function displayTableData(data) {
+            const tableBody = dataTable.querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.setAttribute('colspan', '11');
+                td.textContent = 'ไม่พบข้อมูลที่ตรงกับเงื่อนไข';
+                td.style.textAlign = 'center';
+                td.style.padding = '20px';
+                tr.appendChild(td);
+                tableBody.appendChild(tr);
+                return;
             }
 
-            function displayTableData(data) {
-                const tableBody = dataTable.querySelector('tbody');
-                tableBody.innerHTML = '';
+            data.forEach(rowData => {
+                const tr = document.createElement('tr');
+                
+                const tdA = document.createElement('td');
+                tdA.textContent = rowData[0] || '';
+                tr.appendChild(tdA);
 
-                data.forEach(rowData => {
-                    const tr = document.createElement('tr');
+                const tdB = document.createElement('td');
+                tdB.textContent = rowData[1] || '';
+                tr.appendChild(tdB);
+
+                const tdE = document.createElement('td');
+                tdE.textContent = getLeaveTypeDisplay(rowData[4]);
+                tr.appendChild(tdE);
+                
+                const tdF = document.createElement('td');
+                tdF.textContent = formatDateForDisplay(rowData[5]) || '';
+                tr.appendChild(tdF);
+
+                const tdG = document.createElement('td');
+                tdG.textContent = rowData[6] || '';
+                tr.appendChild(tdG);
+
+                const tdH = document.createElement('td');
+                tdH.textContent = formatDateForDisplay(rowData[7]) || '';
+                tr.appendChild(tdH);
+                
+                const tdI = document.createElement('td');
+                tdI.textContent = rowData[8] || '';
+                tr.appendChild(tdI);
+                
+                const tdJ = document.createElement('td');
+                tdJ.textContent = rowData[9] || '';
+                tr.appendChild(tdJ);
+                
+                const tdk = document.createElement('td');
+                const status = rowData[10] || ''; 
+                tdk.textContent = status;
+                if (status === 'Approved') {
+                    tdk.classList.add('status-approved');
+                } else if (status === 'Rejected') {
+                    tdk.classList.add('status-rejected');
+                } else if (status === 'Pending') {
+                    tdk.classList.add('status-pending');
+                }
+                tr.appendChild(tdk);
+
+                const tdL = document.createElement('td');
+                tdL.textContent = formatDateForDisplay(rowData[11]) || '';
+                tr.appendChild(tdL);
+
+                const actionTd = document.createElement('td');
+                
+                if (status.toLowerCase() === 'pending') { 
+                    const statusSelect = document.createElement('select');
+                    statusSelect.innerHTML = `
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    `;
+                    actionTd.appendChild(statusSelect);
                     
-                    // รหัสพนักงาน (index 0)
-                    const tdA = document.createElement('td');
-                    tdA.textContent = rowData[0] || '';
-                    tr.appendChild(tdA);
-
-                    // ชื่อ-สกุล (index 1)
-                    const tdB = document.createElement('td');
-                    tdB.textContent = rowData[1] || '';
-                    tr.appendChild(tdB);
-
-                    // ประเภทการลา (index 4)
-                    const tdE = document.createElement('td');
-                    tdE.textContent = getLeaveTypeDisplay(rowData[4]);
-                    tr.appendChild(tdE);
-                    
-                    // ลาตั้งแค่วันที่ (index 5)
-                    const tdF = document.createElement('td');
-                    tdF.textContent = formatDateForDisplay(rowData[5]) || '';
-                    tr.appendChild(tdF);
-
-                    // เวลา(เริ่ม) (index 6)
-                    const tdG = document.createElement('td');
-                    tdG.textContent = rowData[6] || '';
-                    tr.appendChild(tdG);
-
-                    // ถึงวันที่ (index 7)
-                    const tdH = document.createElement('td');
-                    tdH.textContent = formatDateForDisplay(rowData[7]) || '';
-                    tr.appendChild(tdH);
-                    
-                    // เวลา(สิ้นสุด) (index 8)
-                    const tdI = document.createElement('td');
-                    tdI.textContent = rowData[8] || '';
-                    tr.appendChild(tdI);
-                    
-                    // จำนวนวันลา (index 9)
-                    const tdJ = document.createElement('td');
-                    tdJ.textContent = rowData[9] || '';
-                    tr.appendChild(tdJ);
-                    
-                    // สถานะ (index 10)
-                    const tdk = document.createElement('td');
-                    const status = rowData[10] || ''; 
-                    tdk.textContent = status;
-                    if (status === 'Approved') {
-                        tdk.classList.add('status-approved');
-                    } else if (status === 'Rejected') {
-                        tdk.classList.add('status-rejected');
-                    } else if (status === 'Pending') {
-                        tdk.classList.add('status-pending');
-                    }
-                    tr.appendChild(tdk);
-
-                    // วันที่ยื่นคำร้อง (index 11)
-                    const tdL = document.createElement('td');
-                    tdL.textContent = formatDateForDisplay(rowData[11]) || '';
-                    tr.appendChild(tdL);
-
-                    // คอลัมน์สำหรับดำเนินการ
-                    const actionTd = document.createElement('td');
-                    
-                    if (status.toLowerCase() === 'pending') { 
-                        const statusSelect = document.createElement('select');
-                        statusSelect.innerHTML = `
-                            <option value="Approved">Approved</option>
-                            <option value="Rejected">Rejected</option>
-                        `;
-                        actionTd.appendChild(statusSelect);
-                        
-                        const saveButton = document.createElement('button');
-                        saveButton.textContent = 'บันทึก';
-                        saveButton.classList.add('action-button', 'save-button');
-                        saveButton.addEventListener('click', () => {
-                            const newStatus = statusSelect.value;
-                            const uuid = rowData[19]; 
-                            updateStatus(uuid, newStatus);
-                        });
-                        actionTd.appendChild(saveButton);
-                    } else if (status.toLowerCase() === 'approved') {
-                        const printButton = document.createElement('button');
-                        printButton.textContent = 'Print';
-                        printButton.classList.add('action-button', 'print-button');
-                        printButton.addEventListener('click', () => {
-                            printRow(rowData);
-                        });
-                        actionTd.appendChild(printButton);
-                    } else {
-                        actionTd.textContent = 'เสร็จสิ้น';
-                    }
-                    
-                    tr.appendChild(actionTd);
-
-                    tableBody.appendChild(tr);
-                });
-            }
-
-            setInitialDates();
-            fetchData(startDateInput.value, endDateInput.value);
-
-            loadDataButton.addEventListener('click', () => {
-                const startDate = startDateInput.value;
-                const endDate = endDateInput.value;
-                fetchData(startDate, endDate);
+                    const saveButton = document.createElement('button');
+                    saveButton.textContent = 'บันทึก';
+                    saveButton.classList.add('action-button', 'save-button');
+                    saveButton.addEventListener('click', () => {
+                        const newStatus = statusSelect.value;
+                        const uuid = rowData[19]; 
+                        updateStatus(uuid, newStatus);
+                    });
+                    actionTd.appendChild(saveButton);
+                } else if (status.toLowerCase() === 'approved') {
+                    const printButton = document.createElement('button');
+                    printButton.textContent = 'Print';
+                    printButton.classList.add('action-button', 'print-button');
+                    printButton.addEventListener('click', () => {
+                        printRow(rowData);
+                    });
+                    actionTd.appendChild(printButton);
+                } else {
+                    actionTd.textContent = 'เสร็จสิ้น';
+                }
+                
+                tr.appendChild(actionTd);
+                tableBody.appendChild(tr);
             });
+        }
 
-            resetButton.addEventListener('click', () => {
-                setInitialDates();
-                searchNameInput.value = '';
-                filterTypeSelect.value = '';
-                filterStatusSelect.value = '';
-                sortOrder = 'desc';
-                sortButton.textContent = 'เรียงล่าสุด → เก่าสุด';
-                fetchData(startDateInput.value, endDateInput.value);
-            });
-            
-            searchNameInput.addEventListener('input', filterAndSortData);
-            filterTypeSelect.addEventListener('change', filterAndSortData);
-            filterStatusSelect.addEventListener('change', filterAndSortData);
-            
-            sortButton.addEventListener('click', () => {
-                sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
-                sortButton.textContent = sortOrder === 'desc' ? 'เรียงล่าสุด → เก่าสุด' : 'เรียงเก่าสุด → ล่าสุด';
-                filterAndSortData();
-            });
+        setInitialDates();
+        fetchData(startDateInput.value, endDateInput.value);
+
+        loadDataButton.addEventListener('click', () => {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            fetchData(startDate, endDate);
         });
-    </script>
+
+        resetButton.addEventListener('click', () => {
+            setInitialDates();
+            searchNameInput.value = '';
+            filterTypeSelect.value = '';
+            filterStatusSelect.value = '';
+            sortOrder = 'desc';
+            sortButton.textContent = 'เรียงล่าสุด → เก่าสุด';
+            fetchData(startDateInput.value, endDateInput.value);
+        });
+        
+        searchNameInput.addEventListener('input', filterAndSortData);
+        filterTypeSelect.addEventListener('change', filterAndSortData);
+        filterStatusSelect.addEventListener('change', filterAndSortData);
+        
+        sortButton.addEventListener('click', () => {
+            sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+            sortButton.textContent = sortOrder === 'desc' ? 'เรียงล่าสุด → เก่าสุด' : 'เรียงเก่าสุด → ล่าสุด';
+            filterAndSortData();
+        });
+    });
+</script>
 </body>
 </html>
