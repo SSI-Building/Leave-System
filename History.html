@@ -284,29 +284,38 @@
     
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        // --- ส่วน JavaScript ของการทำงานเดิม ---
+        // --- ส่วน JavaScript ที่แก้ไขแล้ว ---
         function formatDate(dateStr) {
             if (!dateStr) return '-';
-            // Assuming dateStr is in 'yyyy-MM-dd' format
-            const [year, month, day] = dateStr.split('-');
-            if (!year || !month || !day) return dateStr; // Return original if format is unexpected
+            const dateObj = new Date(dateStr);
+            // ตรวจสอบว่าวันที่ถูกต้องหรือไม่
+            if (isNaN(dateObj.getTime())) return dateStr;
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
             return `${day}/${month}/${year}`;
         }
 
         function formatTime(timeStr) {
             if (!timeStr) return '-';
-            // Assuming timeStr is in 'HH:mm' format
-            return timeStr;
+            // กรณีเป็นค่าเวลาจริง (HH:mm) ที่มาจาก Apps Script โดยตรง
+            if (timeStr.includes(':')) {
+                return timeStr;
+            }
+            // กรณีเป็น Date object ที่ต้องการแปลงเป็นเวลา (ไม่น่าเกิดขึ้นในกรณีนี้)
+            const dateObj = new Date(timeStr);
+            if (isNaN(dateObj.getTime())) return timeStr;
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
         }
 
         async function fetchHistory() {
             const loadingScreen = document.getElementById('loading-screen');
             const dataContainer = document.getElementById('dataContainer');
             
-            // --- Show loading screen ---
             loadingScreen.classList.remove('hidden');
             
-            // Set a timeout to ensure the loading screen is visible even with fast connections
             setTimeout(async () => {
                 try {
                     await liff.init({ liffId: "2007956727-6V7DrnMD" });
@@ -339,12 +348,12 @@
                         const card = document.createElement("div");
                         card.className = "history-card";
                         
-                        let leaveType = row[4];
+                        let leaveType = row[4]; // คอลัมน์ E (index 4)
                         if (leaveType === 'AL') leaveType = 'ลาพักร้อน';
                         else if (leaveType === 'SL') leaveType = 'ลาป่วย';
                         else if (leaveType === 'BL') leaveType = 'ลากิจ';
                         
-                        let statusText = row[10];
+                        let statusText = row[10]; // คอลัมน์ K (index 10)
                         let statusClass = 'pending';
                         if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'status-pending'; }
                         else if (statusText === 'Approved') { statusText = 'อนุมัติแล้ว'; statusClass = 'status-approved'; }
@@ -382,7 +391,7 @@
                 } finally {
                     loadingScreen.classList.add('hidden');
                 }
-            }, 500); // Wait for 500ms to show the loading screen
+            }, 500);
             
             const savedTheme = localStorage.getItem('selectedTheme');
             if (savedTheme) {
