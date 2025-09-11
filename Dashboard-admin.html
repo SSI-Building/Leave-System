@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard - All History</title>
+  <title>Admin Dashboard - History</title>
   <style>
     body { font-family: sans-serif; margin: 20px; background: #f8f9fa; }
     h1 { text-align: center; margin-bottom: 20px; }
@@ -10,22 +10,29 @@
     th, td { border: 1px solid #ddd; padding: 6px; font-size: 13px; text-align: center; }
     th { background: #007bff; color: white; }
     tr:nth-child(even) { background: #f2f2f2; }
+    img { max-width: 50px; max-height: 50px; }
   </style>
 </head>
 <body>
-  <h1>📊 Admin Dashboard - All History</h1>
+  <h1>📊 Admin Dashboard - History</h1>
   <table id="dataTable">
     <thead></thead>
     <tbody></tbody>
   </table>
 
   <script>
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // เปลี่ยนเป็น URL จริงของคุณ
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // เปลี่ยนเป็น URL ของ Web App จริง
 
     async function fetchAllHistory() {
-      const res = await fetch(`${WEBAPP_URL}?action=getAllHistory`);
-      const data = await res.json();
-      renderTable(data);
+      try {
+        const res = await fetch(`${WEBAPP_URL}?action=getAllHistory`);
+        const data = await res.json();
+        renderTable(data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        document.querySelector("#dataTable tbody").innerHTML = 
+          "<tr><td colspan='19'>เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>";
+      }
     }
 
     function renderTable(data) {
@@ -50,11 +57,19 @@
 
       // Rows
       for (let i = 1; i < data.length; i++) {
-        const row = data[i];
         const tr = document.createElement("tr");
-        row.forEach(cell => {
+        data[i].forEach((cell, idx) => {
           const td = document.createElement("td");
-          td.textContent = cell;
+
+          // ถ้า Column N (index 13) → แสดงเป็นรูป
+          if (idx === 13 && cell) {
+            const img = document.createElement("img");
+            img.src = `https://drive.google.com/uc?export=view&id=${cell}`;
+            td.appendChild(img);
+          } else {
+            td.textContent = cell;
+          }
+
           tr.appendChild(td);
         });
         tableBody.appendChild(tr);
