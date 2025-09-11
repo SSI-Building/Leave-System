@@ -1,259 +1,121 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติการลา</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* ===== Theme Variables ===== */
-        :root {
-            --primary-color-start: #1994b6;
-            --primary-color-end: #36a761;
-            --text-color-dark: #333;
-            --text-color-light: #666;
-            --background-color: #f0f2f5;
-            --card-background: #ffffff;
-            --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
-            --border-color: #e0e0e0;
-            --focus-ring-color: rgba(74, 144, 226, 0.2);
-        }
-        body.theme-dark {
-            --primary-color-start: #141E30;
-            --primary-color-end: #243B55;
-            --text-color-dark: #fff;
-            --text-color-light: #bbb;
-            --background-color: #181818;
-            --card-background: #242424;
-            --border-color: #444;
-            --shadow-light: 0 4px 15px rgba(255,255,255,0.08);
-            --focus-ring-color: rgba(36, 59, 85, 0.2);
-        }
-        body.theme-orange-purple { --primary-color-start: #ff7e5f; --primary-color-end: #6a11cb; }
-        body.theme-blue-violet { --primary-color-start: #36d1dc; --primary-color-end: #5b86e5; }
-        body.theme-pink-purple { --primary-color-start: #ff758c; --primary-color-end: #8e44ad; }
-        body.theme-green-gold { --primary-color-start: #11998e; --primary-color-end: #fbc531; }
-        body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
-        body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
-        body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
-        
-        /* ===== Base Styles ===== */
-        body {
-            font-family: 'Prompt', sans-serif;
-            background: var(--background-color);
-            margin: 0;
-            padding: 20px;
-            color: var(--text-color-dark);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background: var(--card-background);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-light);
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        h2 {
-            text-align: center;
-            font-weight: 700;
-            margin-bottom: 25px;
-            font-size: 1.8em;
-            background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-        h2 i {
-            -webkit-text-fill-color: var(--primary-color-end);
-        }
-        body.theme-dark h2 {
-            -webkit-text-fill-color: var(--text-color-dark);
-            background: none;
-        }
-        body.theme-dark h2 i {
-            color: var(--primary-color-end);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9em;
-            min-width: 800px;
-        }
-
-        thead {
-            background-color: var(--background-color);
-            color: var(--text-color-dark);
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            white-space: nowrap; /* Prevent text wrapping in cells */
-        }
-
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.03);
-        }
-        body.theme-dark tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.8em;
-            display: inline-block;
-        }
-        .status-pending { background-color: #ffeb3b; color: #795548; }
-        .status-approved { background-color: #4caf50; color: #fff; }
-        .status-rejected { background-color: #f44336; color: #fff; }
-        
-        .buttons {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #fff;
-            background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        }
-        
-        .btn-secondary {
-            background: var(--border-color);
-            color: var(--text-color-light);
-            box-shadow: none;
-        }
-        body.theme-dark .btn-secondary {
-            background: var(--border-color);
-            color: var(--text-color-dark);
-        }
-        .btn-secondary:hover {
-            background: #d5d5d5;
-            color: #333;
-        }
-        body.theme-dark .btn-secondary:hover {
-            background: #555;
-            color: #fff;
-        }
-        
-    </style>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      margin: 20px;
+      background: #f8f9fa;
+    }
+    h1 { text-align: center; margin-bottom: 20px; }
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .filters input, .filters select, .filters button {
+      padding: 8px;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      font-size: 13px;
+      text-align: center;
+    }
+    th { background: #007bff; color: #fff; }
+    tr:nth-child(even) { background: #f2f2f2; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2><i class="fas fa-history"></i> ประวัติการลา</h2>
+  <h1>📊 Admin Dashboard</h1>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>รหัสพนักงาน</th>
-                        <th>ชื่อ-สกุล</th>
-                        <th>ประเภท</th>
-                        <th>สถานะ</th>
-                        <th>รวมวันลา</th>
-                        <th>วันที่ลา (เริ่ม)</th>
-                        <th>วันที่ลา (สิ้นสุด)</th>
-                        <th>รายละเอียด</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTableBody">
-                    <tr>
-                        <td>P0123456</td>
-                        <td>สมชาย ใจดี</td>
-                        <td>ลาป่วย</td>
-                        <td><span class="status-badge status-pending">รออนุมัติ</span></td>
-                        <td>2.0 วัน</td>
-                        <td>09/09/2025</td>
-                        <td>10/09/2025</td>
-                        <td><a href="#">ดูรายละเอียด</a></td>
-                    </tr>
-                    <tr>
-                        <td>P0123456</td>
-                        <td>สมชาย ใจดี</td>
-                        <td>ลาพักร้อน</td>
-                        <td><span class="status-badge status-approved">อนุมัติ</span></td>
-                        <td>1.0 วัน</td>
-                        <td>01/08/2025</td>
-                        <td>01/08/2025</td>
-                        <td><a href="#">ดูรายละเอียด</a></td>
-                    </tr>
-                    <tr>
-                        <td>P0123456</td>
-                        <td>สมชาย ใจดี</td>
-                        <td>ลากิจ</td>
-                        <td><span class="status-badge status-rejected">ไม่อนุมัติ</span></td>
-                        <td>0.5 วัน</td>
-                        <td>05/07/2025</td>
-                        <td>05/07/2025</td>
-                        <td><a href="#">ดูรายละเอียด</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+  <div class="filters">
+    <label>เริ่ม: <input type="date" id="startDate"></label>
+    <label>สิ้นสุด: <input type="date" id="endDate"></label>
+    <label>คอลัมน์:
+      <select id="columnFilter">
+        <option value="">--เลือก--</option>
+        <option value="empId">empId</option>
+        <option value="empName">empName</option>
+        <option value="department">department</option>
+        <option value="leaveType">leaveType</option>
+        <option value="status">status</option>
+      </select>
+    </label>
+    <input type="text" id="filterValue" placeholder="ค่า...">
+    <button onclick="loadData()">ค้นหา</button>
+  </div>
 
-        <div class="buttons">
-            <button class="btn btn-secondary" onclick="window.location.href='Login.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
-        </div>
-    </div>
-    
-    <script>
-        // --- โหลดธีมจาก localStorage ---
-        document.addEventListener("DOMContentLoaded", () => {
-            const savedTheme = localStorage.getItem('selectedTheme');
-            if (savedTheme) {
-                document.body.className = savedTheme;
-            }
+  <table id="dataTable">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // 👈 ใส่ URL จาก Apps Script Deploy
+
+    async function loadData() {
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
+      const columnFilter = document.getElementById("columnFilter").value;
+      const filterValue = document.getElementById("filterValue").value;
+
+      let url = `${WEBAPP_URL}?action=getHistory`;
+      if (startDate) url += `&startDate=${startDate}`;
+      if (endDate) url += `&endDate=${endDate}`;
+      if (columnFilter && filterValue) {
+        url += `&columnFilter=${columnFilter}&filterValue=${filterValue}`;
+      }
+
+      const res = await fetch(url);
+      const data = await res.json();
+      renderTable(data);
+    }
+
+    function renderTable(data) {
+      const tableHead = document.querySelector("#dataTable thead");
+      const tableBody = document.querySelector("#dataTable tbody");
+      tableHead.innerHTML = "";
+      tableBody.innerHTML = "";
+
+      if (!data || data.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='10'>ไม่พบข้อมูล</td></tr>";
+        return;
+      }
+
+      // Header
+      const headerRow = document.createElement("tr");
+      data[0].forEach((_, idx) => {
+        const th = document.createElement("th");
+        th.textContent = `Col ${idx+1}`;
+        headerRow.appendChild(th);
+      });
+      tableHead.appendChild(headerRow);
+
+      // Rows
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(cell => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
         });
+        tableBody.appendChild(tr);
+      });
+    }
 
-        // ส่วนนี้ไว้สำหรับเขียน JavaScript เพื่อดึงข้อมูลมาแสดงผลในตาราง
-        // ตัวอย่างข้อมูลที่ใส่ไว้เป็นแค่การจำลอง (Mock-up) เท่านั้น
-        // เมื่อคุณนำไปใช้งานจริง ให้ดึงข้อมูลจาก Database หรือ Google Sheet มาใส่ใน tbody
-
-    </script>
+    // โหลด default 2 เดือนล่าสุด
+    window.onload = loadData;
+  </script>
 </body>
 </html>
