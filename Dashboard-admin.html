@@ -2,12 +2,10 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <title>Admin Dashboard - All History</title>
   <style>
     body { font-family: sans-serif; margin: 20px; background: #f8f9fa; }
-    h1 { text-align: center; }
-    .controls { margin-bottom: 20px; display: flex; gap: 10px; }
-    input, select, button { padding: 5px; }
+    h1 { text-align: center; margin-bottom: 20px; }
     table { width: 100%; border-collapse: collapse; background: #fff; }
     th, td { border: 1px solid #ddd; padding: 6px; font-size: 13px; text-align: center; }
     th { background: #007bff; color: white; }
@@ -15,53 +13,19 @@
   </style>
 </head>
 <body>
-  <h1>📊 Admin Dashboard</h1>
-
-  <!-- ฟิลด์เลือกช่วงวันที่สำหรับดึงข้อมูล -->
-  <div class="controls">
-    <label>เริ่ม: <input type="date" id="startDate"></label>
-    <label>สิ้นสุด: <input type="date" id="endDate"></label>
-    <button onclick="fetchData()">ดึงข้อมูล</button>
-  </div>
-
-  <!-- ฟิลด์กรองข้อมูลจากผลลัพธ์ที่ดึงมาแล้ว -->
-  <div class="controls">
-    <label>คอลัมน์:
-      <select id="filterColumn"></select>
-    </label>
-    <input type="text" id="filterValue" placeholder="กรอกค่าที่ต้องการ">
-    <button onclick="applyFilter()">กรอง</button>
-  </div>
-
+  <h1>📊 Admin Dashboard - All History</h1>
   <table id="dataTable">
     <thead></thead>
     <tbody></tbody>
   </table>
 
   <script>
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // 👈 เปลี่ยนเป็น URL จริง
-    let originalData = []; // เก็บข้อมูลที่ดึงมา
-    let headers = [];
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // เปลี่ยนเป็น URL จริงของคุณ
 
-    async function fetchData() {
-      const startDate = document.getElementById("startDate").value;
-      const endDate = document.getElementById("endDate").value;
-      let url = `${WEBAPP_URL}?action=getHistory`;
-      if (startDate) url += `&startDate=${startDate}`;
-      if (endDate) url += `&endDate=${endDate}`;
-
-      const res = await fetch(url);
+    async function fetchAllHistory() {
+      const res = await fetch(`${WEBAPP_URL}?action=getAllHistory`);
       const data = await res.json();
-
-      if (!data || data.length === 0) {
-        renderTable([]);
-        return;
-      }
-
-      headers = data[0];
-      originalData = data.slice(1);
-      renderTable(originalData);
-      fillFilterOptions();
+      renderTable(data);
     }
 
     function renderTable(data) {
@@ -71,21 +35,22 @@
       tableBody.innerHTML = "";
 
       if (!data || data.length === 0) {
-        tableBody.innerHTML = "<tr><td colspan='20'>ไม่พบข้อมูล</td></tr>";
+        tableBody.innerHTML = "<tr><td colspan='19'>ไม่พบข้อมูล</td></tr>";
         return;
       }
 
       // Header
       const headerRow = document.createElement("tr");
-      headers.forEach(h => {
+      data[0].forEach(h => {
         const th = document.createElement("th");
         th.textContent = h;
         headerRow.appendChild(th);
       });
       tableHead.appendChild(headerRow);
 
-      // Data rows
-      data.forEach(row => {
+      // Rows
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
         const tr = document.createElement("tr");
         row.forEach(cell => {
           const td = document.createElement("td");
@@ -93,35 +58,10 @@
           tr.appendChild(td);
         });
         tableBody.appendChild(tr);
-      });
-    }
-
-    function fillFilterOptions() {
-      const filterColumn = document.getElementById("filterColumn");
-      filterColumn.innerHTML = "<option value=''>--เลือก--</option>";
-      headers.forEach((h, idx) => {
-        const opt = document.createElement("option");
-        opt.value = idx;
-        opt.textContent = h;
-        filterColumn.appendChild(opt);
-      });
-    }
-
-    function applyFilter() {
-      const colIndex = document.getElementById("filterColumn").value;
-      const filterValue = document.getElementById("filterValue").value.trim();
-      if (!colIndex || !filterValue) {
-        renderTable(originalData);
-        return;
       }
-      const filtered = originalData.filter(row =>
-        String(row[colIndex]).includes(filterValue)
-      );
-      renderTable(filtered);
     }
 
-    // โหลดข้อมูล default ตอนเปิดหน้า
-    window.onload = fetchData;
+    window.onload = fetchAllHistory;
   </script>
 </body>
 </html>
