@@ -1,82 +1,124 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard - History</title>
-  <style>
-    body { font-family: sans-serif; margin: 20px; background: #f8f9fa; }
-    h1 { text-align: center; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; background: #fff; }
-    th, td { border: 1px solid #ddd; padding: 6px; font-size: 13px; text-align: center; }
-    th { background: #007bff; color: white; }
-    tr:nth-child(even) { background: #f2f2f2; }
-    img { max-width: 50px; max-height: 50px; }
-  </style>
+<meta charset="UTF-8">
+<title>Admin Dashboard - History</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; background: #f8f9fa; }
+  h1 { text-align: center; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; }
+  th, td { border: 1px solid #ddd; padding: 6px; font-size: 13px; text-align: center; }
+  th { background: #007bff; color: white; }
+  tr:nth-child(even) { background: #f2f2f2; }
+  img { max-width: 50px; max-height: 50px; }
+  .filters { margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .filters input, .filters select { padding: 4px 6px; font-size: 13px; }
+</style>
 </head>
 <body>
-  <h1>📊 Admin Dashboard - History</h1>
-  <table id="dataTable">
-    <thead></thead>
-    <tbody></tbody>
-  </table>
 
-  <script>
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // เปลี่ยนเป็น URL ของ Web App จริง
+<h1>📊 Admin Dashboard - History</h1>
 
-    async function fetchAllHistory() {
-      try {
-        const res = await fetch(`${WEBAPP_URL}?action=getAllHistory`);
-        const data = await res.json();
-        renderTable(data);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        document.querySelector("#dataTable tbody").innerHTML = 
-          "<tr><td colspan='19'>เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>";
+<div class="filters">
+  <label>วันที่เริ่ม: <input type="date" id="startDate"></label>
+  <label>วันที่สิ้นสุด: <input type="date" id="endDate"></label>
+  <label>Column A: <input type="text" id="filterA" placeholder="กรอง A"></label>
+  <label>Column B: <input type="text" id="filterB" placeholder="กรอง B"></label>
+  <button onclick="applyFilters()">กรอง</button>
+  <button onclick="resetFilters()">รีเซ็ต</button>
+</div>
+
+<table id="dataTable">
+  <thead></thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // เปลี่ยนเป็น Web App URL
+let allData = [];
+
+window.onload = async function() {
+  const res = await fetch(`${WEBAPP_URL}?action=getAllHistory`);
+  allData = await res.json();
+  setDefaultDates();
+  renderTable(allData);
+}
+
+function setDefaultDates() {
+  const today = new Date();
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+  document.getElementById('startDate').value = firstDay.toISOString().slice(0,10);
+  document.getElementById('endDate').value = today.toISOString().slice(0,10);
+}
+
+function applyFilters() {
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+  const filterA = document.getElementById('filterA').value.toLowerCase();
+  const filterB = document.getElementById('filterB').value.toLowerCase();
+
+  const filtered = allData.filter(row => {
+    const dateL = row[11]; // Column L
+    const valA = row[0].toString().toLowerCase();
+    const valB = row[1].toString().toLowerCase();
+
+    let ok = true;
+
+    if (start) ok = ok && dateL >= start;
+    if (end) ok = ok && dateL <= end;
+    if (filterA) ok = ok && valA.includes(filterA);
+    if (filterB) ok = ok && valB.includes(filterB);
+
+    return ok;
+  });
+
+  renderTable(filtered);
+}
+
+function resetFilters() {
+  setDefaultDates();
+  document.getElementById('filterA').value = "";
+  document.getElementById('filterB').value = "";
+  renderTable(allData);
+}
+
+function renderTable(data) {
+  const tableHead = document.querySelector("#dataTable thead");
+  const tableBody = document.querySelector("#dataTable tbody");
+  tableHead.innerHTML = "";
+  tableBody.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    tableBody.innerHTML = "<tr><td colspan='19'>ไม่พบข้อมูล</td></tr>";
+    return;
+  }
+
+  const headers = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S"];
+  const headerRow = document.createElement("tr");
+  headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    headerRow.appendChild(th);
+  });
+  tableHead.appendChild(headerRow);
+
+  data.forEach(row => {
+    const tr = document.createElement("tr");
+    row.forEach((cell, idx) => {
+      const td = document.createElement("td");
+      if (idx === 13 && cell) {
+        const img = document.createElement("img");
+        img.src = `https://drive.google.com/uc?export=view&id=${cell}`;
+        td.appendChild(img);
+      } else {
+        td.textContent = cell;
       }
-    }
+      tr.appendChild(td);
+    });
+    tableBody.appendChild(tr);
+  });
+}
+</script>
 
-    function renderTable(data) {
-      const tableHead = document.querySelector("#dataTable thead");
-      const tableBody = document.querySelector("#dataTable tbody");
-      tableHead.innerHTML = "";
-      tableBody.innerHTML = "";
-
-      if (!data || data.length === 0) {
-        tableBody.innerHTML = "<tr><td colspan='19'>ไม่พบข้อมูล</td></tr>";
-        return;
-      }
-
-      // Header
-      const headerRow = document.createElement("tr");
-      data[0].forEach(h => {
-        const th = document.createElement("th");
-        th.textContent = h;
-        headerRow.appendChild(th);
-      });
-      tableHead.appendChild(headerRow);
-
-      // Rows
-      for (let i = 1; i < data.length; i++) {
-        const tr = document.createElement("tr");
-        data[i].forEach((cell, idx) => {
-          const td = document.createElement("td");
-
-          // ถ้า Column N (index 13) → แสดงเป็นรูป
-          if (idx === 13 && cell) {
-            const img = document.createElement("img");
-            img.src = `https://drive.google.com/uc?export=view&id=${cell}`;
-            td.appendChild(img);
-          } else {
-            td.textContent = cell;
-          }
-
-          tr.appendChild(td);
-        });
-        tableBody.appendChild(tr);
-      }
-    }
-
-    window.onload = fetchAllHistory;
-  </script>
 </body>
 </html>
