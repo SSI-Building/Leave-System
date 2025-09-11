@@ -283,123 +283,119 @@
     </div>
     
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script>
-        // --- ส่วน JavaScript ที่แก้ไขแล้ว ---
-        function formatDate(dateStr) {
-            if (!dateStr) return '-';
-            const dateObj = new Date(dateStr);
-            // ตรวจสอบว่าวันที่ถูกต้องหรือไม่
-            if (isNaN(dateObj.getTime())) return dateStr;
-            const day = String(dateObj.getDate()).padStart(2, '0');
-            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const year = dateObj.getFullYear();
-            return `${day}/${month}/${year}`;
+<script>
+    // --- ส่วน JavaScript ที่แก้ไขแล้ว ---
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const dateObj = new Date(dateStr);
+        // ตรวจสอบว่าวันที่ถูกต้องหรือไม่
+        if (isNaN(dateObj.getTime())) return dateStr;
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const year = dateObj.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    function formatTime(datetimeStr) {
+        if (!datetimeStr) return '-';
+        // ใช้ regular expression เพื่อดึงเฉพาะส่วน HH:mm
+        const match = datetimeStr.match(/T(\d{2}:\d{2})/);
+        if (match && match[1]) {
+            return match[1]; // ส่งกลับค่าเวลาในรูปแบบ HH:mm
         }
+        return datetimeStr; // ถ้าไม่ตรงรูปแบบ ให้ส่งค่าเดิมกลับ
+    }
 
-        function formatTime(timeStr) {
-            if (!timeStr) return '-';
-            // กรณีเป็นค่าเวลาจริง (HH:mm) ที่มาจาก Apps Script โดยตรง
-            if (timeStr.includes(':')) {
-                return timeStr;
-            }
-            // กรณีเป็น Date object ที่ต้องการแปลงเป็นเวลา (ไม่น่าเกิดขึ้นในกรณีนี้)
-            const dateObj = new Date(timeStr);
-            if (isNaN(dateObj.getTime())) return timeStr;
-            const hours = String(dateObj.getHours()).padStart(2, '0');
-            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-            return `${hours}:${minutes}`;
-        }
-
-        async function fetchHistory() {
-            const loadingScreen = document.getElementById('loading-screen');
-            const dataContainer = document.getElementById('dataContainer');
-            
-            loadingScreen.classList.remove('hidden');
-            
-            setTimeout(async () => {
-                try {
-                    await liff.init({ liffId: "2007956727-6V7DrnMD" });
-                    if (!liff.isLoggedIn()) { 
-                        liff.login(); 
-                        return; 
-                    }
-
-                    const profile = await liff.getProfile();
-                    const lineUserId = profile.userId;
-
-                    const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
-                    const resp = await fetch(webAppUrl);
-                    const data = await resp.json();
-
-                    dataContainer.innerHTML = "";
-
-                    if (!data || data.length === 0) {
-                        dataContainer.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
-                        return;
-                    }
-                    
-                    data.sort((a, b) => {
-                        const dateA = new Date(a[11]);
-                        const dateB = new Date(b[11]);
-                        return dateB - dateA;
-                    });
-
-                    data.forEach(row => {
-                        const card = document.createElement("div");
-                        card.className = "history-card";
-                        
-                        let leaveType = row[4]; // คอลัมน์ E (index 4)
-                        if (leaveType === 'AL') leaveType = 'ลาพักร้อน';
-                        else if (leaveType === 'SL') leaveType = 'ลาป่วย';
-                        else if (leaveType === 'BL') leaveType = 'ลากิจ';
-                        
-                        let statusText = row[10]; // คอลัมน์ K (index 10)
-                        let statusClass = 'pending';
-                        if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'status-pending'; }
-                        else if (statusText === 'Approved') { statusText = 'อนุมัติแล้ว'; statusClass = 'status-approved'; }
-                        else if (statusText === 'Reject') { statusText = 'ไม่อนุมัติ'; statusClass = 'status-rejected'; }
-                        
-                        const header = document.createElement('div');
-                        header.className = 'card-header';
-                        header.innerHTML = `<span class="card-title">${leaveType}</span><span class="card-status ${statusClass}">${statusText}</span>`;
-                        card.appendChild(header);
-
-                        const dateInfo = document.createElement('div');
-                        dateInfo.className = 'card-info';
-                        dateInfo.innerHTML = `
-                            <p><strong>ตั้งแต่วันที่:</strong> ${formatDate(row[5])}, <strong>เวลา:</strong> ${formatTime(row[6])} <strong>ถึงวันที่:</strong> ${formatDate(row[7])}, <strong>เวลา:</strong> ${formatTime(row[8])}</p>
-                            <p><strong>รวม:</strong> ${row[9] || '-'} วัน</p>
-                            <p><strong>ยื่นวันที่:</strong> ${formatDate(row[11])}</p>
-                        `;
-                        card.appendChild(dateInfo);
-                        
-                        const cardFooter = document.createElement('div');
-                        cardFooter.className = 'card-actions';
-                        cardFooter.innerHTML = `
-                            <a href="PDF-form.html?row=${encodeURIComponent(JSON.stringify(row))}" 
-                                class="detail-link" target="_blank">
-                                ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i>
-                            </a>`;
-                        card.appendChild(cardFooter);
-
-                        dataContainer.appendChild(card);
-                    });
-
-                } catch (err) {
-                    console.error(err);
-                    dataContainer.innerHTML = `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
-                } finally {
-                    loadingScreen.classList.add('hidden');
+    async function fetchHistory() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const dataContainer = document.getElementById('dataContainer');
+        
+        loadingScreen.classList.remove('hidden');
+        
+        setTimeout(async () => {
+            try {
+                await liff.init({ liffId: "2007956727-6V7DrnMD" });
+                if (!liff.isLoggedIn()) { 
+                    liff.login(); 
+                    return; 
                 }
-            }, 500);
-            
-            const savedTheme = localStorage.getItem('selectedTheme');
-            if (savedTheme) {
-                document.body.className = savedTheme;
-            }
-        }
 
-        fetchHistory();
-    </script>
+                const profile = await liff.getProfile();
+                const lineUserId = profile.userId;
+
+                const webAppUrl = "https://script.google.com/macros/s/AKfycbyMSCCq9FvSx-ovt3dUVkJ525R9YX5wJnZQoBYOsWNbrxpklT0njy5UzmljCrbfTVww/exec?lineUserId=" + lineUserId;
+                const resp = await fetch(webAppUrl);
+                const data = await resp.json();
+
+                dataContainer.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    dataContainer.innerHTML = `<div class="status-message">❌ ไม่พบข้อมูล</div>`;
+                    return;
+                }
+                
+                data.sort((a, b) => {
+                    const dateA = new Date(a[11]);
+                    const dateB = new Date(b[11]);
+                    return dateB - dateA;
+                });
+
+                data.forEach(row => {
+                    const card = document.createElement("div");
+                    card.className = "history-card";
+                    
+                    let leaveType = row[4]; // คอลัมน์ E (index 4)
+                    if (leaveType === 'AL') leaveType = 'ลาพักร้อน';
+                    else if (leaveType === 'SL') leaveType = 'ลาป่วย';
+                    else if (leaveType === 'BL') leaveType = 'ลากิจ';
+                    
+                    let statusText = row[10]; // คอลัมน์ K (index 10)
+                    let statusClass = 'pending';
+                    if (statusText === 'pending') { statusText = 'รออนุมัติ'; statusClass = 'status-pending'; }
+                    else if (statusText === 'Approved') { statusText = 'อนุมัติแล้ว'; statusClass = 'status-approved'; }
+                    else if (statusText === 'Reject') { statusText = 'ไม่อนุมัติ'; statusClass = 'status-rejected'; }
+                    
+                    const header = document.createElement('div');
+                    header.className = 'card-header';
+                    header.innerHTML = `<span class="card-title">${leaveType}</span><span class="card-status ${statusClass}">${statusText}</span>`;
+                    card.appendChild(header);
+
+                    const dateInfo = document.createElement('div');
+                    dateInfo.className = 'card-info';
+                    dateInfo.innerHTML = `
+                        <p><strong>ตั้งแต่วันที่:</strong> ${formatDate(row[5])}, <strong>เวลา:</strong> ${formatTime(row[6])} <strong>ถึงวันที่:</strong> ${formatDate(row[7])}, <strong>เวลา:</strong> ${formatTime(row[8])}</p>
+                        <p><strong>รวม:</strong> ${row[9] || '-'} วัน</p>
+                        <p><strong>ยื่นวันที่:</strong> ${formatDate(row[11])}</p>
+                    `;
+                    card.appendChild(dateInfo);
+                    
+                    const cardFooter = document.createElement('div');
+                    cardFooter.className = 'card-actions';
+                    cardFooter.innerHTML = `
+                        <a href="PDF-form.html?row=${encodeURIComponent(JSON.stringify(row))}" 
+                            class="detail-link" target="_blank">
+                            ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i>
+                        </a>`;
+                    card.appendChild(cardFooter);
+
+                    dataContainer.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error(err);
+                dataContainer.innerHTML = `<div class="status-message error">❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
+            } finally {
+                loadingScreen.classList.add('hidden');
+            }
+        }, 500);
+        
+        const savedTheme = localStorage.getItem('selectedTheme');
+        if (savedTheme) {
+            document.body.className = savedTheme;
+        }
+    }
+
+    fetchHistory();
+</script>
 </body>
 </html>
