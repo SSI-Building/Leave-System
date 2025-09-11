@@ -1,349 +1,127 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <title>Admin Dashboard (History - Column L)</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
   <style>
-    body { font-family: 'Prompt', sans-serif; margin: 18px; background: #f6f8fa; color:#111;}
-    h1 { text-align:center; margin-bottom:12px; }
-    .box { background:#fff; padding:12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06); margin-bottom:12px;}
-    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    label { font-size:14px; }
-    input[type="date"], input[type="text"], select, button { padding:8px 10px; font-size:14px; border:1px solid #ddd; border-radius:6px;}
-    button { cursor:pointer; background:#1976d2; color:#fff; border:none; }
-    button.secondary { background:#6c757d; }
-    button.ghost { background:transparent; color:#1976d2; border:1px solid #1976d2; }
-    table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
-    th, td { padding:8px; border:1px solid #e6e6e6; text-align:left; }
-    th { background:#0d6efd; color:#fff; position:sticky; top:0; }
-    .small { font-size:13px; color:#555; }
-    .filters-area { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-    .filters-area .group { display:flex; gap:8px; align-items:center; }
-    .filter-row { display:flex; gap:8px; align-items:center; margin-bottom:6px; }
-    .muted { color:#666; font-size:13px; }
-    .count { margin-top:6px; font-weight:600; }
-    .loading { color:#ff8c00; font-weight:600; }
+    body { font-family: sans-serif; margin: 20px; background: #f8f9fa; }
+    h1 { text-align: center; }
+    .controls { margin-bottom: 20px; display: flex; gap: 10px; }
+    input, select, button { padding: 5px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 6px; font-size: 13px; text-align: center; }
+    th { background: #007bff; color: white; }
+    tr:nth-child(even) { background: #f2f2f2; }
   </style>
 </head>
 <body>
-  <h1>Admin Dashboard — ดึงข้อมูลจาก Column L (History)</h1>
+  <h1>📊 Admin Dashboard</h1>
 
-  <div class="box">
-    <div class="small muted">กลุ่มที่ 1 — ใช้สำหรับ <strong>ดึงข้อมูลจาก Google Sheet</strong> (กรอง Column L โดยช่วงวันที่)</div>
-    <div class="row" style="margin-top:10px;">
-      <div class="group">
-        <label>เริ่ม</label>
-        <input type="date" id="startDate">
-      </div>
-      <div class="group">
-        <label>สิ้นสุด</label>
-        <input type="date" id="endDate">
-      </div>
-      <div class="group">
-        <button id="btnFetch">ดึงข้อมูล (Fetch)</button>
-        <button id="btnDefault" class="secondary">ค่าเริ่มต้น (2 เดือน)</button>
-      </div>
-      <div style="margin-left:auto" class="muted small">Column L จะถูกแปลงเป็น <strong>dd/MM/yyyy</strong> (เวลาไม่ถูกนำมาพิจารณา)</div>
-    </div>
+  <!-- ฟิลด์เลือกช่วงวันที่สำหรับดึงข้อมูล -->
+  <div class="controls">
+    <label>เริ่ม: <input type="date" id="startDate"></label>
+    <label>สิ้นสุด: <input type="date" id="endDate"></label>
+    <button onclick="fetchData()">ดึงข้อมูล</button>
   </div>
 
-  <div class="box">
-    <div class="small muted">กลุ่มที่ 2 — ตัวกรองสำหรับกรองข้อมูลที่ดึงมาแล้ว (client-side filters)</div>
-    <div id="clientFilters" style="margin-top:10px;">
-      <!-- dynamic filter rows -->
-    </div>
-
-    <div style="margin-top:8px;" class="row">
-      <button id="btnAddFilter" class="ghost">+ เพิ่มเงื่อนไข</button>
-      <button id="btnApplyFilters">ใช้ตัวกรอง</button>
-      <button id="btnClearFilters" class="secondary">ล้างตัวกรอง</button>
-    </div>
-    <div class="muted small" style="margin-top:8px;">(ตัวกรองนี้ทำงานบนข้อมูลที่ดึงมาแล้ว — ไม่กระทบการดึงข้อมูลจาก Sheet)</div>
+  <!-- ฟิลด์กรองข้อมูลจากผลลัพธ์ที่ดึงมาแล้ว -->
+  <div class="controls">
+    <label>คอลัมน์:
+      <select id="filterColumn"></select>
+    </label>
+    <input type="text" id="filterValue" placeholder="กรอกค่าที่ต้องการ">
+    <button onclick="applyFilter()">กรอง</button>
   </div>
 
-  <div class="box">
-    <div class="row">
-      <div>
-        <span id="summaryCount" class="count">แสดง 0 / 0 แถว</span>
-        <span id="loading" class="loading" style="display:none; margin-left:10px;">Loading...</span>
-      </div>
-      <div style="margin-left:auto" class="muted">Tip: คลิก "ดึงข้อมูล" เพื่อโหลดชุดข้อมูลใหม่ตามช่วงวันที่</div>
-    </div>
-
-    <div style="overflow:auto; margin-top:10px;">
-      <table id="dataTable">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
+  <table id="dataTable">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
 
   <script>
-    // === ตั้งค่า URL ให้เป็น Web App URL ของคุณ (Apps Script deployed) ===
-    const WEBAPP_URL = "https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOY_ID/exec"; // <-- แทนที่ด้วย URL ของคุณ
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec"; // 👈 เปลี่ยนเป็น URL จริง
+    let originalData = []; // เก็บข้อมูลที่ดึงมา
+    let headers = [];
 
-    // เก็บข้อมูลที่ดึงมาจาก server
-    let fetchedHeaders = [];
-    let fetchedRows = [];     // original fetched rows
-    let filteredRows = [];    // results after applying client filters
-
-    // helper: format date to yyyy-mm-dd (for input[type=date])
-    function toISODate(d) {
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${y}-${m}-${day}`;
-    }
-    function addMonths(d, n) {
-      const nd = new Date(d.getTime());
-      nd.setMonth(nd.getMonth() + n);
-      return nd;
-    }
-
-    // init default dates (today and two months back)
-    function setDefaultDates() {
-      const today = new Date();
-      const twoMonthsAgo = addMonths(today, -2);
-      document.getElementById("startDate").value = toISODate(twoMonthsAgo);
-      document.getElementById("endDate").value = toISODate(today);
-    }
-
-    // fetch from webapp
     async function fetchData() {
-      if (WEBAPP_URL.includes("https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec")) {
-        alert("กรุณาแก้ WEBAPP_URL ในไฟล์ HTML เป็น URL ของ Web App ที่คุณ deploy แล้ว");
-        return;
-      }
-      const start = document.getElementById("startDate").value;
-      const end = document.getElementById("endDate").value;
-      toggleLoading(true);
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
+      let url = `${WEBAPP_URL}?action=getHistory`;
+      if (startDate) url += `&startDate=${startDate}`;
+      if (endDate) url += `&endDate=${endDate}`;
 
-      try {
-        const url = new URL(WEBAPP_URL);
-        url.searchParams.set("action", "getHistoryByDate");
-        if (start) url.searchParams.set("startDate", start);
-        if (end) url.searchParams.set("endDate", end);
+      const res = await fetch(url);
+      const data = await res.json();
 
-        const res = await fetch(url.toString());
-        const data = await res.json();
-
-        if (data.error) {
-          alert("Server error: " + data.error);
-          fetchedHeaders = [];
-          fetchedRows = [];
-          filteredRows = [];
-        } else {
-          fetchedHeaders = data.headers || [];
-          fetchedRows = data.rows || [];
-          // by default filteredRows = fetchedRows (no client filter)
-          filteredRows = fetchedRows.slice();
-          renderFiltersUI(); // update column selects
-          renderTable();
-        }
-      } catch (err) {
-        alert("Fetch failed: " + err.message);
-      } finally {
-        toggleLoading(false);
-      }
-    }
-
-    function toggleLoading(show) {
-      document.getElementById("loading").style.display = show ? "inline-block" : "none";
-    }
-
-    // render table
-    function renderTable() {
-      const thead = document.querySelector("#dataTable thead");
-      const tbody = document.querySelector("#dataTable tbody");
-      thead.innerHTML = "";
-      tbody.innerHTML = "";
-
-      if (!fetchedHeaders || fetchedHeaders.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='8'>ยังไม่มีหัวตาราง (Headers) หรือไม่พบข้อมูล</td></tr>";
-        updateCount();
+      if (!data || data.length === 0) {
+        renderTable([]);
         return;
       }
 
-      // header
-      const trh = document.createElement("tr");
-      fetchedHeaders.forEach((h, i) => {
+      headers = data[0];
+      originalData = data.slice(1);
+      renderTable(originalData);
+      fillFilterOptions();
+    }
+
+    function renderTable(data) {
+      const tableHead = document.querySelector("#dataTable thead");
+      const tableBody = document.querySelector("#dataTable tbody");
+      tableHead.innerHTML = "";
+      tableBody.innerHTML = "";
+
+      if (!data || data.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='20'>ไม่พบข้อมูล</td></tr>";
+        return;
+      }
+
+      // Header
+      const headerRow = document.createElement("tr");
+      headers.forEach(h => {
         const th = document.createElement("th");
-        th.textContent = h || `Col ${i+1}`;
-        trh.appendChild(th);
+        th.textContent = h;
+        headerRow.appendChild(th);
       });
-      thead.appendChild(trh);
+      tableHead.appendChild(headerRow);
 
-      // rows
-      if (!filteredRows || filteredRows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${fetchedHeaders.length}">ไม่พบข้อมูล</td></tr>`;
-        updateCount();
-        return;
-      }
-
-      for (const row of filteredRows) {
+      // Data rows
+      data.forEach(row => {
         const tr = document.createElement("tr");
-        for (let i = 0; i < fetchedHeaders.length; i++) {
+        row.forEach(cell => {
           const td = document.createElement("td");
-          td.textContent = (row[i] !== undefined && row[i] !== null) ? String(row[i]) : "";
+          td.textContent = cell;
           tr.appendChild(td);
-        }
-        tbody.appendChild(tr);
-      }
-      updateCount();
+        });
+        tableBody.appendChild(tr);
+      });
     }
 
-    function updateCount() {
-      const total = fetchedRows.length;
-      const shown = filteredRows.length;
-      document.getElementById("summaryCount").textContent = `แสดง ${shown} / ${total} แถว`;
+    function fillFilterOptions() {
+      const filterColumn = document.getElementById("filterColumn");
+      filterColumn.innerHTML = "<option value=''>--เลือก--</option>";
+      headers.forEach((h, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = h;
+        filterColumn.appendChild(opt);
+      });
     }
 
-    // ---------------- client-side filters UI ----------------
-    // allow multiple filter rows (AND)
-    function renderFiltersUI() {
-      const container = document.getElementById("clientFilters");
-      container.innerHTML = ""; // we will append area + filters container
-      // create a container for dynamic filters
-      const filtersBox = document.createElement("div");
-      filtersBox.id = "filtersBox";
-      filtersBox.style.marginTop = "8px";
-      container.appendChild(filtersBox);
-
-      // by default create one row
-      addFilterRow();
-    }
-
-    function addFilterRow(prefill) {
-      const box = document.getElementById("filtersBox");
-      if (!box) return;
-
-      const row = document.createElement("div");
-      row.className = "filter-row";
-
-      const colSelect = document.createElement("select");
-      colSelect.style.minWidth = "220px";
-      const emptyOpt = document.createElement("option");
-      emptyOpt.value = "";
-      emptyOpt.textContent = "-- เลือกคอลัมน์ --";
-      colSelect.appendChild(emptyOpt);
-
-      // populate with headers
-      for (let h of fetchedHeaders) {
-        const o = document.createElement("option");
-        o.value = h;
-        o.textContent = h;
-        colSelect.appendChild(o);
-      }
-
-      const matchSelect = document.createElement("select");
-      const opt1 = document.createElement("option"); opt1.value = "contains"; opt1.textContent = "contains";
-      const opt2 = document.createElement("option"); opt2.value = "equals"; opt2.textContent = "equals";
-      matchSelect.appendChild(opt1); matchSelect.appendChild(opt2);
-
-      const valueInput = document.createElement("input");
-      valueInput.type = "text";
-      valueInput.placeholder = "ค่า...";
-
-      const btnRemove = document.createElement("button");
-      btnRemove.type = "button";
-      btnRemove.className = "secondary";
-      btnRemove.textContent = "ลบ";
-      btnRemove.onclick = () => { box.removeChild(row); };
-
-      // prefill if provided
-      if (prefill) {
-        if (prefill.col) colSelect.value = prefill.col;
-        if (prefill.match) matchSelect.value = prefill.match;
-        if (prefill.val) valueInput.value = prefill.val;
-      }
-
-      row.appendChild(colSelect);
-      row.appendChild(matchSelect);
-      row.appendChild(valueInput);
-      row.appendChild(btnRemove);
-      box.appendChild(row);
-    }
-
-    function collectFilterConditions() {
-      const box = document.getElementById("filtersBox");
-      if (!box) return [];
-      const rows = Array.from(box.querySelectorAll(".filter-row"));
-      const conds = [];
-      for (const r of rows) {
-        const sel = r.querySelector("select");
-        const matchSel = r.querySelectorAll("select")[1];
-        const val = r.querySelector("input").value;
-        if (sel && sel.value && val && val.trim() !== "") {
-          conds.push({
-            colName: sel.value,
-            match: matchSel.value,
-            value: val.trim()
-          });
-        }
-      }
-      return conds;
-    }
-
-    function applyClientFilters() {
-      const conds = collectFilterConditions();
-      if (!conds || conds.length === 0) {
-        filteredRows = fetchedRows.slice();
-        renderTable();
+    function applyFilter() {
+      const colIndex = document.getElementById("filterColumn").value;
+      const filterValue = document.getElementById("filterValue").value.trim();
+      if (!colIndex || !filterValue) {
+        renderTable(originalData);
         return;
       }
-
-      // build mapping header -> index
-      const map = {};
-      for (let i = 0; i < fetchedHeaders.length; i++) {
-        map[fetchedHeaders[i]] = i;
-      }
-
-      filteredRows = fetchedRows.filter(row => {
-        for (const c of conds) {
-          const idx = map[c.colName];
-          if (idx === undefined) return false;
-          const cell = row[idx] !== undefined && row[idx] !== null ? String(row[idx]) : "";
-          const val = c.value;
-          if (c.match === "contains") {
-            if (!cell.toLowerCase().includes(val.toLowerCase())) return false;
-          } else { // equals
-            if (cell.toLowerCase() !== val.toLowerCase()) return false;
-          }
-        }
-        return true;
-      });
-
-      renderTable();
+      const filtered = originalData.filter(row =>
+        String(row[colIndex]).includes(filterValue)
+      );
+      renderTable(filtered);
     }
 
-    function clearClientFilters() {
-      const box = document.getElementById("filtersBox");
-      if (box) box.innerHTML = "";
-      addFilterRow();
-      filteredRows = fetchedRows.slice();
-      renderTable();
-    }
-
-    // ---------------- event wiring ----------------
-    document.getElementById("btnFetch").addEventListener("click", fetchData);
-    document.getElementById("btnDefault").addEventListener("click", () => {
-      setDefaultDates();
-      fetchData();
-    });
-    document.getElementById("btnAddFilter").addEventListener("click", () => addFilterRow());
-    document.getElementById("btnApplyFilters").addEventListener("click", applyClientFilters);
-    document.getElementById("btnClearFilters").addEventListener("click", clearClientFilters);
-
-    // init
-    setDefaultDates();
-    // auto load default 2 months on page load
-    window.addEventListener("load", () => {
-      // small delay to ensure UI ready
-      setTimeout(fetchData, 150);
-    });
-
+    // โหลดข้อมูล default ตอนเปิดหน้า
+    window.onload = fetchData;
   </script>
 </body>
 </html>
