@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sheet Data</title>
+    <title>Google Sheet Data Filter</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f4f4f4;
+        }
+        #controls-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        #controls-container label, #controls-container input, #controls-container button {
+            margin-right: 10px;
         }
         #table-container {
             background-color: #fff;
@@ -43,6 +53,15 @@
 </head>
 <body>
 
+    <div id="controls-container">
+        <h2>เลือกช่วงเวลาเพื่อกรองข้อมูล</h2>
+        <label for="start-date">วันที่เริ่มต้น:</label>
+        <input type="date" id="start-date">
+        <label for="end-date">วันที่สิ้นสุด:</label>
+        <input type="date" id="end-date">
+        <button onclick="fetchAndDisplayData()">กรองข้อมูล</button>
+    </div>
+
     <div id="table-container">
         <h1>ข้อมูลจาก Google Sheet</h1>
         <p class="loading">กำลังโหลดข้อมูล...</p>
@@ -56,21 +75,32 @@
     </div>
 
     <script>
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec'; // เปลี่ยนตรงนี้
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec'; // เปลี่ยนตรงนี้!
 
         async function fetchAndDisplayData() {
+            const startDateInput = document.getElementById('start-date').value;
+            const endDateInput = document.getElementById('end-date').value;
+
+            const table = document.getElementById('data-table');
+            const tableBody = table.querySelector('tbody');
+            const headerRow = document.getElementById('table-header-row');
+            const loadingMessage = document.querySelector('.loading');
+            
+            loadingMessage.textContent = 'กำลังโหลดข้อมูล...';
+            loadingMessage.style.display = 'block';
+            tableBody.innerHTML = ''; // Clear table body
+            headerRow.innerHTML = ''; // Clear table header
+
+            let fetchUrl = webAppUrl;
+
+            // Append date parameters to the URL if they exist
+            if (startDateInput && endDateInput) {
+                fetchUrl += `?startDate=${startDateInput}T00:00:00.000Z&endDate=${endDateInput}T23:59:59.999Z`;
+            }
+
             try {
-                const response = await fetch(webAppUrl);
+                const response = await fetch(fetchUrl);
                 const data = await response.json();
-
-                const table = document.getElementById('data-table');
-                const headerRow = document.getElementById('table-header-row');
-                const tableBody = table.querySelector('tbody');
-                const loadingMessage = document.querySelector('.loading');
-
-                // Clear existing data
-                headerRow.innerHTML = '';
-                tableBody.innerHTML = '';
 
                 if (data.data.length === 0) {
                     loadingMessage.textContent = 'ไม่พบข้อมูลที่ตรงตามเงื่อนไข';
@@ -89,7 +119,7 @@
                     const tr = document.createElement('tr');
                     rowData.forEach((cellData, index) => {
                         const td = document.createElement('td');
-                        if (index === data.header.indexOf('Column N') && cellData.startsWith('https://')) {
+                        if (data.header[index].toLowerCase() === 'column n' && typeof cellData === 'string' && cellData.startsWith('https://')) {
                             // Check if it's an image URL
                             const img = document.createElement('img');
                             img.src = cellData;
@@ -107,11 +137,11 @@
 
             } catch (error) {
                 console.error('Error fetching data:', error);
-                const loadingMessage = document.querySelector('.loading');
                 loadingMessage.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
             }
         }
 
+        // Load all data on page load
         document.addEventListener('DOMContentLoaded', fetchAndDisplayData);
     </script>
 
