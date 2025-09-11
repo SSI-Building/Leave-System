@@ -49,13 +49,25 @@
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
+        
+        .filter-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
 
-        .controls label {
+        .controls label,
+        .filter-controls label {
             color: var(--text-color);
             font-weight: 500;
         }
 
-        .controls input[type="date"] {
+        .controls input[type="date"],
+        .filter-controls input[type="text"],
+        .filter-controls select {
             padding: 10px 12px;
             border: 1px solid #ced4da;
             border-radius: 6px;
@@ -63,14 +75,17 @@
             color: var(--text-color);
             transition: border-color 0.3s;
         }
-
-        .controls input[type="date"]:focus {
+        
+        .controls input:focus,
+        .filter-controls input:focus,
+        .filter-controls select:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
 
-        .controls button {
+        .controls button,
+        .filter-controls button {
             padding: 10px 20px;
             border: none;
             border-radius: 6px;
@@ -97,6 +112,13 @@
         #resetButton:hover {
             background-color: #5a6268;
             transform: translateY(-1px);
+        }
+
+        #sortButton {
+            background-color: #3498db;
+        }
+        #sortButton:hover {
+            background-color: #2980b9;
         }
 
         table {
@@ -141,6 +163,30 @@
             <button id="loadDataButton">โหลดข้อมูล</button>
             <button id="resetButton">ตั้งค่าเริ่มต้น</button>
         </div>
+        
+        <div class="filter-controls">
+            <label for="searchName">ชื่อ-สกุล:</label>
+            <input type="text" id="searchName" placeholder="ค้นหาชื่อ...">
+            
+            <label for="filterType">ประเภท:</label>
+            <select id="filterType">
+                <option value="">ทั้งหมด</option>
+                <option value="AL">ลาพักร้อน</option>
+                <option value="SL">ลาป่วย</option>
+                <option value="BL">ลากิจ</option>
+            </select>
+            
+            <label for="filterStatus">สถานะ:</label>
+            <select id="filterStatus">
+                <option value="">ทั้งหมด</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Pending">Pending</option>
+            </select>
+            
+            <button id="sortButton">เรียงล่าสุด → เก่าสุด</button>
+        </div>
+
         <div style="overflow-x:auto;">
             <table id="dataTable">
                 <thead>
@@ -157,8 +203,7 @@
                         <th>วันที่ยื่นคำร้อง</th>
                     </tr>
                 </thead>
-                <tbody>
-                    </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
@@ -170,7 +215,16 @@
             const loadDataButton = document.getElementById('loadDataButton');
             const resetButton = document.getElementById('resetButton');
             const dataTable = document.getElementById('dataTable');
+            
+            const searchNameInput = document.getElementById('searchName');
+            const filterTypeSelect = document.getElementById('filterType');
+            const filterStatusSelect = document.getElementById('filterStatus');
+            const sortButton = document.getElementById('sortButton');
+            
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec';
+            
+            let allData = [];
+            let sortOrder = 'desc'; // 'desc' for latest first, 'asc' for oldest first
 
             function setInitialDates() {
                 const today = new Date();
@@ -197,6 +251,39 @@
                 return `${day}/${month}/${year}`;
             }
 
+            function filterAndSortData() {
+                let filteredData = allData;
+                
+                // กรองตามชื่อ-สกุล (Column 2, index 1)
+                const searchText = searchNameInput.value.toLowerCase();
+                if (searchText) {
+                    filteredData = filteredData.filter(row => 
+                        (row[1] || '').toLowerCase().includes(searchText)
+                    );
+                }
+
+                // กรองตามประเภทการลา (Column 3, index 4)
+                const filterType = filterTypeSelect.value;
+                if (filterType) {
+                    filteredData = filteredData.filter(row => (row[4] || '') === filterType);
+                }
+
+                // กรองตามสถานะ (Column 9, index 10)
+                const filterStatus = filterStatusSelect.value;
+                if (filterStatus) {
+                    filteredData = filteredData.filter(row => (row[10] || '') === filterStatus);
+                }
+
+                // จัดเรียงตามวันที่ยื่นคำร้อง (Column 10, index 11)
+                filteredData.sort((a, b) => {
+                    const dateA = new Date(a[11]);
+                    const dateB = new Date(b[11]);
+                    return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+                });
+                
+                displayTableData(filteredData);
+            }
+
             async function fetchData(startDate, endDate) {
                 try {
                     const oldestDate = startDate > endDate ? endDate : startDate;
@@ -208,31 +295,33 @@
                         throw new Error('Network response was not ok');
                     }
                     const data = await response.json();
-                    displayData(data);
+                    
+                    allData = data.data;
+                    filterAndSortData();
                 } catch (error) {
                     console.error('Error fetching data:', error);
                     alert('ไม่สามารถดึงข้อมูลได้ โปรดตรวจสอบ URL หรือการเชื่อมต่อ');
                 }
             }
 
-            function displayData(data) {
+            function displayTableData(data) {
                 const tableBody = dataTable.querySelector('tbody');
                 tableBody.innerHTML = '';
 
-                data.data.forEach(rowData => {
+                data.forEach(rowData => {
                     const tr = document.createElement('tr');
                     
-                    // Column A (index 0)
+                    // รหัสพนักงาน (index 0)
                     const tdA = document.createElement('td');
                     tdA.textContent = rowData[0] || '';
                     tr.appendChild(tdA);
 
-                    // Column B (index 1)
+                    // ชื่อ-สกุล (index 1)
                     const tdB = document.createElement('td');
                     tdB.textContent = rowData[1] || '';
                     tr.appendChild(tdB);
 
-                    // Column E (index 4) - ประเภท
+                    // ประเภทการลา (index 4)
                     const tdE = document.createElement('td');
                     let leaveType = rowData[4] || '';
                     if (leaveType === 'AL') {
@@ -245,38 +334,46 @@
                         tdE.textContent = leaveType;
                     }
                     tr.appendChild(tdE);
-
-                    // Column F (index 5) - วันที่เริ่มต้น
+                    
+                    // ลาตั้งแค่วันที่ (index 5)
                     const tdF = document.createElement('td');
                     tdF.textContent = formatDateForDisplay(rowData[5]) || '';
                     tr.appendChild(tdF);
 
-                    // Column G (index 6) - เวลา
+                    // เวลา(เริ่ม) (index 6)
                     const tdG = document.createElement('td');
                     tdG.textContent = rowData[6] || '';
                     tr.appendChild(tdG);
 
-                    // Column H (index 7) - วันที่สิ้นสุด
+                    // ถึงวันที่ (index 7)
                     const tdH = document.createElement('td');
                     tdH.textContent = formatDateForDisplay(rowData[7]) || '';
                     tr.appendChild(tdH);
-
-                    // Column I (index 8) - จำนวนวัน
+                    
+                    // เวลา(สิ้นสุด) (index 8)
                     const tdI = document.createElement('td');
                     tdI.textContent = rowData[8] || '';
                     tr.appendChild(tdI);
                     
-                    // Column J (index 9) - รายละเอียด
+                    // จำนวนวันลา (index 9)
                     const tdJ = document.createElement('td');
                     tdJ.textContent = rowData[9] || '';
                     tr.appendChild(tdJ);
                     
-                    // Column K (index 10) - สถานะ
+                    // สถานะ (index 10)
                     const tdk = document.createElement('td');
-                    tdk.textContent = rowData[10] || '';
+                    const status = rowData[10] || '';
+                    tdk.textContent = status;
+                    if (status === 'Approved') {
+                        tdk.classList.add('status-approved');
+                    } else if (status === 'Rejected') {
+                        tdk.classList.add('status-rejected');
+                    } else if (status === 'Pending') {
+                        tdk.classList.add('status-pending');
+                    }
                     tr.appendChild(tdk);
 
-                    // Column L (index 11) - วันที่ยื่นคำร้อง
+                    // วันที่ยื่นคำร้อง (index 11)
                     const tdL = document.createElement('td');
                     tdL.textContent = formatDateForDisplay(rowData[11]) || '';
                     tr.appendChild(tdL);
@@ -285,9 +382,11 @@
                 });
             }
 
+            // กำหนดค่าเริ่มต้นและโหลดข้อมูลครั้งแรก
             setInitialDates();
             fetchData(startDateInput.value, endDateInput.value);
 
+            // Event listeners
             loadDataButton.addEventListener('click', () => {
                 const startDate = startDateInput.value;
                 const endDate = endDateInput.value;
@@ -296,7 +395,22 @@
 
             resetButton.addEventListener('click', () => {
                 setInitialDates();
+                searchNameInput.value = '';
+                filterTypeSelect.value = '';
+                filterStatusSelect.value = '';
+                sortOrder = 'desc';
+                sortButton.textContent = 'เรียงล่าสุด → เก่าสุด';
                 fetchData(startDateInput.value, endDateInput.value);
+            });
+            
+            searchNameInput.addEventListener('input', filterAndSortData);
+            filterTypeSelect.addEventListener('change', filterAndSortData);
+            filterStatusSelect.addEventListener('change', filterAndSortData);
+            
+            sortButton.addEventListener('click', () => {
+                sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+                sortButton.textContent = sortOrder === 'desc' ? 'เรียงล่าสุด → เก่าสุด' : 'เรียงเก่าสุด → ล่าสุด';
+                filterAndSortData();
             });
         });
     </script>
