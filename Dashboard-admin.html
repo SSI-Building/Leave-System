@@ -85,7 +85,8 @@
         }
 
         .controls button,
-        .filter-controls button {
+        .filter-controls button,
+        .action-button {
             padding: 10px 20px;
             border: none;
             border-radius: 6px;
@@ -120,6 +121,26 @@
         #sortButton:hover {
             background-color: #2980b9;
         }
+        
+        .action-button {
+            padding: 5px 10px;
+            font-size: 14px;
+            margin: 2px;
+        }
+        
+        .save-button {
+            background-color: #4CAF50;
+        }
+        .save-button:hover {
+            background-color: #45a049;
+        }
+        
+        .print-button {
+            background-color: #555555;
+        }
+        .print-button:hover {
+            background-color: #333333;
+        }
 
         table {
             width: 100%;
@@ -150,6 +171,7 @@
         .status-approved { background-color: #28a745; color: white; }
         .status-rejected { background-color: #dc3545; color: white; }
         .status-pending { background-color: #ffc107; color: var(--text-color); }
+        
     </style>
 </head>
 <body>
@@ -201,6 +223,7 @@
                         <th>จำนวนวันลา</th>
                         <th>สถานะ</th>
                         <th>วันที่ยื่นคำร้อง</th>
+                        <th>ดำเนินการ</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -224,7 +247,7 @@
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec';
             
             let allData = [];
-            let sortOrder = 'desc'; // 'desc' for latest first, 'asc' for oldest first
+            let sortOrder = 'desc'; 
 
             function setInitialDates() {
                 const today = new Date();
@@ -250,11 +273,70 @@
                 const year = date.getFullYear();
                 return `${day}/${month}/${year}`;
             }
+            
+            async function updateStatus(uuid, newStatus) {
+                try {
+                    const url = `${webAppUrl}?action=update&uuid=${uuid}&status=${newStatus}`;
+                    await fetch(url, {
+                        method: 'GET',
+                        mode: 'no-cors'
+                    });
+                    
+                    alert(`อัปเดตสถานะ UUID: ${uuid} เป็น ${newStatus} เรียบร้อยแล้ว`);
+                    fetchData(startDateInput.value, endDateInput.value);
+                    
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                    alert('เกิดข้อผิดพลาดในการอัปเดตสถานะ');
+                }
+            }
+
+            // ฟังก์ชันใหม่สำหรับพิมพ์ข้อมูล
+            function printRow(rowData) {
+                const printWindow = window.open('', '', 'height=600,width=800');
+                printWindow.document.write('<html><head><title>ข้อมูลการลา</title>');
+                printWindow.document.write('<style>');
+                printWindow.document.write(`
+                    body { font-family: 'Kanit', sans-serif; padding: 20px; }
+                    h2 { text-align: center; color: #007BFF; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                `);
+                printWindow.document.write('</style></head><body>');
+                printWindow.document.write('<h2>รายละเอียดการลา</h2>');
+                printWindow.document.write('<table>');
+                
+                // ตารางแสดงรายละเอียด
+                printWindow.document.write(`
+                    <tr><th>รหัสพนักงาน</th><td>${rowData[0] || ''}</td></tr>
+                    <tr><th>ชื่อ-สกุล</th><td>${rowData[1] || ''}</td></tr>
+                    <tr><th>ประเภทการลา</th><td>${getLeaveTypeDisplay(rowData[4])}</td></tr>
+                    <tr><th>ลาตั้งแค่วันที่</th><td>${formatDateForDisplay(rowData[5]) || ''}</td></tr>
+                    <tr><th>เวลา(เริ่ม)</th><td>${rowData[6] || ''}</td></tr>
+                    <tr><th>ถึงวันที่</th><td>${formatDateForDisplay(rowData[7]) || ''}</td></tr>
+                    <tr><th>เวลา(สิ้นสุด)</th><td>${rowData[8] || ''}</td></tr>
+                    <tr><th>จำนวนวันลา</th><td>${rowData[9] || ''}</td></tr>
+                    <tr><th>สถานะ</th><td>${rowData[10] || ''}</td></tr>
+                    <tr><th>วันที่ยื่นคำร้อง</th><td>${formatDateForDisplay(rowData[11]) || ''}</td></tr>
+                `);
+                
+                printWindow.document.write('</table>');
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+            }
+
+            function getLeaveTypeDisplay(leaveType) {
+                if (leaveType === 'AL') return 'ลาพักร้อน (AL)';
+                if (leaveType === 'SL') return 'ลาป่วย (SL)';
+                if (leaveType === 'BL') return 'ลากิจ (BL)';
+                return leaveType;
+            }
 
             function filterAndSortData() {
                 let filteredData = allData;
                 
-                // กรองตามชื่อ-สกุล (Column 2, index 1)
                 const searchText = searchNameInput.value.toLowerCase();
                 if (searchText) {
                     filteredData = filteredData.filter(row => 
@@ -262,19 +344,16 @@
                     );
                 }
 
-                // กรองตามประเภทการลา (Column 3, index 4)
                 const filterType = filterTypeSelect.value;
                 if (filterType) {
                     filteredData = filteredData.filter(row => (row[4] || '') === filterType);
                 }
 
-                // กรองตามสถานะ (Column 9, index 10)
                 const filterStatus = filterStatusSelect.value;
                 if (filterStatus) {
                     filteredData = filteredData.filter(row => (row[10] || '') === filterStatus);
                 }
 
-                // จัดเรียงตามวันที่ยื่นคำร้อง (Column 10, index 11)
                 filteredData.sort((a, b) => {
                     const dateA = new Date(a[11]);
                     const dateB = new Date(b[11]);
@@ -323,16 +402,7 @@
 
                     // ประเภทการลา (index 4)
                     const tdE = document.createElement('td');
-                    let leaveType = rowData[4] || '';
-                    if (leaveType === 'AL') {
-                        tdE.textContent = 'ลาพักร้อน (AL)';
-                    } else if (leaveType === 'SL') {
-                        tdE.textContent = 'ลาป่วย (SL)';
-                    } else if (leaveType === 'BL') {
-                        tdE.textContent = 'ลากิจ (BL)';
-                    } else {
-                        tdE.textContent = leaveType;
-                    }
+                    tdE.textContent = getLeaveTypeDisplay(rowData[4]);
                     tr.appendChild(tdE);
                     
                     // ลาตั้งแค่วันที่ (index 5)
@@ -362,7 +432,7 @@
                     
                     // สถานะ (index 10)
                     const tdk = document.createElement('td');
-                    const status = rowData[10] || '';
+                    const status = rowData[10] || ''; 
                     tdk.textContent = status;
                     if (status === 'Approved') {
                         tdk.classList.add('status-approved');
@@ -378,15 +448,47 @@
                     tdL.textContent = formatDateForDisplay(rowData[11]) || '';
                     tr.appendChild(tdL);
 
+                    // คอลัมน์สำหรับดำเนินการ
+                    const actionTd = document.createElement('td');
+                    
+                    if (status.toLowerCase() === 'pending') { 
+                        const statusSelect = document.createElement('select');
+                        statusSelect.innerHTML = `
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        `;
+                        actionTd.appendChild(statusSelect);
+                        
+                        const saveButton = document.createElement('button');
+                        saveButton.textContent = 'บันทึก';
+                        saveButton.classList.add('action-button', 'save-button');
+                        saveButton.addEventListener('click', () => {
+                            const newStatus = statusSelect.value;
+                            const uuid = rowData[19]; 
+                            updateStatus(uuid, newStatus);
+                        });
+                        actionTd.appendChild(saveButton);
+                    } else if (status.toLowerCase() === 'approved') {
+                        const printButton = document.createElement('button');
+                        printButton.textContent = 'Print';
+                        printButton.classList.add('action-button', 'print-button');
+                        printButton.addEventListener('click', () => {
+                            printRow(rowData);
+                        });
+                        actionTd.appendChild(printButton);
+                    } else {
+                        actionTd.textContent = 'เสร็จสิ้น';
+                    }
+                    
+                    tr.appendChild(actionTd);
+
                     tableBody.appendChild(tr);
                 });
             }
 
-            // กำหนดค่าเริ่มต้นและโหลดข้อมูลครั้งแรก
             setInitialDates();
             fetchData(startDateInput.value, endDateInput.value);
 
-            // Event listeners
             loadDataButton.addEventListener('click', () => {
                 const startDate = startDateInput.value;
                 const endDate = endDateInput.value;
