@@ -3,68 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แสดงข้อมูลประวัติ</title>
+    <title>ข้อมูลประวัติ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: auto; background: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
-        h1 { text-align: center; color: #333; }
-        .controls { text-align: center; margin-bottom: 20px; }
-        .controls label, .controls input, .controls button { margin: 5px; padding: 8px; font-size: 16px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table, th, td { border: 1px solid #ddd; }
-        th, td { padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; font-weight: bold; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #6c757d;
+            --background-color: #f4f7f9;
+            --card-background: #ffffff;
+            --text-color: #343a40;
+            --table-header-bg: #e9ecef;
+            --table-row-even-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .controls label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .controls input[type="date"] {
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 16px;
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+
+        .controls input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        #loadDataButton {
+            background-color: var(--primary-color);
+        }
+
+        #loadDataButton:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        #resetButton {
+            background-color: var(--secondary-color);
+        }
+
+        #resetButton:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        table th, table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        table th {
+            background-color: var(--table-header-bg);
+            color: var(--text-color);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: var(--table-row-even-bg);
+        }
+
+        .status-approved { background-color: #28a745; color: white; }
+        .status-rejected { background-color: #dc3545; color: white; }
+        .status-pending { background-color: #ffc107; color: var(--text-color); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>ข้อมูลประวัติจาก Google Sheet</h1>
+        <h1>ข้อมูลประวัติการอนุมัติ</h1>
         <div class="controls">
             <label for="startDate">วันที่เริ่มต้น:</label>
             <input type="date" id="startDate">
             <label for="endDate">วันที่สิ้นสุด:</label>
             <input type="date" id="endDate">
             <button id="loadDataButton">โหลดข้อมูล</button>
+            <button id="resetButton">ตั้งค่าเริ่มต้น</button>
         </div>
-        <table id="dataTable">
-            <thead>
-                <tr></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div style="overflow-x:auto;">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>รหัสพนักงาน</th>
+                        <th>ชื่อ-สกุล</th>
+                        <th>ประเภทการลา</th>
+                        <th>ลาตั้งแค่วันที่</th>
+                        <th>เวลา(เริ่ม)</th>
+                        <th>ถึงวันที่</th>
+                        <th>เวลา(สิ้นสุด)</th>
+                        <th>จำนวนวันลา</th>
+                        <th>สถานะ</th>
+                        <th>วันที่ยื่นคำร้อง</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
             const loadDataButton = document.getElementById('loadDataButton');
+            const resetButton = document.getElementById('resetButton');
             const dataTable = document.getElementById('dataTable');
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec'; // **สำคัญ: เปลี่ยนเป็น URL ที่ Deploy จาก Google Apps Script**
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec';
 
             function setInitialDates() {
                 const today = new Date();
                 const fortyDaysBefore = new Date();
                 fortyDaysBefore.setDate(today.getDate() - 40);
                 
-                // กำหนดวันที่เริ่มต้นเป็นวันนี้
-                startDateInput.value = formatDate(today);
-                
-                // กำหนดวันสิ้นสุดเป็น 40 วันย้อนหลัง
-                endDateInput.value = formatDate(fortyDaysBefore);
+                startDateInput.value = formatDateForInput(today);
+                endDateInput.value = formatDateForInput(fortyDaysBefore);
             }
 
-            function formatDate(date) {
+            function formatDateForInput(date) {
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
                 return `${year}-${month}-${day}`;
             }
 
+            function formatDateForDisplay(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            }
+
             async function fetchData(startDate, endDate) {
                 try {
-                    const url = `${webAppUrl}?startDate=${endDate}&endDate=${startDate}`;
+                    const oldestDate = startDate > endDate ? endDate : startDate;
+                    const newestDate = startDate > endDate ? startDate : endDate;
+
+                    const url = `${webAppUrl}?startDate=${oldestDate}&endDate=${newestDate}`;
                     const response = await fetch(url);
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -78,24 +216,71 @@
             }
 
             function displayData(data) {
-                const tableHeader = dataTable.querySelector('thead tr');
                 const tableBody = dataTable.querySelector('tbody');
-                tableHeader.innerHTML = '';
                 tableBody.innerHTML = '';
-
-                data.header.forEach(headerText => {
-                    const th = document.createElement('th');
-                    th.textContent = headerText;
-                    tableHeader.appendChild(th);
-                });
 
                 data.data.forEach(rowData => {
                     const tr = document.createElement('tr');
-                    rowData.forEach(cellData => {
-                        const td = document.createElement('td');
-                        td.textContent = cellData;
-                        tr.appendChild(td);
-                    });
+                    
+                    // Column A (index 0)
+                    const tdA = document.createElement('td');
+                    tdA.textContent = rowData[0] || '';
+                    tr.appendChild(tdA);
+
+                    // Column B (index 1)
+                    const tdB = document.createElement('td');
+                    tdB.textContent = rowData[1] || '';
+                    tr.appendChild(tdB);
+
+                    // Column E (index 4) - ประเภท
+                    const tdE = document.createElement('td');
+                    let leaveType = rowData[4] || '';
+                    if (leaveType === 'AL') {
+                        tdE.textContent = 'ลาพักร้อน (AL)';
+                    } else if (leaveType === 'SL') {
+                        tdE.textContent = 'ลาป่วย (SL)';
+                    } else if (leaveType === 'BL') {
+                        tdE.textContent = 'ลากิจ (BL)';
+                    } else {
+                        tdE.textContent = leaveType;
+                    }
+                    tr.appendChild(tdE);
+
+                    // Column F (index 5) - วันที่เริ่มต้น
+                    const tdF = document.createElement('td');
+                    tdF.textContent = formatDateForDisplay(rowData[5]) || '';
+                    tr.appendChild(tdF);
+
+                    // Column G (index 6) - เวลา
+                    const tdG = document.createElement('td');
+                    tdG.textContent = rowData[6] || '';
+                    tr.appendChild(tdG);
+
+                    // Column H (index 7) - วันที่สิ้นสุด
+                    const tdH = document.createElement('td');
+                    tdH.textContent = formatDateForDisplay(rowData[7]) || '';
+                    tr.appendChild(tdH);
+
+                    // Column I (index 8) - จำนวนวัน
+                    const tdI = document.createElement('td');
+                    tdI.textContent = rowData[8] || '';
+                    tr.appendChild(tdI);
+                    
+                    // Column J (index 9) - รายละเอียด
+                    const tdJ = document.createElement('td');
+                    tdJ.textContent = rowData[9] || '';
+                    tr.appendChild(tdJ);
+                    
+                    // Column K (index 10) - สถานะ
+                    const tdk = document.createElement('td');
+                    tdk.textContent = rowData[10] || '';
+                    tr.appendChild(tdk);
+
+                    // Column L (index 11) - วันที่ยื่นคำร้อง
+                    const tdL = document.createElement('td');
+                    tdL.textContent = formatDateForDisplay(rowData[11]) || '';
+                    tr.appendChild(tdL);
+
                     tableBody.appendChild(tr);
                 });
             }
@@ -107,6 +292,11 @@
                 const startDate = startDateInput.value;
                 const endDate = endDateInput.value;
                 fetchData(startDate, endDate);
+            });
+
+            resetButton.addEventListener('click', () => {
+                setInitialDates();
+                fetchData(startDateInput.value, endDateInput.value);
             });
         });
     </script>
