@@ -4,20 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>History Table</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body { font-family: 'Prompt', sans-serif; padding: 20px; }
-  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-  th { background-color: #f2f2f2; }
+  body { font-family: 'Prompt', sans-serif; background: #f5f5f5; padding: 20px; }
+  h2 { text-align: center; color: #333; }
+  .controls { margin-bottom: 20px; text-align: center; }
+  .controls input { padding: 6px; margin: 0 5px; border-radius: 4px; border: 1px solid #ccc; }
+  .controls button { padding: 6px 12px; border-radius: 4px; border: none; background: #007bff; color: #fff; cursor: pointer; }
+  .controls button:hover { background: #0056b3; }
+  table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: center; vertical-align: middle; }
+  th { background-color: #007bff; color: white; }
+  tbody tr:hover { background-color: #f1f1f1; }
+  td img { max-width: 80px; height: auto; border-radius: 4px; }
 </style>
 </head>
 <body>
 
 <h2>History Table</h2>
 
-<label>จากวันที่: <input type="date" id="startDate"></label>
-<label>ถึงวันที่: <input type="date" id="endDate"></label>
-<button onclick="filterData()">กรอง</button>
+<div class="controls">
+  <label>จากวันที่: <input type="date" id="startDate"></label>
+  <label>ถึงวันที่: <input type="date" id="endDate"></label>
+  <button onclick="filterData()">กรอง</button>
+</div>
 
 <table id="historyTable">
   <thead>
@@ -35,13 +45,13 @@
 const webAppURL = 'https://script.google.com/macros/s/AKfycbx2Y2ChK_CSCUr5xOe5TX0dxSIbOjtnFNWCwqUFRroi2OtLQgDRfxGX41k2O2DHm1Mt/exec';
 let allData = []; // เก็บข้อมูลทั้งหมด
 
-// ดึงข้อมูลครั้งเดียว
+// โหลดข้อมูลครั้งเดียว
 function loadData() {
   fetch(webAppURL)
     .then(response => response.json())
     .then(data => {
       allData = data;
-      renderTable(allData); // แสดงทั้งหมดตอนโหลด
+      renderTable(allData);
     })
     .catch(err => console.error("Error fetching data:", err));
 }
@@ -63,7 +73,7 @@ function filterData() {
   const filtered = allData.filter(row => {
     const colL = row[11]; // Column L
     if (!colL) return false;
-    const parts = colL.split(",")[0].split("/"); // แยกเฉพาะวันที่
+    const parts = colL.split(",")[0].split("/"); 
     const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
     return rowDate >= startDate && rowDate <= endDate;
   });
@@ -71,15 +81,21 @@ function filterData() {
   renderTable(filtered);
 }
 
-// แสดงตาราง
+// แสดงตาราง และ Column N เป็นรูปจาก Drive
 function renderTable(data) {
   const tbody = document.querySelector("#historyTable tbody");
   tbody.innerHTML = "";
   data.forEach(row => {
     const tr = document.createElement("tr");
-    row.forEach(cell => {
+    row.forEach((cell, index) => {
       const td = document.createElement("td");
-      td.textContent = cell;
+      if(index === 13 && cell) { // Column N
+        const img = document.createElement("img");
+        img.src = `https://drive.google.com/uc?export=view&id=${cell}`;
+        td.appendChild(img);
+      } else {
+        td.textContent = cell;
+      }
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
