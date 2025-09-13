@@ -296,36 +296,63 @@
             }
         }
 
- function printSignature(rowData) {
-    const printWindow = window.open('', '', 'height=600,width=600');
+                            function printRow(rowData) {
+                                    const printWindow = window.open('', '', 'height=900,width=700');
+                                    
 
-    // ✅ ดึง FILE_ID จากลิงก์ใน rowData[13]
-    let signatureUrl = '';
-    if (rowData[13]) {
-        const match = rowData[13].match(/\/d\/(.*?)\//); 
-        if (match && match[1]) {
-            const fileId = match[1];
-            signatureUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-            console.log("Direct link:", signatureUrl);
-        }
-    }
+                                    // ดึงค่า empId และตัวอักษรตัวแรก (ไม่เจอให้เป็นสตริงว่าง)
+                                    const empId = String(rowData[0] || '').trim();
+                                    const firstChar = empId.charAt(0).toUpperCase(); // M, P, I, T (หรือ '')
 
-    // ✅ สร้างหน้า HTML ที่มีแค่รูป
-    printWindow.document.write(`
-        <html>
-        <head><title>ทดสอบรูป</title></head>
-        <body style="text-align:center; padding:20px; font-family:sans-serif;">
-            <h3>ทดสอบแสดงรูปจาก Google Drive</h3>
-            ${signatureUrl 
-                ? `<img src="${signatureUrl}" style="max-width:500px; max-height:500px;" />`
-                : '<p style="color:red;">❌ ไม่มีลิงก์รูป</p>'}
-        </body>
-        </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-}
+                                    // แมปเป็นชื่อบริษัท
+                                    let company1 = 'ใบลาหยุดงาน (Leave Form)'; // ค่าเริ่มต้นถ้าไม่ตรงเงื่อนไข
+                                    if (firstChar === 'M') {
+                                    company1 = 'ห้างหุ้นส่วนจำกัด แม่รำพึง ดี แอนด์ ที บีสชิเนส';
+                                    } else if (firstChar === 'P') {
+                                    company1 = 'ห้างหุ้นส่วนจำกัด พชรพล บางสะพาน';
+                                    } else if (firstChar === 'I') {
+                                    company1 = 'บริษัท ทัศนพงศ์ ธุรกิจ จำกัด';
+                                    } else if (firstChar === 'T') {
+                                    company1 = 'ห้างหุ้นส่วนจำกัด ทองหลาง กรุ๊ป';
+                                    }
 
+
+
+
+                                    printWindow.document.write(`<h2>${company1}</h2>`);
+                                    printWindow.document.write(`
+                                    <style>
+                                        body { font-family: 'Kanit', sans-serif; padding: 20px; }
+                                        h2 { text-align: center; margin-bottom: 10px; }
+                                        .box { border: 1px solid #000; padding: 15px; margin-bottom: 15px; }
+                                        .line { display: inline-block; border-bottom: 1px dotted #000; min-width: 200px; }
+                                        .sign-box { border: 1px solid #000; height: 120px; margin-top: 15px; padding: 10px; }
+                                    </style>
+                                    `);
+                                    printWindow.document.write('</head><body>');
+
+                                    // ✅ ตัวอย่างฟอร์ม custom
+                                    printWindow.document.write(`
+                                    <h2>ใบลาหยุดงาน (Leave Form)</h2>
+                                    <div class="box">
+                                        <p>ชื่อ-สกุล: <span class="line">${rowData[1] || ''}</span></p>
+                                        <p>รหัสพนักงาน: <span class="line">${rowData[0] || ''}</span></p>
+                                        <p>ประเภทการลา: <span class="line">${rowData[4] || ''}</span></p>
+                                        <p>ตั้งแต่วันที่: <span class="line">${rowData[5] || ''}</span> เวลา: <span class="line">${rowData[6] || ''}</span></p>
+                                        <p>ถึงวันที่: <span class="line">${rowData[7] || ''}</span> เวลา: <span class="line">${rowData[8] || ''}</span></p>
+                                        <p>จำนวนวันลา: <span class="line">${rowData[9] || ''} วัน</span></p>
+                                        <p>สถานะ: <span class="line">${rowData[10] || ''}</span></p>
+                                    </div>
+
+                                    <div class="sign-box">ผู้บังคับบัญชา: ..........................................</div>
+                                    <div class="sign-box">ฝ่ายทรัพยากรบุคคล: ...................................</div>
+                                    <div class="sign-box">ผู้อนุมัติ: .............................................</div>
+                                    `);
+
+                                    printWindow.document.write('</body></html>');
+                                    printWindow.document.close();
+                                    printWindow.print();
+                                }
 
 
         function getLeaveTypeDisplay(leaveType) {
