@@ -207,62 +207,85 @@ document.addEventListener("DOMContentLoaded", () => {
     const loadingOverlay = document.getElementById("loadingOverlay");
     let isSubmitting = false;
 
-    btnSubmit.addEventListener("click", () => {
-        if (isSubmitting) return;
-        isSubmitting = true;
-        btnSubmit.disabled = true;
-        loadingOverlay.classList.add("visible");
-
-        leaveData.signature = canvas.toDataURL();
-
-        // ✅ เพิ่มการดึง set1/set2 จาก localStorage
-        const set1 = JSON.parse(localStorage.getItem("leaveSet1")) || [];
-        const set2 = JSON.parse(localStorage.getItem("leaveSet2")) || [];
-
-        // ✅ เพิ่ม default index 3-5 ของ set2 เพื่อให้ usedAL/SL/BL ถูกต้อง
-        set2[3] = set2[3] || 0; // usedAL
-        set2[4] = set2[4] || 0; // usedSL
-        set2[5] = set2[5] || 0; // usedBL
-        const usedTotal = set2[3] + set2[4] + set2[5];
-
-        leaveData.set1 = set1;
-        leaveData.set2 = set2;
-        leaveData.usedAL = set2[3];
-        leaveData.usedSL = set2[4];
-        leaveData.usedBL = set2[5];
-        leaveData.usedTotal = usedTotal;
-
-        const leaveDataToSend = {
-            ...leaveData,
-            startDate: leaveData.startDateFormatted,
-            startTime: leaveData.startTimeFormatted,
-            endDate: leaveData.endDateFormatted,
-            endTime: leaveData.endTimeFormatted,
-            set1,
-            set2
-        };
-
-        const url = "https://script.google.com/macros/s/AKfycbwviyKkV7geROoSiWGxPy0HtqFvjOtXF4SXR2SdXTPoGRDyrfwSIe0bxfelBmtYlfl4/exec";
-
-        fetch(url, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(leaveDataToSend)
-        })
-        .then(() => {
-            alert("ส่งคำขอเรียบร้อยแล้ว");
-            localStorage.removeItem("leavePreviewData");
-            window.location.href = "Dashboard.html";
-        })
-        .catch(err => {
-            console.error("Fetch Error:", err);
-            alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
-            isSubmitting = false;
-            btnSubmit.disabled = false;
-            loadingOverlay.classList.remove("visible");
+    
+        function compressDataUrl(dataUrl, maxWidth = 600, quality = 0.7) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ratio = img.width / img.height;
+                const newW = Math.min(img.width, maxWidth);
+                const newH = newW / ratio;
+                canvas.width = newW;
+                canvas.height = newH;
+                const ctx = canvas.getContext("2d");
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(0, 0, newW, newH);
+                ctx.drawImage(img, 0, 0, newW, newH);
+                const compressed = canvas.toDataURL("image/jpeg", quality);
+                resolve(compressed);
+            };
+            img.onerror = reject;
+            img.src = dataUrl;
         });
-    });
+        }
+
+            btnSubmit.addEventListener("click", async () => {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            btnSubmit.disabled = true;
+            loadingOverlay.classList.add("visible");
+
+            // บีบลายเซ็นก่อนส่ง
+            const originalSig = canvas.toDataURL();
+            leaveData.signature = await compressDataUrl(originalSig, 600, 0.7);
+
+            // ส่วนเดิมของ set1/set2/usedTotal ...
+            const set1 = JSON.parse(localStorage.getItem("leaveSet1")) || [];
+            const set2 = JSON.parse(localStorage.getItem("leaveSet2")) || [];
+            set2[3] = set2[3] || 0;
+            set2[4] = set2[4] || 0;
+            set2[5] = set2[5] || 0;
+            const usedTotal = set2[3] + set2[4] + set2[5];
+
+            leaveData.set1 = set1;
+            leaveData.set2 = set2;
+            leaveData.usedAL = set2[3];
+            leaveData.usedSL = set2[4];
+            leaveData.usedBL = set2[5];
+            leaveData.usedTotal = usedTotal;
+
+            const leaveDataToSend = {
+                ...leaveData,
+                startDate: leaveData.startDateFormatted,
+                startTime: leaveData.startTimeFormatted,
+                endDate: leaveData.endDateFormatted,
+                endTime: leaveData.endTimeFormatted,
+                set1,
+                set2
+            };
+
+            const url = "https://script.google.com/macros/s/AKfycbwviyKkV7geROoSiWGxPy0HtqFvjOtXF4SXR2SdXTPoGRDyrfwSIe0bxfelBmtYlfl4/exec";
+
+            try {
+                await fetch(url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(leaveDataToSend)
+                });
+                alert("ส่งคำขอเรียบร้อยแล้ว");
+                localStorage.removeItem("leavePreviewData");
+                window.location.href = "Dashboard.html";
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                isSubmitting = false;
+                btnSubmit.disabled = false;
+                loadingOverlay.classList.remove("visible");
+            }
+        });
+
 });
 </script>
 </body>
