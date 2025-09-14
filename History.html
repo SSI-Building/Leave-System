@@ -142,21 +142,6 @@
             color: var(--text-color-dark);
         }
 
-        .card-actions {
-            margin-top: 15px;
-            text-align: right;
-        }
-        .detail-link {
-            text-decoration: none;
-            color: var(--primary-color-end);
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: color 0.3s ease;
-        }
-        .detail-link:hover {
-            color: var(--primary-color-start);
-        }
-
         /* ===== Buttons Styles ===== */
         .buttons-container {
             width: 100%;
@@ -358,20 +343,18 @@
                         const dateInfo = document.createElement('div');
                         dateInfo.className = 'card-info';
                         dateInfo.innerHTML = `
-                            <p><strong>ตั้งแต่วันที่:</strong> ${formatDate(row[5])}, <strong>เวลา:</strong> ${formatTime(row[6])} <strong>ถึงวันที่:</strong> ${formatDate(row[7])}, <strong>เวลา:</strong> ${formatTime(row[8])}</p>
+                            <p><strong>ตั้งแต่วันที่:</strong> ${formatDate(row[5])}, <strong>เวลา:</strong> ${formatTime(row[6])}</p>
+                            <p><strong>ถึงวันที่:</strong> ${formatDate(row[7])}, <strong>เวลา:</strong> ${formatTime(row[8])}</p>
                             <p><strong>รวม:</strong> ${row[9] || '-'} วัน</p>
                             <p><strong>ยื่นวันที่:</strong> ${formatDate(row[11])}</p>
                         `;
                         card.appendChild(dateInfo);
                         
-                        const cardFooter = document.createElement('div');
-                        cardFooter.className = 'card-actions';
-                        cardFooter.innerHTML = `
-                            <a href="PDF-form.html?row=${encodeURIComponent(JSON.stringify(row))}" 
-                                class="detail-link" target="_blank">
-                                ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i>
-                            </a>`;
-                        card.appendChild(cardFooter);
+                        // ลบส่วน card-actions ออก
+                        // const cardFooter = document.createElement('div');
+                        // cardFooter.className = 'card-actions';
+                        // cardFooter.innerHTML = `<a href="PDF-form.html?row=${encodeURIComponent(JSON.stringify(row))}" class="detail-link" target="_blank">ดูรายละเอียดเพิ่มเติม <i class="fas fa-chevron-right"></i></a>`;
+                        // card.appendChild(cardFooter);
 
                         dataContainer.appendChild(card);
                     });
