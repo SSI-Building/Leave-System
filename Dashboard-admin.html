@@ -638,11 +638,13 @@
             doc.text(`วัน`, 77, 159, { align: "right" });
 
                 //เอกสารประกอบ
-            doc.text(`เอกสารประกอบ`, 40, 171, { align: "right" });
-            doc.rect(50, 167.5, size, size, Parper === "มี" ? 'F' : 'S');
-            doc.text(`มี`, 60, 171, { align: "right" });
-            doc.rect(70, 167.5, size, size, Parper === "ไม่มี" ? 'F' : 'S');
-            doc.text(`ไม่มี`, 83, 171, { align: "right" });
+            const xdocuments=137;
+            const ydocuments=159;
+            doc.text(`เอกสารประกอบ`, xdocuments, ydocuments, { align: "right" });
+            doc.rect(xdocuments+10, ydocuments-3.5, size, size, Parper === "มี" ? 'F' : 'S');
+            doc.text(`มี`, xdocuments+20, ydocuments, { align: "right" });
+            doc.rect(xdocuments+30, ydocuments-3.5, size, size, Parper === "ไม่มี" ? 'F' : 'S');
+            doc.text(`ไม่มี`, xdocuments+43, ydocuments, { align: "right" });
 
           
              // ---- กำหนดขนาดตาราง ----
