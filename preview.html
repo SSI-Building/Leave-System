@@ -245,20 +245,53 @@ document.addEventListener("DOMContentLoaded", () => {
             leaveData.signature = await compressDataUrl(originalSig, 600, 0.7);
 
             // ส่วนเดิมของ set1/set2/usedTotal ...
-            const set1 = JSON.parse(localStorage.getItem("leaveSet1")) || [];
-            const set2 = JSON.parse(localStorage.getItem("leaveSet2")) || [];
+            let set1 = JSON.parse(localStorage.getItem("leaveSet1")) || [];
+            let set2 = JSON.parse(localStorage.getItem("leaveSet2")) || [];
+            
+            // กัน index ว่าง
+            set1[3] = set1[3] || 0; // AL
+            set1[4] = set1[4] || 0; // SL
+            set1[5] = set1[5] || 0; // BL
             set2[3] = set2[3] || 0;
             set2[4] = set2[4] || 0;
             set2[5] = set2[5] || 0;
+            
+            // จำนวนวันที่ลาครั้งนี้
+            const leaveDays = parseInt(leaveData.leaveDays) || 0;
+            const leaveType = leaveData.leaveType;
+            
+            // อัปเดท set2 (สิทธิที่ใช้ไป) และ set1 (สิทธิคงเหลือ)
+            if (leaveType === "AL") {
+                set2[3] += leaveDays;
+                set1[3] -= leaveDays;
+            }
+            else if (leaveType === "SL") {
+                set2[4] += leaveDays;
+                set1[4] -= leaveDays;
+            }
+            else if (leaveType === "BL") {
+                set2[5] += leaveDays;
+                set1[5] -= leaveDays;
+            }
+            
+            // คำนวณรวม
             const usedTotal = set2[3] + set2[4] + set2[5];
-
+            const balanceTotal = set1[3] + set1[4] + set1[5];
+            
+            // เก็บข้อมูลลง leaveData
             leaveData.set1 = set1;
             leaveData.set2 = set2;
             leaveData.usedAL = set2[3];
             leaveData.usedSL = set2[4];
             leaveData.usedBL = set2[5];
             leaveData.usedTotal = usedTotal;
-
+            leaveData.balanceTotal = balanceTotal;
+            
+            // เก็บกลับไป localStorage ด้วย (กันค่าหลุด)
+            localStorage.setItem("leaveSet1", JSON.stringify(set1));
+            localStorage.setItem("leaveSet2", JSON.stringify(set2));
+            
+            // ส่งไป Apps Script
             const leaveDataToSend = {
                 ...leaveData,
                 startDate: leaveData.startDateFormatted,
@@ -266,8 +299,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 endDate: leaveData.endDateFormatted,
                 endTime: leaveData.endTimeFormatted,
                 set1,
-                set2
+                set2,
+                usedTotal,
+                balanceTotal
             };
+
 
             const url = "https://script.google.com/macros/s/AKfycbwviyKkV7geROoSiWGxPy0HtqFvjOtXF4SXR2SdXTPoGRDyrfwSIe0bxfelBmtYlfl4/exec";
 
