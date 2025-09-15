@@ -257,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
             set2[5] = set2[5] || 0;
             
             // จำนวนวันที่ลาครั้งนี้
-            const leaveDays = parseInt(leaveData.leaveDays) || 0;
+            let leaveDays = parseFloat(leaveData.leaveDays);
             const leaveType = leaveData.leaveType;
             
             // อัปเดท set2 (สิทธิที่ใช้ไป) และ set1 (สิทธิคงเหลือ)
