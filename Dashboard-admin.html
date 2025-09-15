@@ -431,10 +431,14 @@
             const createDate = rowData[11] || '';
             const reason = rowData[12] || '';
             const Parper = rowData[14] || '';
-            const sumSL = rowData[15] || '';
-            const sumAL = rowData[16] || '';
-            const sumBL = rowData[17] || '';
-            const totalLeave=rowData[18] || '';
+            const sumAL = rowData[15] == 0 ? '-' : rowData[15] || '';
+            const sumSL = rowData[16] == 0 ? '-' : rowData[16] || '';
+            const sumBL = rowData[17] == 0 ? '-' : rowData[17] || '';
+            const totalLeave = rowData[18] == 0 ? '-' : rowData[18] || '';
+            const balAL = rowData[20] == 0 ? '-' : rowData[20] || '';
+            const balSL = rowData[21] == 0 ? '-' : rowData[21] || '';
+            const balBL = rowData[22] == 0 ? '-' : rowData[22] || '';
+            const balanceTotal = rowData[23] == 0 ? '-' : rowData[23] || '';
 
 
         
@@ -671,7 +675,7 @@
             // ---- ข้อความหัวตาราง ----
             const centerX_table = (tbx1 + tbx2) / 2;
             doc.setFontSize(12);
-            doc.text("สิทธิลาคงเหลือ/สิทธิลาที่ใช้", centerX_table, tby1 + rowHeight - 2.5, { align: "center" });
+            doc.text("สิทธิลาที่ใช้/สิทธิลาคงเหลือ", centerX_table, tby1 + rowHeight - 2.5, { align: "center" });
             doc.setFontSize(12);
             const colCenter1 = (15 + 40) / 2;
             doc.text("ประเภทการลา", colCenter1, tby1 + rowHeight + rowHeight - 2, { align: "center" });
@@ -700,14 +704,14 @@
              // Row3
             doc.setFontSize(12);
             const colCenter11 = (15+40) / 2;
-            doc.text("สิทธิลาคงเหลือ", colCenter11, tby1 + rowHeight*3 - 2, { align: "center" });
+            doc.text("สิทธิลาที่ใช้", colCenter11, tby1 + rowHeight*3 - 2, { align: "center" });
         
             doc.setFontSize(11);
             const colCenter12 = (40 + 47) / 2;
-            doc.text("-", colCenter12, tby1 + rowHeight*3 - 2, { align: "center" });
+            doc.text(`${sumSL}`, colCenter12, tby1 + rowHeight*3 - 2, { align: "center" });
         
             const colCenter13 = (47 + 54) / 2;
-            doc.text("-", colCenter13, tby1 + rowHeight*3 - 2, { align: "center" });
+            doc.text(`${sumAL}`, colCenter13, tby1 + rowHeight*3 - 2, { align: "center" });
         
             const colCenter14 = (54 + 61) / 2;
             doc.text("-", colCenter14, tby1 + rowHeight*3 - 2, { align: "center" });
@@ -716,7 +720,7 @@
             doc.text("-", colCenter15, tby1 + rowHeight*3 - 2, { align: "center" });
         
             const colCenter16 = (68 + 75) / 2;
-            doc.text("-", colCenter16, tby1 + rowHeight*3 - 2, { align: "center" });
+            doc.text(`${sumBL}`, colCenter16, tby1 + rowHeight*3 - 2, { align: "center" });
         
             const colCenter17 = (75 + 82) / 2;
             doc.text("-", colCenter17, tby1 + rowHeight*3 - 2, { align: "center" });
@@ -728,19 +732,19 @@
             doc.text("-", colCenter19, tby1 + rowHeight*3 - 2, { align: "center" });
         
             const colCenter20 = (96 + 103) / 2;
-            doc.text("-", colCenter20, tby1 + rowHeight*3 - 2, { align: "center" });
+            doc.text(`${totalLeave}`, colCenter20, tby1 + rowHeight*3 - 2, { align: "center" });
             
                 // ---- Row4 (สิทธิลาที่ใช้) ----
             doc.setFontSize(12);
             const colCenter21 = (15 + 40) / 2;
-            doc.text("สิทธิลาที่ใช้", colCenter21, tby1 + rowHeight*4 - 2, { align: "center" });
+            doc.text("สิทธิลาคงเหลือ", colCenter21, tby1 + rowHeight*4 - 2, { align: "center" });
         
             doc.setFontSize(11);
             const colCenter22 = (40 + 47) / 2;
-            doc.text("-", colCenter22, tby1 + rowHeight*4 - 2, { align: "center" });
+            doc.text(`${balSL}`, colCenter22, tby1 + rowHeight*4 - 2, { align: "center" });
         
             const colCenter23 = (47 + 54) / 2;
-            doc.text("-", colCenter23, tby1 + rowHeight*4 - 2, { align: "center" });
+            doc.text(`${balAL}`, colCenter23, tby1 + rowHeight*4 - 2, { align: "center" });
         
             const colCenter24 = (54 + 61) / 2;
             doc.text("-", colCenter24, tby1 + rowHeight*4 - 2, { align: "center" });
@@ -749,7 +753,7 @@
             doc.text("-", colCenter25, tby1 + rowHeight*4 - 2, { align: "center" });
         
             const colCenter26 = (68 + 75) / 2;
-            doc.text("-", colCenter26, tby1 + rowHeight*4 - 2, { align: "center" });
+            doc.text(`${balBL}`, colCenter26, tby1 + rowHeight*4 - 2, { align: "center" });
         
             const colCenter27 = (75 + 82) / 2;
             doc.text("-", colCenter27, tby1 + rowHeight*4 - 2, { align: "center" });
@@ -761,7 +765,7 @@
             doc.text("-", colCenter29, tby1 + rowHeight*4 - 2, { align: "center" });
         
             const colCenter30 = (96 + 103) / 2;
-            doc.text("-", colCenter30, tby1 + rowHeight*4 - 2, { align: "center" });
+            doc.text(`${balanceTotal}`, colCenter30, tby1 + rowHeight*4 - 2, { align: "center" });
 
 
     // --- กรอบครอบทั้งหมด ---
