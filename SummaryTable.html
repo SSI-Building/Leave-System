@@ -8,30 +8,37 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4CAF50;
+            --border-color: #f3f4f6;
+            --text-color: #334e68;
+        }
+
         body {
             font-family: 'Prompt', sans-serif;
-            background-color: #f0f4f8; /* Soft, light blue-gray background */
+            background-color: #f0f4f8;
             margin: 0;
             padding: 20px;
-            color: #334e68; /* Darker text for readability */
+            color: #334e68;
             line-height: 1.6;
+            position: relative;
         }
 
         .card {
             background-color: #ffffff;
-            border-radius: 20px; /* Softer rounded corners */
-            padding: 30px; /* More padding for a spacious feel */
+            border-radius: 20px;
+            padding: 30px;
             max-width: 900px;
-            margin: 40px auto; /* Centered with more top/bottom margin */
-            box-shadow: 0 10px 30px rgba(45, 55, 72, 0.1); /* Deeper, more noticeable shadow */
+            margin: 40px auto;
+            box-shadow: 0 10px 30px rgba(45, 55, 72, 0.1);
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 25px; /* More space below the heading */
+            margin-bottom: 25px;
             font-weight: 600;
             color: #2d3748;
-            font-size: 28px; /* Slightly larger font size */
+            font-size: 28px;
         }
 
         .filter-container {
@@ -44,86 +51,164 @@
         .btn-group {
             display: flex;
             justify-content: center;
-            margin-bottom: 15px; /* Adjust margin to create space between buttons and search input */
+            margin-bottom: 15px;
             background-color: #e5e7eb;
             border-radius: 12px;
             padding: 5px;
             max-width: 350px;
-            width: 100%; /* Make the button group fill the container */
+            width: 100%;
         }
 
         .btn-group button {
             flex: 1;
-            padding: 12px 18px; /* Larger padding for a bigger click area */
+            padding: 12px 18px;
             border: none;
             border-radius: 10px;
             background-color: transparent;
-            font-size: 16px; /* Slightly larger font */
+            font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease; /* Smooth transition for effects */
+            transition: all 0.3s ease;
         }
 
         .btn-group button:hover:not(.active) {
-            background-color: #d1d5db; /* Lighter hover effect */
+            background-color: #d1d5db;
         }
 
         .btn-group button.active {
-            background-color: #4CAF50; /* A vibrant green for the active state */
+            background-color: #4CAF50;
             color: white;
             font-weight: 600;
-            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3); /* Shadow for active button */
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
         }
 
         #searchInput {
             width: 100%;
-            padding: 12px 16px; /* Increased padding */
+            padding: 12px 16px;
             border-radius: 10px;
-            border: 1px solid #cbd5e0; /* Softer border color */
+            border: 1px solid #cbd5e0;
             font-size: 15px;
-            box-sizing: border-box; /* Ensures padding doesn't affect total width */
+            box-sizing: border-box;
             transition: border-color 0.3s;
         }
 
         #searchInput:focus {
             outline: none;
-            border-color: #4CAF50; /* Highlight on focus */
+            border-color: #4CAF50;
         }
 
         table {
             width: 100%;
-            border-collapse: separate; /* Use separate to enable border-radius */
+            border-collapse: separate;
             border-spacing: 0;
             border-radius: 12px;
-            overflow: hidden; /* Hides parts that are outside the border radius */
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05); /* Subtle table shadow */
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
 
         th, td {
-            padding: 15px 12px; /* More vertical padding */
+            padding: 15px 12px;
             text-align: center;
-            border-bottom: 1px solid #e2e8f0; /* Lighter bottom border */
+            border-bottom: 1px solid #e2e8f0;
         }
 
         th {
-            background-color: #f7fafc; /* Lighter header background */
+            background-color: #f7fafc;
             font-weight: 600;
             color: #4a5568;
-            text-transform: uppercase; /* Uppercase for a more formal look */
+            text-transform: uppercase;
             font-size: 14px;
             letter-spacing: 0.5px;
         }
 
         tr:hover td {
-            background-color: #f7fafc; /* Lighter row hover effect */
+            background-color: #f7fafc;
         }
 
         .hidden {
             display: none;
         }
+
+        /* Styling for the back button */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-button:hover {
+            background-color: #f7fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* ==================== Loading Overlay Styles ==================== */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Use a higher z-index to ensure it's on top */
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <a href="Dashboard-admin.html" class="back-button">
+        <span class="back-button-icon">&#8592;</span> ย้อนกลับ
+    </a>
+
     <h2>ข้อมูลสิทธิการลา</h2>
 
     <div class="card">
@@ -165,12 +250,18 @@
         </table>
     </div>
 
+    <div id="loading-overlay" class="visible">
+        <div class="spinner"></div>
+        <div class="loading-text">กำลังโหลดข้อมูล...</div>
+    </div>
+
     <script>
         const btnRemain = document.getElementById("btnRemain");
         const btnUsed = document.getElementById("btnUsed");
         const remainTable = document.getElementById("remainTable");
         const usedTable = document.getElementById("usedTable");
         const searchInput = document.getElementById("searchInput");
+        const loadingOverlay = document.getElementById("loading-overlay");
 
         const API_URL = "https://script.google.com/macros/s/AKfycbzTzW5A5DfeSTMPnq-ad52I8zSdZ1C56HiahTeu0AXv2gu9QQCs_V1N53Htm8Esu6pT/exec";
 
@@ -182,6 +273,9 @@
         let balanceData = [];
         let recordsData = [];
 
+        // Show loading overlay before fetching data
+        loadingOverlay.classList.add('visible');
+
         fetch(API_URL)
             .then(res => res.json())
             .then(data => {
@@ -189,6 +283,10 @@
                 recordsData = data.records;
                 renderTable(remainTable, balanceData);
                 renderTable(usedTable, recordsData, true);
+            })
+            .finally(() => {
+                // Hide loading overlay after data is loaded (whether successful or not)
+                loadingOverlay.classList.remove('visible');
             });
 
         function renderTable(table, data, includeAbsent = false) {
