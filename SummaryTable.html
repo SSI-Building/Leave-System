@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สิทธิการลา</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f0f4f8; /* Soft, light blue-gray background */
+            margin: 0;
+            padding: 20px;
+            color: #334e68; /* Darker text for readability */
+            line-height: 1.6;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 20px; /* Softer rounded corners */
+            padding: 30px; /* More padding for a spacious feel */
+            max-width: 900px;
+            margin: 40px auto; /* Centered with more top/bottom margin */
+            box-shadow: 0 10px 30px rgba(45, 55, 72, 0.1); /* Deeper, more noticeable shadow */
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px; /* More space below the heading */
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 28px; /* Slightly larger font size */
+        }
+
+        .filter-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px; /* Adjust margin to create space between buttons and search input */
+            background-color: #e5e7eb;
+            border-radius: 12px;
+            padding: 5px;
+            max-width: 350px;
+            width: 100%; /* Make the button group fill the container */
+        }
+
+        .btn-group button {
+            flex: 1;
+            padding: 12px 18px; /* Larger padding for a bigger click area */
+            border: none;
+            border-radius: 10px;
+            background-color: transparent;
+            font-size: 16px; /* Slightly larger font */
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease; /* Smooth transition for effects */
+        }
+
+        .btn-group button:hover:not(.active) {
+            background-color: #d1d5db; /* Lighter hover effect */
+        }
+
+        .btn-group button.active {
+            background-color: #4CAF50; /* A vibrant green for the active state */
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3); /* Shadow for active button */
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 16px; /* Increased padding */
+            border-radius: 10px;
+            border: 1px solid #cbd5e0; /* Softer border color */
+            font-size: 15px;
+            box-sizing: border-box; /* Ensures padding doesn't affect total width */
+            transition: border-color 0.3s;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: #4CAF50; /* Highlight on focus */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate; /* Use separate to enable border-radius */
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden; /* Hides parts that are outside the border radius */
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05); /* Subtle table shadow */
+        }
+
+        th, td {
+            padding: 15px 12px; /* More vertical padding */
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0; /* Lighter bottom border */
+        }
+
+        th {
+            background-color: #f7fafc; /* Lighter header background */
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase; /* Uppercase for a more formal look */
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover td {
+            background-color: #f7fafc; /* Lighter row hover effect */
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>ข้อมูลสิทธิการลา</h2>
+
+    <div class="card">
+        <div class="filter-container">
+            <div class="btn-group">
+                <button id="btnRemain" class="active">สิทธิคงเหลือ</button>
+                <button id="btnUsed">สิทธิที่ใช้</button>
+            </div>
+            <input type="text" id="searchInput" placeholder="ค้นหาชื่อพนักงาน...">
+        </div>
+
+        <table id="remainTable">
+            <thead>
+                <tr>
+                    <th>รหัสพนักงาน</th>
+                    <th>ชื่อ-สกุล</th>
+                    <th>ตำแหน่ง</th>
+                    <th>พักร้อน (AL)</th>
+                    <th>ป่วย (SL)</th>
+                    <th>กิจ (BL)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <table id="usedTable" class="hidden">
+            <thead>
+                <tr>
+                    <th>รหัสพนักงาน</th>
+                    <th>ชื่อ-สกุล</th>
+                    <th>ตำแหน่ง</th>
+                    <th>พักร้อน (AL)</th>
+                    <th>ป่วย (SL)</th>
+                    <th>กิจ (BL)</th>
+                    <th>ขาดงาน (A)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const btnRemain = document.getElementById("btnRemain");
+        const btnUsed = document.getElementById("btnUsed");
+        const remainTable = document.getElementById("remainTable");
+        const usedTable = document.getElementById("usedTable");
+        const searchInput = document.getElementById("searchInput");
+
+        const API_URL = "https://script.google.com/macros/s/AKfycbzTzW5A5DfeSTMPnq-ad52I8zSdZ1C56HiahTeu0AXv2gu9QQCs_V1N53Htm8Esu6pT/exec";
+
+        function formatNumber(num) {
+            if (num === "" || num === null || isNaN(num)) return num;
+            return Number.isInteger(Number(num)) ? num : Number(num).toFixed(1);
+        }
+
+        let balanceData = [];
+        let recordsData = [];
+
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                balanceData = data.balance;
+                recordsData = data.records;
+                renderTable(remainTable, balanceData);
+                renderTable(usedTable, recordsData, true);
+            });
+
+        function renderTable(table, data, includeAbsent = false) {
+            const tbody = table.querySelector("tbody");
+            tbody.innerHTML = "";
+            data.forEach(row => {
+                let tr = "<tr>";
+                tr += `<td>${row.empId}</td>`;
+                tr += `<td>${row.name}</td>`;
+                tr += `<td>${row.position}</td>`;
+                tr += `<td>${formatNumber(row.al)}</td>`;
+                tr += `<td>${formatNumber(row.sl)}</td>`;
+                tr += `<td>${formatNumber(row.bl)}</td>`;
+                if (includeAbsent) tr += `<td>${formatNumber(row.absent)}</td>`;
+                tr += "</tr>";
+                tbody.innerHTML += tr;
+            });
+        }
+
+        btnRemain.addEventListener("click", () => {
+            remainTable.classList.remove("hidden");
+            usedTable.classList.add("hidden");
+            btnRemain.classList.add("active");
+            btnUsed.classList.remove("active");
+            filterTable();
+        });
+
+        btnUsed.addEventListener("click", () => {
+            remainTable.classList.add("hidden");
+            usedTable.classList.remove("hidden");
+            btnUsed.classList.add("active");
+            btnRemain.classList.remove("active");
+            filterTable();
+        });
+
+        searchInput.addEventListener("input", filterTable);
+
+        function filterTable() {
+            const filter = searchInput.value.toLowerCase();
+            const isRemainTableVisible = !remainTable.classList.contains("hidden");
+
+            if (isRemainTableVisible) {
+                const visibleDataRemain = balanceData.filter(row => row.name.toLowerCase().includes(filter));
+                renderTable(remainTable, visibleDataRemain);
+            } else {
+                const visibleDataUsed = recordsData.filter(row => row.name.toLowerCase().includes(filter));
+                renderTable(usedTable, visibleDataUsed, true);
+            }
+        }
+    </script>
+</body>
+</html>
