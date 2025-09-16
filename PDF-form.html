@@ -109,8 +109,12 @@
             background-color: var(--card-background);
         }
 
+        /* Adjusted button styles to ensure consistent height */
         button,
-        .action-button {
+        .action-button,
+        .controls-group button,
+        .controls-group .action-button,
+        .controls-grid button {
             padding: 12px 24px;
             border: none;
             border-radius: 10px;
@@ -123,6 +127,9 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            height: 44px; /* Set a fixed height for consistency */
+            box-sizing: border-box; /* Include padding in height calculation */
+            text-decoration: none; /* For the anchor tag button */
         }
 
         button:hover,
@@ -158,6 +165,12 @@
         
         .save-button { background-color: var(--approved-color); }
         .save-button:hover { background-color: #388e3c; }
+        .save-button:disabled {
+            background-color: #a5d6a7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
         
         .print-button { background-color: var(--primary-dark); }
         .print-button:hover { background-color: #283593; }
@@ -172,6 +185,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1000px; /* Adjust as needed for desktop view */
         }
 
         table thead th {
@@ -211,6 +225,14 @@
             align-items: center;
             gap: 5px;
             flex-wrap: wrap;
+        }
+        /* Adjusted select and button height in table cells */
+        .action-cell-content select {
+            height: 38px;
+        }
+        .action-cell-content button {
+            height: 38px;
+            padding: 8px 12px;
         }
 
         .status-badge {
@@ -275,14 +297,19 @@
         /* ==================== Responsive Design ==================== */
         @media (max-width: 992px) {
             h1 { font-size: 2em; }
-            .controls-grid { grid-template-columns: 1fr; }
+            .controls-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+            table { min-width: 800px; }
         }
 
         @media (max-width: 768px) {
             body { padding: 15px; }
             .container { padding: 20px; }
             h1 { font-size: 1.8em; }
+            .controls-grid { grid-template-columns: 1fr; }
+            .controls-group { flex-direction: column; align-items: stretch; }
+            .controls-group label { text-align: left; }
             
+            table { min-width: 100%; }
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { 
                 position: absolute;
@@ -319,6 +346,13 @@
             .action-button {
                 width: calc(50% - 8px);
                 min-width: 120px;
+            }
+            .action-cell-content select {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .action-cell-content button {
+                width: 100%;
             }
         }
     </style>
@@ -449,8 +483,11 @@
                 loadingOverlay.classList.remove('visible');
             }
             
-            async function updateStatus(uuid, newStatus) {
+            async function updateStatus(uuid, newStatus, button) {
+                // Disable the button and show loading state
+                button.disabled = true;
                 showLoading();
+
                 try {
                     const url = `${webAppUrl}?action=update&uuid=${uuid}&status=${newStatus}`;
                     
@@ -459,14 +496,16 @@
                     
                     if (result.status === 'success') {
                         alert(`อัปเดตสถานะ UUID: ${uuid} เป็น ${newStatus} เรียบร้อยแล้ว`);
-                        fetchData(startDateInput.value, endDateInput.value);
+                        await fetchData(startDateInput.value, endDateInput.value); // Reload data after successful update
                     } else {
                         alert(`เกิดข้อผิดพลาดในการอัปเดต: ${result.message}`);
-                        hideLoading();
                     }
                 } catch (error) {
                     console.error('Error updating status:', error);
                     alert('เกิดข้อผิดพลาดในการอัปเดตสถานะ');
+                } finally {
+                    // Re-enable the button and hide loading state after the process
+                    button.disabled = false;
                     hideLoading();
                 }
             }
@@ -1084,7 +1123,7 @@
                         saveButton.addEventListener('click', () => {
                             const newStatus = statusSelect.value;
                             const uuid = rowData[19]; 
-                            updateStatus(uuid, newStatus);
+                            updateStatus(uuid, newStatus, saveButton);
                         });
                         actionContent.appendChild(saveButton);
                     } else if (status.toLowerCase() === 'approved') {
