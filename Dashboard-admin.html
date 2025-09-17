@@ -415,6 +415,15 @@
                 }
             }
 
+            function formatDateThailand(dateString) {
+            if (!dateString) return "";
+            const d = new Date(dateString);
+            if (isNaN(d)) return dateString;
+        
+            return d.toLocaleDateString("th-TH", { timeZone: "Asia/Bangkok" });
+            }
+
+
 
   function printRow(rowData) {
             const { jsPDF } = window.jspdf;
@@ -511,8 +520,8 @@
             const shiftWidth = doc.getTextWidth(Shift);
             const centerX_shift = 164 + (dotsWidthShift / 2) - (shiftWidth / 2);
 
-            //ลาตั้งแต่วันที่(จัเดกึ่งกลาง)
-            const formattedStartDate = startDate.split("T")[0].split("-").reverse().join("-");
+            //ลาตั้งแต่วันที่(จัดดกึ่งกลาง)
+            const formattedStartDate = formatDateThailand(startDate);
             const dotsWidthStartDate = doc.getTextWidth(lineText_04);
             const startDateWidth = doc.getTextWidth(formattedStartDate);
             const centerX_startDate = 42 + (dotsWidthStartDate / 2) - (startDateWidth / 2);
@@ -523,7 +532,7 @@
             const centerX_startTime = 82 + (dotsWidthStartTime / 2) - (startTimeWidth / 2);
 
             // ลาถึงวันที่ (จัเดกึ่งกลาง)
-            const formattedendDate = endDate.split("T")[0].split("-").reverse().join("-");
+            const formattedendDate = formatDateThailand(endDate);
             const dotsWidthEndDate = doc.getTextWidth(lineText_04);
             const endDateWidth = doc.getTextWidth(formattedendDate);
             const centerX_endDate = 122 + (dotsWidthEndDate / 2) - (endDateWidth / 2);
