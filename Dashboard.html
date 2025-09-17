@@ -236,6 +236,12 @@ const messages = [
   "วันนี้อาจเจอความท้าทาย แต่คุณเก่งพอ!", "ขอให้วันนี้มีรอยยิ้มเยอะ ๆ นะครับ!"
 ];
 
+  function formatNumber(num) {
+  if (num === "" || num === null || isNaN(num)) return num;
+  return Number.isInteger(Number(num)) ? Number(num) : Number(num).toFixed(1);
+  }
+
+
 async function loadDashboard() {
   await liff.init({ liffId });
   if(!liff.isLoggedIn()){ liff.login(); return; }
@@ -259,15 +265,15 @@ async function loadDashboard() {
       document.getElementById("empName").textContent = data.set1[1];
       document.getElementById("remainTable").innerHTML = `
         <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
-        <tr><td>ลาพักร้อน</td><td>${data.set1[3]}</td></tr>
-        <tr><td>ลาป่วย</td><td>${data.set1[4]}</td></tr>
-        <tr><td>ลากิจ</td><td>${data.set1[5]}</td></tr>`;
+        <tr><td>ลาพักร้อน</td><td>${formatNumber(data.set1[3])}</td></tr>
+        <tr><td>ลาป่วย</td><td>${formatNumber(data.set1[4])}</td></tr>
+        <tr><td>ลากิจ</td><td>${formatNumber(data.set1[5])}</td></tr>`;
       document.getElementById("usedTable").innerHTML = `
         <tr><th>ประเภทการลา</th><th>จำนวนวัน</th></tr>
-        <tr><td>ลาพักร้อน</td><td>${data.set2[3]}</td></tr>
-        <tr><td>ลาป่วย</td><td>${data.set2[4]}</td></tr>
-        <tr><td>ลากิจ</td><td>${data.set2[5]}</td></tr>
-        <tr><td>ขาดงานสะสม</td><td>${data.set2[6]}</td></tr>`;
+        <tr><td>ลาพักร้อน</td><td>${formatNumber(data.set2[3])}</td></tr>
+        <tr><td>ลาป่วย</td><td>${formatNumber(data.set2[4])}</td></tr>
+        <tr><td>ลากิจ</td><td>${formatNumber(data.set2[5])}</td></tr>
+        <tr><td>ขาดงานสะสม</td><td>${formatNumber(data.set2[6])}</td></tr>`;
     })
     .catch(err => {
       console.error(err);
