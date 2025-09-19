@@ -828,7 +828,7 @@
         doc.text(nameText, nameX, 190.5);
 
         // --- วันที่ (กึ่งกลางเส้น) ---
-        const formattedCreateDate = createDate.split("T")[0].split("-").reverse().join("-");
+        const formattedCreateDate = formatDateThailand(createDate);
         const dateText = `วันที่ ${formattedCreateDate}`;
         const dateWidth = doc.getTextWidth(dateText);
         const dateX = lineX + (lineWidth - dateWidth) / 2;
