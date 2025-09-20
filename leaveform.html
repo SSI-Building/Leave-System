@@ -468,68 +468,71 @@
         });
 
 
-        // ฟังก์ชันคำนวณวันลา
-        function calculateLeaveDays(sDate, sTime, eDate, eTime) {
-            if (!sDate || !sTime || !eDate || !eTime) return 0;
-            const WORK_HOURS_PER_DAY = 8; // วันทำงานปกติ (จันทร์–ศุกร์)
-            const SAT_HOURS_PER_DAY = 7;  // วันเสาร์ (08:00–16:00 พัก 12:00–13:00)
-        
-            const start = new Date(`${sDate}T${sTime}`);
-            const end = new Date(`${eDate}T${eTime}`);
-            if (end <= start) return 0;
-        
-            let totalHours = 0;
-            let current = new Date(start);
-            current.setHours(0, 0, 0, 0);
-        
-            while (current <= end) {
-                const dayOfWeek = current.getDay(); // 0=อาทิตย์, 6=เสาร์
-        
-                if (dayOfWeek !== 0) { // ไม่คิดวันอาทิตย์
-                    if (dayOfWeek === 6) {
-                        // ---- กรณีวันเสาร์ ----
-                        const morningStart = new Date(current);
-                        morningStart.setHours(8, 0, 0, 0);
-                        const morningEnd = new Date(current);
-                        morningEnd.setHours(12, 0, 0, 0);
-        
-                        const afternoonStart = new Date(current);
-                        afternoonStart.setHours(13, 0, 0, 0);
-                        const afternoonEnd = new Date(current);
-                        afternoonEnd.setHours(16, 0, 0, 0);
-        
-                        let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
-                        let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
-        
-                        totalHours += overlapMorning + overlapAfternoon;
-                    } else {
-                        // ---- จันทร์-ศุกร์ ----
-                        const morningStart = new Date(current);
-                        morningStart.setHours(8, 0, 0, 0);
-                        const morningEnd = new Date(current);
-                        morningEnd.setHours(12, 0, 0, 0);
-        
-                        const afternoonStart = new Date(current);
-                        afternoonStart.setHours(13, 0, 0, 0);
-                        const afternoonEnd = new Date(current);
-                        afternoonEnd.setHours(17, 0, 0, 0);
-        
-                        let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
-                        let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
-        
-                        totalHours += overlapMorning + overlapAfternoon;
-                    }
-                }
-        
-                current.setDate(current.getDate() + 1);
+            // ฟังก์ชันคำนวณวันลา
+            function calculateLeaveDays(sDate, sTime, eDate, eTime) {
+                if (!sDate || !sTime || !eDate || !eTime) return 0;
+                const WORK_HOURS_PER_DAY = 8; // วันทำงานปกติ (จันทร์–ศุกร์)
+            
+                const start = new Date(`${sDate}T${sTime}`);
+                const end = new Date(`${eDate}T${eTime}`);
+                if (end <= start) return 0;
+            
+                let totalDays = 0;
+                let totalHours = 0;
+            
+                let current = new Date(start);
                 current.setHours(0, 0, 0, 0);
+            
+                while (current <= end) {
+                    const dayOfWeek = current.getDay(); // 0=อาทิตย์, 6=เสาร์
+            
+                    if (dayOfWeek !== 0) { // ไม่คิดวันอาทิตย์
+                        if (dayOfWeek === 6) {
+                            // ---- กรณีวันเสาร์ ----
+                            const satStart = new Date(current);
+                            satStart.setHours(8, 0, 0, 0);
+                            const satEnd = new Date(current);
+                            satEnd.setHours(16, 0, 0, 0);
+            
+                            let overlap = Math.max(0, Math.min(end, satEnd) - Math.max(start, satStart)) / 1000 / 3600;
+            
+                            if (overlap >= 7.0) {
+                                // ถ้าลาครบ 08:00–16:00 (7 ชั่วโมงพอดี) → นับเป็น 1 วันเต็ม
+                                totalDays += 1;
+                            } else {
+                                // ถ้าลาแค่บางช่วง → คิดเป็นชั่วโมงแล้วหาร 8 ปกติ
+                                totalHours += overlap;
+                            }
+                        } else {
+                            // ---- จันทร์–ศุกร์ ----
+                            const morningStart = new Date(current);
+                            morningStart.setHours(8, 0, 0, 0);
+                            const morningEnd = new Date(current);
+                            morningEnd.setHours(12, 0, 0, 0);
+            
+                            const afternoonStart = new Date(current);
+                            afternoonStart.setHours(13, 0, 0, 0);
+                            const afternoonEnd = new Date(current);
+                            afternoonEnd.setHours(17, 0, 0, 0);
+            
+                            let overlapMorning = Math.max(0, Math.min(end, morningEnd) - Math.max(start, morningStart)) / 1000 / 3600;
+                            let overlapAfternoon = Math.max(0, Math.min(end, afternoonEnd) - Math.max(start, afternoonStart)) / 1000 / 3600;
+            
+                            totalHours += overlapMorning + overlapAfternoon;
+                        }
+                    }
+            
+                    current.setDate(current.getDate() + 1);
+                    current.setHours(0, 0, 0, 0);
+                }
+            
+                // วันเสาร์เต็มวัน = +1
+                // จันทร์–ศุกร์ หรือเสาร์บางช่วง = ชั่วโมง ÷ 8
+                totalDays += totalHours / WORK_HOURS_PER_DAY;
+            
+                return Math.round(totalDays * 10) / 10;
             }
-        
-            // รวมวันหยุด: จ-ศ = 8 ชั่วโมง, เสาร์ = 7 ชั่วโมง
-            // ดังนั้นเราต้อง normalize โดยเฉลี่ยเป็นวันลาตามชั่วโมงจริง
-            // ใช้สูตร: วันลา = ชั่วโมงรวม ÷ 8 (ฐานวันทำงานปกติ)
-            return Math.round((totalHours / WORK_HOURS_PER_DAY) * 10) / 10;
-        }
+
 
 
         // --- เพิ่มการจับเหตุการณ์เมื่อมีการเปลี่ยนแปลง Date และ Time ---
