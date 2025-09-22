@@ -145,8 +145,20 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    // โหลดธีมจาก localStorage
     const savedTheme = localStorage.getItem('selectedTheme');
-    if (savedTheme) document.body.className = savedTheme;
+    if (savedTheme) {
+        document.body.className = savedTheme;
+        // เพิ่มส่วนนี้: สำหรับธีมที่กำหนดเอง
+        if (savedTheme === 'theme-custom') {
+            const savedColorStart = localStorage.getItem('customColorStart');
+            const savedColorEnd = localStorage.getItem('customColorEnd');
+            if (savedColorStart && savedColorEnd) {
+                document.body.style.setProperty('--primary-color-start', savedColorStart);
+                document.body.style.setProperty('--primary-color-end', savedColorEnd);
+            }
+        }
+    }
 
     let leaveData = localStorage.getItem("leavePreviewData");
     if (!leaveData) {
