@@ -38,6 +38,13 @@
         body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
         body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
         body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
+
+
+        /* ===== Custom Theme Colors Override ===== */
+        body.theme-custom {
+            --primary-color-start: var(--custom-primary-start);
+            --primary-color-end: var(--custom-primary-end);
+        }
         
         /* ===== Base Styles ===== */
         body {
@@ -370,6 +377,15 @@
             const savedTheme = localStorage.getItem('selectedTheme');
             if (savedTheme) {
                 document.body.className = savedTheme;
+                // ตรวจสอบว่าธีมที่บันทึกไว้คือ custom theme หรือไม่
+                if (savedTheme === 'theme-custom') {
+                    const savedColorStart = localStorage.getItem('customColorStart');
+                    const savedColorEnd = localStorage.getItem('customColorEnd');
+                    if (savedColorStart && savedColorEnd) {
+                        document.body.style.setProperty('--primary-color-start', savedColorStart);
+                        document.body.style.setProperty('--primary-color-end', savedColorEnd);
+                    }
+                }
             }
         }
 
