@@ -421,16 +421,23 @@
 
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
+        
         // --- การจัดการ Loading Screen และ Theme ---
-        document.addEventListener("DOMContentLoaded", () => {
-            const loadingScreen = document.getElementById('loadingScreen');
-            const mainContainer = document.getElementById('mainContainer');
-            
-            // โหลดธีมจาก localStorage
-            const savedTheme = localStorage.getItem('selectedTheme');
-            if (savedTheme) {
-                document.body.className = savedTheme;
+       document.addEventListener("DOMContentLoaded", () => {
+    // โหลดธีมจาก localStorage
+    const savedTheme = localStorage.getItem('selectedTheme');
+    if (savedTheme) {
+        document.body.className = savedTheme;
+        // เพิ่มส่วนนี้: สำหรับธีมที่กำหนดเอง
+        if (savedTheme === 'theme-custom') {
+            const savedColorStart = localStorage.getItem('customColorStart');
+            const savedColorEnd = localStorage.getItem('customColorEnd');
+            if (savedColorStart && savedColorEnd) {
+                document.body.style.setProperty('--primary-color-start', savedColorStart);
+                document.body.style.setProperty('--primary-color-end', savedColorEnd);
             }
+        }
+    }
 
             // หน่วงเวลา 1 วินาทีแล้วแสดงหน้าหลัก
             setTimeout(() => {
