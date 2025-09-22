@@ -17,7 +17,11 @@
   --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
   --border-color: #e0e0e0;
 }
-
+/* ===== Custom Theme Colors Override ===== */
+body.theme-custom {
+  --primary-color-start: var(--custom-primary-start);
+  --primary-color-end: var(--custom-primary-end);
+}
 /* ===== Theme Variants ===== */
 body.theme-orange-purple {
   --primary-color-start: #ff7e5f;
@@ -55,6 +59,11 @@ body.theme-dark {
   --background-color: #181818;
   --card-background: #242424;
   --border-color: #444;
+}
+/* ===== Custom Theme Colors Override ===== */
+body.theme-custom {
+  --primary-color-start: var(--custom-primary-start);
+  --primary-color-end: var(--custom-primary-end);
 }
 
 /* ===== Base Styles ===== */
@@ -286,12 +295,20 @@ async function loadDashboard() {
 }
 
 window.onload = () => {
-    // โหลดธีมจาก localStorage ก่อนแสดง Loading Screen เพื่อให้ Loading Screen มีสีตามธีม
     const savedTheme = localStorage.getItem('selectedTheme');
     if (savedTheme) {
         document.body.className = savedTheme;
+        // ตรวจสอบว่าธีมที่บันทึกไว้คือ custom theme หรือไม่
+        if (savedTheme === 'theme-custom') {
+            const savedColorStart = localStorage.getItem('customColorStart');
+            const savedColorEnd = localStorage.getItem('customColorEnd');
+            if (savedColorStart && savedColorEnd) {
+                // ถ้าเป็น custom theme ให้กำหนดค่าสีที่บันทึกไว้ใน localStorage
+                document.body.style.setProperty('--custom-primary-start', savedColorStart);
+                document.body.style.setProperty('--custom-primary-end', savedColorEnd);
+            }
+        }
     }
-    // เริ่มโหลดข้อมูลหลังจาก DOM และรูปภาพทั้งหมดโหลดเสร็จ
     loadDashboard();
 };
   
