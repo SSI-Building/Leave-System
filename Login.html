@@ -460,6 +460,32 @@ body.theme-dark .login-button:hover:not(:disabled) {
 .modal-btn.apply:hover {
   filter: brightness(1.1);
 }
+
+.manual-button {
+    position: fixed;
+    top: 65px; /* ปรับตำแหน่งให้อยู่ใต้ปุ่มเฟือง */
+    right: 15px;
+    z-index: 100;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px var(--shadow-color);
+    transition: all 0.3s ease;
+    color: var(--text-color-light);
+    text-decoration: none; /* ลบเส้นใต้ลิงก์ */
+}
+
+.manual-button:hover {
+    transform: scale(1.1); /* ทำให้ปุ่มใหญ่ขึ้นเมื่อชี้เมาส์ */
+    box-shadow: 0 6px 15px var(--shadow-color);
+}
+
 </style>
 </head>
 <body>
@@ -502,6 +528,10 @@ body.theme-dark .login-button:hover:not(:disabled) {
         </div>
     </div>
 </div>
+
+<a href="manual.html" class="manual-button" title="คู่มือการใช้งาน">
+    <i class="fas fa-book"></i>
+</a>
 
 <div id="customThemeModal" class="modal">
     <div class="modal-content">
